@@ -31,7 +31,7 @@ jobs:
           tag_message: "v%s"
           create_tag: "true"
           workspace: "./dist"
-          publish_command: "npm"
+#          publish_command: "npm"
           publish_args: "--non-interactive"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
