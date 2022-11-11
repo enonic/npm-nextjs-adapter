@@ -1,4 +1,4 @@
-# RELEASE PROCEDURE
+# Release Procedure
 
 > It is strictly not recommended to do a manual release. Please, follow the automated release procedure.
 
