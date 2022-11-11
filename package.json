@@ -3,6 +3,9 @@
   "version": "0.0.1-alpha.0",
   "license": "Apache-2.0",
   "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "copy": "npx --yes cpy-cli package.json README.md dist",
     "build": "tsc",
