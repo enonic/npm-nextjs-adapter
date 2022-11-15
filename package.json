@@ -2,14 +2,12 @@
   "name": "@enonic/nextjs-adapter",
   "version": "0.0.1-alpha.5",
   "license": "Apache-2.0",
-  "main": "dist/index.js",
+  "main": "index.js",
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
+    "copy": "npx --yes cpy-cli package.json README.md dist",
     "build": "tsc",
     "lint": "eslint --quiet .",
     "lint:fix": "eslint --fix ."
