@@ -1,12 +1,4 @@
-import {
-    getMetaQuery,
-    MetaData,
-    PageComponent,
-    PageData,
-    pageFragmentQuery,
-    PageRegion,
-    RegionTree,
-} from './getMetaData';
+import {getMetaQuery, MetaData, PageComponent, PageData, pageFragmentQuery, PageRegion, RegionTree} from './getMetaData';
 
 import adapterConstants, {
     APP_NAME,
@@ -598,7 +590,7 @@ function getQueryAndVariables(type: string,
 
     let query, getVariables;
 
-    if (typeof selectedQuery === 'string') {
+    if (typeof selectedQuery === 'string' || typeof selectedQuery === 'function') {
         query = selectedQuery;
 
     } else if (Array.isArray(selectedQuery)) {
@@ -614,13 +606,17 @@ function getQueryAndVariables(type: string,
         throw Error(`getVariables for content type ${type} should be a function, not: ${typeof getVariables}`);
     }
 
-    if (query && typeof query !== 'string') {
-        throw Error(`Query for content type ${type} should be a string, not: ${typeof query}`);
+    if (query && typeof query !== 'string' && typeof query !== 'function') {
+        throw Error(`Query for content type ${type} should be a string or function, not: ${typeof query}`);
+    }
+
+    if (typeof query === 'function') {
+        query = query(config);
     }
 
     if (query) {
         return {
-            query: query,
+            query,
             variables: getVariables ? getVariables(path, context, config) : {path},
         };
     }
@@ -758,9 +754,9 @@ export const buildContentFetcher = <T extends AdapterConstants>(config: FetcherC
                     renderMode, contentApiUrl, xpBaseUrl, contentPath);
 
             } else if (renderMode === RENDER_MODE.NEXT && !IS_DEV_MODE &&
-                (type === FRAGMENT_CONTENTTYPE_NAME ||
-                    type === PAGE_TEMPLATE_CONTENTTYPE_NAME ||
-                    type === PAGE_TEMPLATE_FOLDER)) {
+                       (type === FRAGMENT_CONTENTTYPE_NAME ||
+                        type === PAGE_TEMPLATE_CONTENTTYPE_NAME ||
+                        type === PAGE_TEMPLATE_FOLDER)) {
                 return errorResponse('404', `Content type [${type}] is not accessible in ${renderMode} mode`, requestType, renderMode,
                     contentApiUrl, xpBaseUrl, contentPath);
             }

@@ -38,18 +38,19 @@ interface ComponentDictionary {
 export type DataProcessor = (data: any, context?: Context) => Promise<Record<string, any>>;
 
 // TODO: also access as arguments: dataAsJson, pageAsJson, configAsJson from the first (meta) call here?
-//  To allow content or component config values to affect the query?
-//  Another option could be to let the component or page controller pass those values to nextjs by a header
+//   Another option could be to let the component or page controller pass those values to NextJS by a header
 export type VariablesGetter = (path: string, context?: Context, config?: any) => VariablesGetterResult;
+
+export type QueryGetter = (config?: any) => string;
 
 export type VariablesGetterResult = {
     [variables: string]: any,
     path: string,
 };
 
-export type SelectedQueryMaybeVariablesFunc = string |
-    { query: string, variables: VariablesGetter } |
-    [string, VariablesGetter];
+export type SelectedQueryMaybeVariablesFunc = string | QueryGetter |
+    { query: string | QueryGetter, variables: VariablesGetter } |
+    [string | QueryGetter, VariablesGetter];
 
 export const CATCH_ALL = '*';
 
@@ -62,6 +63,43 @@ export class ComponentRegistry {
     private static layouts: ComponentDictionary = {};
     private static macros: ComponentDictionary = {};
     private static commonQuery: SelectedQueryMaybeVariablesFunc;
+
+    private static getSelector(name: SelectorName): ComponentDictionary {
+        switch (name) {
+        case 'contentType':
+            return this.contentTypes;
+        case 'page':
+            return this.pages;
+        case 'component':
+            return this.components;
+        case 'layout':
+            return this.layouts;
+        case 'part':
+            return this.parts;
+        case 'macro':
+            return this.macros;
+        }
+    }
+
+    private static getType(selectorName: SelectorName, typeName: string, useCatchAll = true): ComponentDefinition | undefined {
+        const selector = ComponentRegistry.getSelector(selectorName);
+        let type = selector[typeName];
+        if (type) {
+            type.catchAll = false;
+        } else if (!type && useCatchAll) {
+            type = selector[CATCH_ALL];
+            if (type) {
+                type.catchAll = true;
+            }
+        }
+        return type;
+    }
+
+    private static addType(selectorName: SelectorName, name: string, obj: ComponentDefinition): void {
+        const selector = ComponentRegistry.getSelector(selectorName);
+        const curr = selector[name];
+        selector[name] = curr ? Object.assign(curr, obj) : obj;
+    }
 
     public static getByComponent(component: PageComponent): ComponentDefinition | undefined {
         const selName = toSelectorName(component.type);
@@ -140,42 +178,5 @@ export class ComponentRegistry {
 
     public static getComponent(name: string): ComponentDefinition | undefined {
         return ComponentRegistry.getType('component', name);
-    }
-
-    private static getSelector(name: SelectorName): ComponentDictionary {
-        switch (name) {
-        case 'contentType':
-            return this.contentTypes;
-        case 'page':
-            return this.pages;
-        case 'component':
-            return this.components;
-        case 'layout':
-            return this.layouts;
-        case 'part':
-            return this.parts;
-        case 'macro':
-            return this.macros;
-        }
-    }
-
-    private static getType(selectorName: SelectorName, typeName: string, useCatchAll = true): ComponentDefinition | undefined {
-        const selector = ComponentRegistry.getSelector(selectorName);
-        let type = selector[typeName];
-        if (type) {
-            type.catchAll = false;
-        } else if (!type && useCatchAll) {
-            type = selector[CATCH_ALL];
-            if (type) {
-                type.catchAll = true;
-            }
-        }
-        return type;
-    }
-
-    private static addType(selectorName: SelectorName, name: string, obj: ComponentDefinition): void {
-        const selector = ComponentRegistry.getSelector(selectorName);
-        const curr = selector[name];
-        selector[name] = curr ? Object.assign(curr, obj) : obj;
     }
 }
