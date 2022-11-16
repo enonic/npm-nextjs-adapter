@@ -13,6 +13,7 @@ export type Replacer = (domNode: DOMNode, data: RichTextData, meta: MetaData, re
 type Props = {
     data: RichTextData,
     meta: MetaData,
+    className?: string,
     tag?: string,
     renderMacroInEditMode?: boolean,
     customReplacer?: Replacer,
@@ -64,9 +65,9 @@ export function createReplacer(allData: RichTextData, meta: MetaData, renderMacr
     };
 }
 
-const RichTextView = ({tag, data, meta, renderMacroInEditMode, customReplacer}: Props) => {
+const RichTextView = ({className, tag, data, meta, renderMacroInEditMode, customReplacer}: Props) => {
     const CustomTag = tag as keyof JSX.IntrinsicElements || 'section';
-    return <CustomTag>
+    return <CustomTag className={className}>
         {data.processedHtml ? HTMLReactParser(data.processedHtml, {replace: createReplacer(data, meta, renderMacroInEditMode, customReplacer)}) : ''}
     </CustomTag>;
 };
