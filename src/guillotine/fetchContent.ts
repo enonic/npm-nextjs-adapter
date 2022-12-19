@@ -758,6 +758,7 @@ export const buildContentFetcher = <T extends AdapterConstants>(config: FetcherC
             contentPath = _path || '';
 
             if (metaResult.error) {
+                console.error(metaResult.error);
                 return errorResponse(metaResult.error.code, metaResult.error.message, requestType, renderMode, contentApiUrl, xpBaseUrl, contentPath);
             }
 
@@ -828,6 +829,11 @@ export const buildContentFetcher = <T extends AdapterConstants>(config: FetcherC
             // ///////////////    SECOND GUILLOTINE CALL FOR DATA   //////////////////////
             const contentResults = await fetchContentData(contentApiUrl, contentPath, query, variables, headers);
             // ///////////////////////////////////////////////////////////////////////////
+
+            if (contentResults.error) {
+                console.error(contentResults.error);
+                return errorResponse(contentResults.error.code, contentResults.error.message, requestType, renderMode, contentApiUrl, xpBaseUrl, contentPath);
+            }
 
             // Apply processors to every component
             const datas = await applyProcessors(allDescriptors, contentResults, context);

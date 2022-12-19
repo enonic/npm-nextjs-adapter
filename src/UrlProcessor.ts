@@ -14,6 +14,7 @@ export class UrlProcessor {
     private static IMG_ATMT_REGEXP = /_\/image\/|_\/attachment\//;
     private static endSlashPattern = /\/+$/;
     private static startSlashPattern = /^\/+/;
+    private static localhostPattern = /localhost/;
 
     private static siteKey: string;
 
@@ -44,8 +45,11 @@ export class UrlProcessor {
     }
 
     private static stripApiUrl(url: string, apiUrl: string): string {
-        const common = commonChars(url, apiUrl);
-        const remaining = common.length > 0 ? url.substring(common.length) : url;
+        // normalise localhost-127.0.0.1 if present in urls
+        const normalUrl = url.replace(this.localhostPattern, '127.0.0.1');
+        const normalApiUrl = apiUrl.replace(this.localhostPattern, '127.0.0.1');
+        const common = commonChars(normalUrl, normalApiUrl);
+        const remaining = common.length > 0 ? normalUrl.substring(common.length) : normalUrl;
         return (remaining.length > 0 && remaining.charAt(0) === '/') ? remaining.substring(1) : remaining;
     }
 
