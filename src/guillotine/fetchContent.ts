@@ -89,6 +89,7 @@ export interface ServerSideParams
 export interface PreviewParams {
     contentPath: string[];
     headers: Record<string, string>;
+    params: Record<string, string>;
 }
 
 export type Context = GetServerSidePropsContext<ServerSideParams, PreviewParams>;
@@ -515,10 +516,16 @@ async function applyProcessors(componentDescriptors: ComponentDescriptor[], cont
             data = contentResults.contents[dataCounter++];
         }
 
-        return await propsProcessor(data, context);
+        const config = getComponentConfig(desc.component);
+        return await propsProcessor(data, context, config);
     });
 
     return Promise.allSettled(processorPromises);
+}
+
+function getComponentConfig(cmp?: PageComponent) {
+    const cmpData = cmp && cmp[cmp.type];
+    return cmpData && 'config' in cmpData ? cmpData.config : undefined;
 }
 
 function collectComponentDescriptors(components: PageComponent[],
@@ -538,8 +545,7 @@ function collectComponentDescriptors(components: PageComponent[],
             const cmpDef = ComponentRegistry.getByComponent(cmp);
             if (cmpDef) {
                 // const partPath = `${xpContentPath}/_component${cmp.path}`;
-                const cmpData = cmp[cmp.type];
-                const config = cmpData && 'config' in cmpData ? cmpData.config : undefined;
+                const config = getComponentConfig(cmp);
                 const queryAndVariables = getQueryAndVariables(cmp.type, xpContentPath, cmpDef.query, context, config);
                 if (queryAndVariables) {
                     descriptors.push({
@@ -594,7 +600,8 @@ function processComponentConfig(myAppName: string, myAppNameDashed: string, cmp:
 function getQueryAndVariables(type: string,
                               path: string,
                               selectedQuery?: SelectedQueryMaybeVariablesFunc,
-                              context?: Context, config?: any): QueryAndVariables | undefined {
+                              context?: Context,
+                              config?: any): QueryAndVariables | undefined {
 
     let query, getVariables;
 
@@ -619,7 +626,7 @@ function getQueryAndVariables(type: string,
     }
 
     if (typeof query === 'function') {
-        query = query(config);
+        query = query(path, context, config);
     }
 
     if (query) {
