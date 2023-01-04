@@ -38,11 +38,8 @@ export const RegionView = (props: RegionProps) => {
         regionAttrs.id = name + 'Region';
         regionAttrs[PORTAL_REGION_ATTRIBUTE] = name;
     }
-    if (Object.keys(regionAttrs).length) {
-        return <div {...regionAttrs}>{children}</div>;
-    } else {
-        return <>{children}</>;
-    }
+
+    return <div {...regionAttrs}>{children}</div>;
 };
 
 
