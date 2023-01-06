@@ -395,26 +395,45 @@ function prefixLayoutPath(contentType: string, path: string): string {
 
 function buildPage(contentType: string, comps: PageComponent[] = []): PageComponent {
 
-    let page: PageComponent = {
+    const page: PageComponent = {
         type: XP_COMPONENT_TYPE.PAGE,
         path: '/',
     };
-    const tree = {};
-    if (contentType === FRAGMENT_CONTENTTYPE_NAME) {
-        page.regions = tree;
+
+    return buildComponentTree(comps, page, contentType);
+}
+
+function buildComponentTree(comps: PageComponent[], rootComp: PageComponent, contentType?: string): PageComponent {
+    const rootTree: RegionTree = {};
+    const isFragmentType = contentType === FRAGMENT_CONTENTTYPE_NAME;
+
+    if (isFragmentType) {
+        rootComp.regions = rootTree;
     }
 
     comps.forEach(cmp => {
         const cmpPath = parseComponentPath(contentType, cmp.path);
-        let region;
-        if (cmp.path === '/' && cmp.type === XP_COMPONENT_TYPE.PAGE) {
-            // add page values to page object
-            page = Object.assign(page, cmp);
-            page.page.regions = tree;
-            return;
-        } else {
-            region = getParentRegion(tree, contentType, cmpPath, comps, true);
+
+        if (cmp.path === '/') {
+            if (cmp.type === XP_COMPONENT_TYPE.PAGE && rootComp.type === XP_COMPONENT_TYPE.PAGE) {
+                // add page values to page object
+                rootComp = Object.assign(rootComp, cmp);
+                rootComp.page.regions = rootTree;
+                return;
+            } else if (cmp.type === XP_COMPONENT_TYPE.LAYOUT && rootComp.type === XP_COMPONENT_TYPE.FRAGMENT) {
+                // when rendering fragment as part of the page with layout at root path
+                // remove other children from list as they will be included in layout
+                rootComp.fragment.fragment.components = [cmp];
+                cmp.regions = rootTree;
+            }
         }
+
+        if (cmp.type === XP_COMPONENT_TYPE.FRAGMENT) {
+            // build component subtree for fragment
+            cmp = buildComponentTree(cmp.fragment.fragment.components, cmp, contentType);
+        }
+
+        const region = getParentRegion(rootTree, contentType, cmpPath, comps, true);
 
         if (region) {
             // getting the index of component from string like '/main/0/left/11'
@@ -427,7 +446,7 @@ function buildPage(contentType: string, comps: PageComponent[] = []): PageCompon
         }
     });
 
-    return page;
+    return rootComp;
 }
 
 
