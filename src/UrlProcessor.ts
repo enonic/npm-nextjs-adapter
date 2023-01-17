@@ -1,5 +1,6 @@
 import {commonChars, RENDER_MODE, SITE_KEY} from './utils';
 import {ImageData, LinkData, MetaData} from './guillotine/getMetaData';
+import {useRouter} from 'next/router';
 
 export class UrlProcessor {
 
@@ -26,7 +27,8 @@ export class UrlProcessor {
         } else {
             const apiUrl = this.getApiUrl(meta);
             const strippedUrl = this.stripApiUrl(url, apiUrl);
-            result = (meta?.baseUrl || '') + strippedUrl;
+            const {basePath} = useRouter();
+            result = (basePath && basePath !== '/' ? basePath : '') + (meta?.baseUrl || '') + strippedUrl;
         }
 
         return result;
