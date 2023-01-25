@@ -27,7 +27,15 @@ export class UrlProcessor {
         } else {
             const apiUrl = this.getApiUrl(meta);
             const strippedUrl = this.stripApiUrl(url, apiUrl);
-            const {basePath} = useRouter();
+            let basePath: string | undefined;
+            // only add basePath in next
+            if (meta.renderMode === RENDER_MODE.NEXT) {
+                try {
+                    basePath = useRouter().basePath;
+                } catch (e) {
+                    console.error('Error getting basePath from nextjs router', e);
+                }
+            }
             result = (basePath && basePath !== '/' ? basePath : '') + (meta?.baseUrl || '') + strippedUrl;
         }
 
@@ -70,5 +78,5 @@ export class UrlProcessor {
 
 UrlProcessor.setSiteKey(SITE_KEY);
 
-export const getUrl = UrlProcessor.process.bind(UrlProcessor);
+export const getUrl: (url: string, meta: MetaData) => string = UrlProcessor.process.bind(UrlProcessor);
 
