@@ -19,21 +19,6 @@ type Props = {
     customReplacer?: Replacer,
 };
 
-function processImgSrcSet(srcset: string, meta: MetaData): string {
-    return srcset.split(/, */g).map(src => {
-        const srcParts = src.trim().split(' ');
-        switch (srcParts.length) {
-            case 1:
-                return getUrl(src, meta);
-            case 2:
-                return getUrl(srcParts[0], meta) + ' ' + srcParts[1];
-            default:
-                console.warn('Can not process image srcset: ' + src);
-                return src;
-        }
-    }).join(', ');
-}
-
 export function createReplacer(allData: RichTextData, meta: MetaData, renderMacroInEditMode = true, customReplacer?: Replacer): (domNode: DOMNode) => ReplacerResult {
     // eslint-disable-next-line react/display-name
     return (domNode: DOMNode): ReplacerResult => {
@@ -47,7 +32,6 @@ export function createReplacer(allData: RichTextData, meta: MetaData, renderMacr
             case UrlProcessor.IMG_TAG:
                 ref = el.attribs[UrlProcessor.IMG_ATTR];
                 if (ref) {
-                    // do not process content images in next to keep it absolute
                     if (UrlProcessor.isContentImage(ref, allData.images)) {
                         const src = el.attribs['src'];
                         if (src) {
@@ -56,7 +40,7 @@ export function createReplacer(allData: RichTextData, meta: MetaData, renderMacr
 
                         const srcset = el.attribs['srcset'];
                         if (srcset) {
-                            el.attribs['srcset'] = processImgSrcSet(srcset, meta);
+                            el.attribs['srcset'] = UrlProcessor.processSrcSet(srcset, meta);
                         }
                     }
                 }

@@ -54,6 +54,21 @@ export class UrlProcessor {
         return linkData.find(data => data.ref === ref)?.image !== null;
     }
 
+    public static processSrcSet(srcset: string, meta: MetaData): string {
+        return srcset.split(/, */g).map(src => {
+            const srcParts = src.trim().split(' ');
+            switch (srcParts.length) {
+                case 1:
+                    return this.process(src, meta);
+                case 2:
+                    return this.process(srcParts[0], meta) + ' ' + srcParts[1];
+                default:
+                    console.warn('Can not process image srcset: ' + src);
+                    return src;
+            }
+        }).join(', ');
+    }
+
     private static stripApiUrl(url: string, apiUrl: string): string {
         // normalise localhost-127.0.0.1 if present in urls
         const normalUrl = url.replace(this.localhostPattern, '127.0.0.1');
