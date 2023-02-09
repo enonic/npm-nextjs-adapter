@@ -31,10 +31,18 @@ export function createReplacer(allData: RichTextData, meta: MetaData, renderMacr
         switch (el.tagName) {
             case UrlProcessor.IMG_TAG:
                 ref = el.attribs[UrlProcessor.IMG_ATTR];
-                const src = el.attribs['src'];
-                // do not process content images in next to keep it absolute
-                if (ref && src && UrlProcessor.isContentImage(ref, allData.images)) {
-                    el.attribs['src'] = getUrl(src, meta);
+                if (ref) {
+                    if (UrlProcessor.isContentImage(ref, allData.images)) {
+                        const src = el.attribs['src'];
+                        if (src) {
+                            el.attribs['src'] = getUrl(src, meta);
+                        }
+
+                        const srcset = el.attribs['srcset'];
+                        if (srcset) {
+                            el.attribs['srcset'] = UrlProcessor.processSrcSet(srcset, meta);
+                        }
+                    }
                 }
                 break;
             case UrlProcessor.LINK_TAG:

@@ -27,7 +27,15 @@ export class UrlProcessor {
         } else {
             const apiUrl = this.getApiUrl(meta);
             const strippedUrl = this.stripApiUrl(url, apiUrl);
-            const {basePath} = useRouter();
+            let basePath: string | undefined;
+            // only add basePath in next
+            if (meta.renderMode === RENDER_MODE.NEXT) {
+                try {
+                    basePath = useRouter().basePath;
+                } catch (e) {
+                    console.error('Error getting basePath from nextjs router', e);
+                }
+            }
             result = (basePath && basePath !== '/' ? basePath : '') + (meta?.baseUrl || '') + strippedUrl;
         }
 
@@ -44,6 +52,21 @@ export class UrlProcessor {
 
     public static isContentImage(ref: string, linkData: ImageData[]): boolean {
         return linkData.find(data => data.ref === ref)?.image !== null;
+    }
+
+    public static processSrcSet(srcset: string, meta: MetaData): string {
+        return srcset.split(/, */g).map(src => {
+            const srcParts = src.trim().split(' ');
+            switch (srcParts.length) {
+                case 1:
+                    return this.process(src, meta);
+                case 2:
+                    return this.process(srcParts[0], meta) + ' ' + srcParts[1];
+                default:
+                    console.warn('Can not process image srcset: ' + src);
+                    return src;
+            }
+        }).join(', ');
     }
 
     private static stripApiUrl(url: string, apiUrl: string): string {
@@ -70,5 +93,5 @@ export class UrlProcessor {
 
 UrlProcessor.setSiteKey(SITE_KEY);
 
-export const getUrl = UrlProcessor.process.bind(UrlProcessor);
+export const getUrl: (url: string, meta: MetaData) => string = UrlProcessor.process.bind(UrlProcessor);
 
