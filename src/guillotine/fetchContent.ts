@@ -6,9 +6,12 @@ import adapterConstants, {
     FRAGMENT_CONTENTTYPE_NAME,
     FRAGMENT_DEFAULT_REGION_NAME,
     getContentApiUrl,
+    getJsessionHeaders,
+    getRenderMode,
+    getSingleComponentPath,
     getXpBaseUrl,
+    getXPRequestType,
     IS_DEV_MODE,
-    JSESSIONID_HEADER,
     PAGE_TEMPLATE_CONTENTTYPE_NAME,
     PAGE_TEMPLATE_FOLDER,
     RENDER_MODE,
@@ -27,9 +30,6 @@ export type AdapterConstants = {
     APP_NAME: string,
     APP_NAME_DASHED: string,
     SITE_KEY: string,
-    getXPRequestType: (context?: Context) => XP_REQUEST_TYPE,
-    getRenderMode: (context?: Context) => RENDER_MODE,
-    getSingleComponentPath: (context?: Context) => string | undefined,
 };
 
 type Result = {
@@ -106,7 +106,6 @@ export interface MinimalContext {
  * @returns FetchContentResult object: {data?: T, error?: {code, message}}
  */
 export type ContentFetcher = (contentPath: string | string[], context: Context) => Promise<FetchContentResult>;
-
 
 const NO_PROPS_PROCESSOR = async (props: any) => await props ?? {};
 
@@ -549,7 +548,6 @@ function getComponentConfig(cmp?: PageComponent) {
 
 function collectComponentDescriptors(components: PageComponent[],
                                      componentRegistry: typeof ComponentRegistry,
-                                     requestedComponentPath: string | undefined,
                                      xpContentPath: string,
                                      context: Context | undefined,
 ): ComponentDescriptor[] {
@@ -576,8 +574,7 @@ function collectComponentDescriptors(components: PageComponent[],
             }
         } else {
             // look for parts inside fragments
-            const fragPartDescs = collectComponentDescriptors(cmp.fragment.fragment.components, componentRegistry, requestedComponentPath,
-                xpContentPath, context);
+            const fragPartDescs = collectComponentDescriptors(cmp.fragment.fragment.components, componentRegistry, xpContentPath, context);
             if (fragPartDescs.length) {
                 descriptors.push(...fragPartDescs);
             }
@@ -657,10 +654,13 @@ function getQueryAndVariables(type: string,
 }
 
 
-function createPageData(contentType: string, components?: PageComponent[]): PageComponent | undefined {
+function createPageData(contentType: string, components: PageComponent[], componentPath?: string): PageComponent | undefined {
     let page;
-    if (components) {
+    if (components && !componentPath) {
         page = buildPage(contentType, components);
+    } else {
+        // Don't build page for single component
+        page = null;
     }
     return page as PageComponent;
 }
@@ -680,7 +680,7 @@ function createMetaData(contentType: string, contentPath: string,
         requestType: requestType,
         renderMode: renderMode,
         canRender: false,
-        catchAll: false,
+        catchAll: false,  // catchAll only refers to content type catch-all
         apiUrl,
         baseUrl,
     };
@@ -693,10 +693,12 @@ function createMetaData(contentType: string, contentPath: string,
     const typeDef = ComponentRegistry.getContentType(contentType);
     if (typeDef?.view && !typeDef.catchAll) {
         meta.canRender = true;
-    } else if (pageDesc) {
-        // always render a page if there is a descriptor (show missing in case it's not implemented)
+    } else if (requestType === XP_REQUEST_TYPE.COMPONENT) {
+        // always render a single component (show missing if not implemented)
         meta.canRender = true;
-        meta.catchAll = false;  // catchAll only refers to content type catch-all
+    } else if (pageDesc) {
+        // always render a page if there is a descriptor (show missing if not implemented)
+        meta.canRender = true;
     } else if (typeDef?.view) {
         meta.canRender = true;
         meta.catchAll = true;
@@ -729,59 +731,92 @@ function errorResponse(code = '500', message = 'Unknown error',
     };
 }
 
+function restrictComponentsToPath(contentType: string, components: PageComponent[], componentPath?: string) {
+    if (!componentPath) {
+        return components;
+    }
+
+    // filter components to the requested one only
+    const component = components.find(cmp => {
+        return cmp.path === componentPath;
+    });
+
+    if (!component) {
+        return [];
+    }
+
+    let result: PageComponent[] = [component];
+    if (component.type !== XP_COMPONENT_TYPE.LAYOUT) {
+        // remember to include all parent layouts too !
+        const cmpPath = parseComponentPath(contentType, component.path);
+        for (let i = cmpPath.length - 2; i >= 0; i--) {
+            const parentPath = cmpPath[i];
+            const parentCmp = components.find(cmp => cmp.path === `/${parentPath.region}/${parentPath.index}`);
+            if (parentCmp) {
+                result.unshift(parentCmp);
+            }
+        }
+    } else {
+        // It's a layout, include child components
+        const childCmps = components.filter(cmp => cmp.path !== component.path && cmp.path.startsWith(component.path));
+        if (childCmps.length) {
+            result = result.concat(childCmps);
+        }
+    }
+    return result;
+}
+
+const COMPONENT_PATH_KEY = '/_/component';
+
+const getContentAndComponentPaths = (requestPath: string, context: Context): string[] => {
+    let contentPath, componentPath;
+    if (requestPath.indexOf(COMPONENT_PATH_KEY) >= 0) {
+        [contentPath, componentPath] = requestPath.split(COMPONENT_PATH_KEY);
+    } else {
+        contentPath = requestPath;
+        // also check the lib-nextjs way of passing component path
+        componentPath = getSingleComponentPath(context);
+    }
+    return [contentPath, componentPath];
+};
+
 // /////////////////////////////  ENTRY 1 - THE BUILDER:
 
 /**
  * Configures, builds and returns a general fetchContent function.
- * @param adapterConstants Object containing attributes imported from enonic-connecion-config.js: constants and function concerned with connection to the XP backend. Easiest: caller imports enonic-connection-config and just passes that entire object here as adapterConstants.
- * @param componentRegistry ComponentRegistry object from ComponentRegistry.ts, holding user type mappings that are set in typesRegistration.ts file
+ * @param config object containing ComponentRegistry as well as constants imported from enonic-connecion-config.js
  * @returns ContentFetcher
  */
-export const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T>): ContentFetcher => {
+const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T>): ContentFetcher => {
 
     const {
         APP_NAME,
         APP_NAME_DASHED,
-        getXPRequestType,
-        getRenderMode,
-        getSingleComponentPath,
         componentRegistry,
     } = config;
 
-    return async (
-        contentPathOrArray: string | string[],
-        context?: Context,
-    ): Promise<FetchContentResult> => {
+    return async (contentPathOrArray: string | string[], context?: Context): Promise<FetchContentResult> => {
 
-        let headers;
-        const jsessionid = context?.req?.headers[JSESSIONID_HEADER];
-        if (jsessionid) {
-            headers = {
-                'Cookie': `${JSESSIONID_HEADER}=${jsessionid}`,
-            };
-        }
-
+        const headers = getJsessionHeaders(context);
         const xpBaseUrl = getXpBaseUrl(context);
         const contentApiUrl = getContentApiUrl(context);
-
-        const requestType = getXPRequestType(context);
         const renderMode = getRenderMode(context);
-        let contentPath;
+        let requestType = getXPRequestType(context);
 
         try {
-            const siteRelativeContentPath = getCleanContentPathArrayOrThrow400(contentPathOrArray);
-
-            let requestedComponentPath: string | undefined;
-            if (requestType === XP_REQUEST_TYPE.COMPONENT) {
-                requestedComponentPath = getSingleComponentPath(context);
+            const requestContentPath = getCleanContentPathArrayOrThrow400(contentPathOrArray);
+            const [siteRelativeContentPath, componentPath] = getContentAndComponentPaths(requestContentPath, context);
+            if (componentPath && requestType !== XP_REQUEST_TYPE.COMPONENT) {
+                // set component request type because url contains component path
+                requestType = XP_REQUEST_TYPE.COMPONENT;
             }
 
             // /////////////  FIRST GUILLOTINE CALL FOR METADATA     /////////////////
             const metaResult = await fetchMetaData(contentApiUrl, '${site}/' + siteRelativeContentPath, headers);
             // ///////////////////////////////////////////////////////////////////////
 
-            const {type, components, _path} = metaResult.meta || {};
-            contentPath = _path || '';
+            const {_path, type} = metaResult.meta || {};
+            const contentPath = _path || siteRelativeContentPath;
 
             if (metaResult.error) {
                 console.error(metaResult.error);
@@ -791,7 +826,6 @@ export const buildContentFetcher = <T extends AdapterConstants>(config: FetcherC
             if (!metaResult.meta) {
                 return errorResponse('404', 'No meta data found for content, most likely content does not exist', requestType, renderMode,
                     contentApiUrl, xpBaseUrl, contentPath);
-
             } else if (!type) {
                 return errorResponse('500', "Server responded with incomplete meta data: missing content 'type' attribute.", requestType,
                     renderMode, contentApiUrl, xpBaseUrl, contentPath);
@@ -804,6 +838,11 @@ export const buildContentFetcher = <T extends AdapterConstants>(config: FetcherC
                     contentApiUrl, xpBaseUrl, contentPath);
             }
 
+            const components = restrictComponentsToPath(type, metaResult.meta.components, componentPath);
+            if (!components.length) {
+                // component was not found
+                return errorResponse('404', `Component ${componentPath} was not found`, requestType, renderMode, contentApiUrl, xpBaseUrl, contentPath);
+            }
 
             // //////////////////////////////////////////////////  Content type established. Proceed to data call:
 
@@ -838,8 +877,7 @@ export const buildContentFetcher = <T extends AdapterConstants>(config: FetcherC
                     processComponentConfig(APP_NAME, APP_NAME_DASHED, cmp);
                 }
                 // Collect component queries if defined
-                const componentDescriptors = collectComponentDescriptors(components, componentRegistry, requestedComponentPath, contentPath,
-                    context);
+                const componentDescriptors = collectComponentDescriptors(components, componentRegistry, contentPath, context);
                 if (componentDescriptors.length) {
                     allDescriptors.push(...componentDescriptors);
                 }
@@ -897,16 +935,14 @@ export const buildContentFetcher = <T extends AdapterConstants>(config: FetcherC
             }
 
             const page = createPageData(type, components);
-            const meta = createMetaData(type, siteRelativeContentPath, requestType, renderMode, contentApiUrl, xpBaseUrl, requestedComponentPath, page, components);
+            const meta = createMetaData(type, siteRelativeContentPath, requestType, renderMode, contentApiUrl, xpBaseUrl, componentPath, page, components);
 
             return {
                 data: contentData,
                 common,
                 meta,
-                page: page || null,
+                page,
             } as FetchContentResult;
-
-            // ///////////////////////////////////////////////////////////  Catch
 
         } catch (e: any) {
             console.error(e);
@@ -920,7 +956,7 @@ export const buildContentFetcher = <T extends AdapterConstants>(config: FetcherC
                     message: e.message,
                 };
             }
-            return errorResponse(error.code, error.message, requestType, renderMode, contentApiUrl, xpBaseUrl, contentPath);
+            return errorResponse(error.code, error.message, requestType, renderMode, contentApiUrl, xpBaseUrl, contentPathOrArray.toString());
         }
     };
 };
