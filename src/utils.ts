@@ -80,19 +80,28 @@ export const getXPRequestType = (context?: Context): XP_REQUEST_TYPE => {
     return enumValue || XP_REQUEST_TYPE.PAGE;   // need to have some defaults here in case of rendering without XP
 };
 
-const getRenderMode = (context?: MinimalContext): RENDER_MODE => {
+export const getRenderMode = (context?: MinimalContext): RENDER_MODE => {
     const value = (context?.req?.headers || {})[RENDER_MODE_HEADER] as string | undefined;
     const enumValue = RENDER_MODE[<keyof typeof RENDER_MODE>value?.toUpperCase()];
     return enumValue || RENDER_MODE[process.env.RENDER_MODE] || RENDER_MODE.NEXT;
 };
 
-const getSingleComponentPath = (context?: Context): string | undefined => (
+export const getSingleComponentPath = (context?: Context): string | undefined => (
     (context?.req?.headers || {})[COMPONENT_SUBPATH_HEADER] as string | undefined
 );
 
 export function getContentApiUrl(context?: MinimalContext): string {
     const mode = getRenderMode(context);
     return mode === RENDER_MODE.NEXT ? CONTENT_API_MASTER : CONTENT_API_DRAFT;
+}
+
+export function getJsessionHeaders(context?: MinimalContext): Object {
+    const headers = {};
+    const jsessionid = context?.req?.headers[JSESSIONID_HEADER];
+    if (jsessionid) {
+        headers['Cookie'] = `${JSESSIONID_HEADER}=${jsessionid}`;
+    }
+    return headers;
 }
 
 /** For '<a href="..."' link values in props when clicking the link should navigate to an XP content item page
@@ -156,20 +165,14 @@ export const sanitizeGraphqlName = (text: string) => {
 
 const adapterConstants = {
     IS_DEV_MODE,
-
     APP_NAME,
     APP_NAME_UNDERSCORED,
     APP_NAME_DASHED,
     SITE_KEY,
-
     FROM_XP_PARAM,
     COMPONENT_SUBPATH_HEADER,
     PORTAL_COMPONENT_ATTRIBUTE,
     PORTAL_REGION_ATTRIBUTE,
-
-    getXPRequestType,
-    getSingleComponentPath,
-    getRenderMode,
 };
 
 // Verify required values
