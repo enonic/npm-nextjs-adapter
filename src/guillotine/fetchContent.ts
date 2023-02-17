@@ -26,7 +26,7 @@ import {type GetServerSidePropsContext} from 'next';
 import {IncomingMessage} from 'http';
 import {type NextApiRequestCookies} from 'next/dist/server/api-utils';
 
-export type AdapterConstants = {
+type AdapterConstants = {
     APP_NAME: string,
     APP_NAME_DASHED: string,
     SITE_KEY: string,
@@ -188,7 +188,6 @@ export const fetchFromApi = async (
 export const fetchGuillotine = async (
     contentApiUrl: string,
     body: ContentApiBaseBody,
-    xpContentPath: string,
     headers?: {}): Promise<GuillotineResult> => {
     if (typeof body.query !== 'string' || !body.query.trim()) {
         return {
@@ -198,7 +197,8 @@ export const fetchGuillotine = async (
             },
         };
     }
-
+    const path = body.variables?.path;
+    const pathMessage = path ? `(path = ${JSON.stringify(path)})` : '';
     const result = await fetchFromApi(
         contentApiUrl,
         body,
@@ -211,7 +211,7 @@ export const fetchGuillotine = async (
                 if (!Array.isArray(errors)) {
                     errors = [errors];
                 }
-                console.warn(`${errors.length} error(s) when trying to fetch data (path = ${JSON.stringify(xpContentPath)}):`);
+                console.warn(`${errors.length} error(s) when trying to fetch data ${pathMessage}:`);
                 errors.forEach(error => {
                     console.error(error);
                 });
@@ -229,7 +229,7 @@ export const fetchGuillotine = async (
             return json.data;
         })
         .catch((err) => {
-            console.warn(`Client-side error when trying to fetch data (path = ${JSON.stringify(xpContentPath)})`, err);
+            console.warn(`Client-side error when trying to fetch data ${pathMessage}`, err);
             try {
                 return {error: JSON.parse(err.message)};
             } catch (e2) {
@@ -249,7 +249,7 @@ const fetchMetaData = async (contentApiUrl: string, xpContentPath: string, heade
             path: xpContentPath,
         },
     };
-    const metaResult = await fetchGuillotine(contentApiUrl, body, xpContentPath, headers);
+    const metaResult = await fetchGuillotine(contentApiUrl, body, headers);
     if (metaResult.error) {
         return metaResult;
     } else {
@@ -272,7 +272,7 @@ const fetchContentData = async <T>(
     if (variables && Object.keys(variables).length > 0) {
         body.variables = variables;
     }
-    const contentResults = await fetchGuillotine(contentApiUrl, body, xpContentPath, headers);
+    const contentResults = await fetchGuillotine(contentApiUrl, body, headers);
 
     if (contentResults.error) {
         return contentResults;
