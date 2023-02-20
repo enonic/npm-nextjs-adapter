@@ -140,6 +140,14 @@ export class ComponentRegistry {
         return Object.entries(this.pages);
     }
 
+    public static getContentTypes(): [string, ComponentDefinition][] {
+        return Object.entries(this.contentTypes);
+    }
+
+    public static getComponents(): [string, ComponentDefinition][] {
+        return Object.entries(this.components);
+    }
+
     public static addContentType(name: string, obj: ComponentDefinition): void {
         return ComponentRegistry.addType('contentType', name, obj);
     }
