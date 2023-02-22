@@ -766,11 +766,11 @@ function restrictComponentsToPath(contentType: string, components: PageComponent
     return result;
 }
 
-const COMPONENT_PATH_KEY = '/_/component';
+const COMPONENT_PATH_KEY = /\/?_\/component/;   // first slash is optional for root components
 
 const getContentAndComponentPaths = (requestPath: string, context: Context): string[] => {
     let contentPath, componentPath;
-    if (requestPath.indexOf(COMPONENT_PATH_KEY) >= 0) {
+    if (COMPONENT_PATH_KEY.test(requestPath)) {
         [contentPath, componentPath] = requestPath.split(COMPONENT_PATH_KEY);
     } else {
         contentPath = requestPath;
