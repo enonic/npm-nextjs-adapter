@@ -9,8 +9,8 @@
   "scripts": {
     "copy": "npx --yes cpy-cli package.json README.md dist",
     "build": "tsc --build src/tsconfig.json && tsc --build server/tsconfig.json",
-    "lint": "eslint --quiet .",
-    "lint:fix": "eslint --fix ."
+    "lint": "eslint --quiet server && eslint --quiet src",
+    "lint:fix": "eslint --fix server && eslint --fix src"
   },
   "dependencies": {
     "html-react-parser": "^3.0.11",

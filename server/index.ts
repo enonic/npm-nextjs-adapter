@@ -27,6 +27,7 @@ export default async (next: (options: any) => any) => {
         const opts: NextConfig = nextNodeServer['serverOptions'].conf;
         const purgeUrl = (opts?.basePath || '') + PURGE_CACHE_URL;
 
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         const server = createServer(async (req, res) => {
             const parsedUrl = new URL(`http://${host}:${port}${req.url || ''}`);
             if (parsedUrl.pathname !== purgeUrl) {
