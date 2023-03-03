@@ -115,6 +115,7 @@ export default class ClearableFileCache implements CacheHandler {
               )
               : JSON.parse(
                   await this.fs.readFile(
+                      // eslint-disable-next-line @typescript-eslint/await-thenable
                       await (
                           await this.getFsPath({
                             pathname: `${key}.json`,
