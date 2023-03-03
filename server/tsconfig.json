@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "skipLibCheck": true,
+    "moduleResolution": "Node",
+    "lib": [
+      "es6"
+    ],
+    "strict": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "noImplicitAny": true,
+    "outDir": "../dist/server",
+    "resolveJsonModule": true
+  },
+  "include": [
+    "../next-env.d.ts",
+    "**/*.ts"
+  ],
+  "exclude": []
+}

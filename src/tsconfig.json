@@ -10,14 +10,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "outDir": "dist",
-    "declaration": true,
+    "outDir": "../dist",
+    "declaration": true
   },
   "include": [
     "**/*.ts",
     "**/*.tsx"
   ],
-  "exclude": [
-    "dist"
-  ]
+  "exclude": []
 }
