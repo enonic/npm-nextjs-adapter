@@ -8,9 +8,7 @@ import adapterConstants, {
     getContentApiUrl,
     getJsessionHeaders,
     getRenderMode,
-    getSingleComponentPath,
     getXpBaseUrl,
-    getXPRequestType,
     IS_DEV_MODE,
     PAGE_TEMPLATE_CONTENTTYPE_NAME,
     PAGE_TEMPLATE_FOLDER,
@@ -731,9 +729,9 @@ function errorResponse(code = '500', message = 'Unknown error',
     };
 }
 
-function restrictComponentsToPath(contentType: string, components: PageComponent[], componentPath?: string) {
-    if (!componentPath) {
-        return components;
+function restrictComponentsToPath(contentType: string, components?: PageComponent[], componentPath?: string) {
+    if (!componentPath || !components?.length) {
+        return components || [];
     }
 
     // filter components to the requested one only
@@ -774,8 +772,6 @@ const getContentAndComponentPaths = (requestPath: string, context: Context): str
         [contentPath, componentPath] = requestPath.split(COMPONENT_PATH_KEY);
     } else {
         contentPath = requestPath;
-        // also check the lib-nextjs way of passing component path
-        componentPath = getSingleComponentPath(context);
     }
     return [contentPath, componentPath];
 };
@@ -801,12 +797,12 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
         const xpBaseUrl = getXpBaseUrl(context);
         const contentApiUrl = getContentApiUrl(context);
         const renderMode = getRenderMode(context);
-        let requestType = getXPRequestType(context);
+        let requestType = XP_REQUEST_TYPE.TYPE;
 
         try {
             const requestContentPath = getCleanContentPathArrayOrThrow400(contentPathOrArray);
             const [siteRelativeContentPath, componentPath] = getContentAndComponentPaths(requestContentPath, context);
-            if (componentPath && requestType !== XP_REQUEST_TYPE.COMPONENT) {
+            if (componentPath) {
                 // set component request type because url contains component path
                 requestType = XP_REQUEST_TYPE.COMPONENT;
             }
@@ -839,9 +835,13 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
             }
 
             const components = restrictComponentsToPath(type, metaResult.meta.components, componentPath);
-            if (!components.length) {
+            if (componentPath && !components.length) {
                 // component was not found
                 return errorResponse('404', `Component ${componentPath} was not found`, requestType, renderMode, contentApiUrl, xpBaseUrl, contentPath);
+            }
+
+            if (requestType !== XP_REQUEST_TYPE.COMPONENT && components.length > 0) {
+                requestType = XP_REQUEST_TYPE.PAGE;
             }
 
             // //////////////////////////////////////////////////  Content type established. Proceed to data call:
