@@ -1,5 +1,5 @@
 /** Import config values from .env, .env.development and .env.production */
-import {Context, MinimalContext} from './guillotine/fetchContent';
+import {MinimalContext} from './guillotine/fetchContent';
 
 const mode = process.env.MODE || process.env.NEXT_PUBLIC_MODE;
 export const IS_DEV_MODE = (mode === 'development');
@@ -24,9 +24,7 @@ export const SITE_KEY = (process.env.SITE_KEY || process.env.NEXT_PUBLIC_SITE_KE
 // ////////////////////////////////////////////////////////////////////////  Hardcode-able constants
 
 // URI parameter marking that a request is for a preview for CS. MUST MATCH THE VALUE OF 'FROM_XP_PARAM' on XP side.
-export const FROM_XP_PARAM = '__fromxp__';
 export const XP_BASE_URL_HEADER = 'xpbaseurl';
-export const COMPONENT_SUBPATH_HEADER = 'xp-component-path';
 export const RENDER_MODE_HEADER = 'content-studio-mode';
 export const JSESSIONID_HEADER = 'jsessionid';
 
@@ -68,27 +66,11 @@ export enum XP_COMPONENT_TYPE {
     PAGE = 'page',
 }
 
-/** Returns true if the context object (from next.js in [[...contentPath]].jsx ) stems from a request that comes from XP in a CS-preview, i.e. has the URI param FROM_XP_PARAM (defined as '__fromXp__' above).
- *  False if no context, query or FROM_XP_PARAM param */
-export const isRequestFromXP = (context?: Context): boolean => {
-    return !!getXPRequestType(context);
-};
-
-export const getXPRequestType = (context?: Context): XP_REQUEST_TYPE => {
-    const headerValue = (context?.req?.headers || {})[FROM_XP_PARAM] as string | undefined;
-    const enumValue = XP_REQUEST_TYPE[<keyof typeof XP_REQUEST_TYPE>headerValue?.toUpperCase()];
-    return enumValue || XP_REQUEST_TYPE.PAGE;   // need to have some defaults here in case of rendering without XP
-};
-
 export const getRenderMode = (context?: MinimalContext): RENDER_MODE => {
     const value = (context?.req?.headers || {})[RENDER_MODE_HEADER] as string | undefined;
     const enumValue = RENDER_MODE[<keyof typeof RENDER_MODE>value?.toUpperCase()];
     return enumValue || RENDER_MODE[process.env.RENDER_MODE] || RENDER_MODE.NEXT;
 };
-
-export const getSingleComponentPath = (context?: Context): string | undefined => (
-    (context?.req?.headers || {})[COMPONENT_SUBPATH_HEADER] as string | undefined
-);
 
 export function getContentApiUrl(context?: MinimalContext): string {
     const mode = getRenderMode(context);
@@ -169,8 +151,6 @@ const adapterConstants = {
     APP_NAME_UNDERSCORED,
     APP_NAME_DASHED,
     SITE_KEY,
-    FROM_XP_PARAM,
-    COMPONENT_SUBPATH_HEADER,
     PORTAL_COMPONENT_ATTRIBUTE,
     PORTAL_REGION_ATTRIBUTE,
 };
