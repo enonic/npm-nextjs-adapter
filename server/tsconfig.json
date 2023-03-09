@@ -12,7 +12,8 @@
     "allowJs": true,
     "noImplicitAny": true,
     "outDir": "../dist/server",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "declaration": true
   },
   "include": [
     "../next-env.d.ts",
