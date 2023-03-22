@@ -21,8 +21,9 @@ export class UrlProcessor {
 
     public static process(url: string, meta: MetaData): string {
         let result;
-        if (!meta || !this.isPageUrl(url) && meta.renderMode === RENDER_MODE.NEXT) {
-            // keep content urls absolute in next mode for everything but page urls
+        if (this.startsWithHash(url) || !meta || !this.isPageUrl(url) && meta.renderMode === RENDER_MODE.NEXT) {
+            // keep page-relative urls starting with hash
+            // keep urls absolute in next mode for everything but page urls
             result = url;
         } else {
             const apiUrl = this.getApiUrl(meta);
@@ -80,6 +81,10 @@ export class UrlProcessor {
 
     private static isPageUrl(url: string): boolean {
         return !this.IMG_ATMT_REGEXP.test(url);
+    }
+
+    private static startsWithHash(url: string): boolean {
+        return url?.charAt(0) == '#';
     }
 
     private static getApiUrl(meta: MetaData) {
