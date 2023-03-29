@@ -32,6 +32,11 @@ export default async (next: (options: any) => any) => {
             const parsedUrl = new URL(`http://${host}:${port}${req.url || ''}`);
             if (parsedUrl.pathname !== purgeUrl) {
                 await nextHandler(req, res);
+            } else if (dev) {
+                console.warn('\nCache clearing is not available in DEV mode.\n');
+
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({purged: false}));
             } else {
                 const tokenParam = parsedUrl.searchParams.get('token');
                 if (tokenParam !== process.env.API_TOKEN) {
