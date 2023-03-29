@@ -3,7 +3,6 @@
     "target": "ES6",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "noImplicitUseStrict": true,
     "allowSyntheticDefaultImports": true,
     "module": "ESNext",
     "moduleResolution": "node",
