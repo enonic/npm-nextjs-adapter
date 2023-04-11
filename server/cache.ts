@@ -16,18 +16,18 @@ export const purgeCache = async (cache: IncrementalCache, pathname?: string) => 
 
 const purgePath = async (cache: IncrementalCache, pathname: string) => {
     const handler = getCacheHandler(cache);
-    const fullPathname = await handler.getFsPath({pathname});
+    const fsPathObj = await handler.getFsPath({pathname});
     try {
         /* Delete entry in cache */
         handler.delete(pathname);
 
         /* Delete files from disc */
-        fs.unlinkSync(`${fullPathname}.html`);
-        fs.unlinkSync(`${fullPathname}.json`);
+        fs.unlinkSync(`${fsPathObj.filePath}.html`);
+        fs.unlinkSync(`${fsPathObj.filePath}.json`);
 
-        console.info(`\nCache deleted for '${fullPathname}'\n`);
+        console.info(`\nCache deleted for '${fsPathObj.filePath}'\n`);
     } catch (err) {
-        console.error(`Could not delete cache of '${fullPathname}':`, err);
+        console.error(`Could not delete cache of '${fsPathObj.filePath}':`, err);
     }
 };
 
