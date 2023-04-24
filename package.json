@@ -13,7 +13,7 @@
     "lint:fix": "eslint --fix server && eslint --fix src"
   },
   "dependencies": {
-    "html-react-parser": "^3.0.15",
+    "html-react-parser": "^3.0.16",
     "lru-cache": "^9.0.3",
     "next": "^13.3.0",
     "react": "^18.2.0",
