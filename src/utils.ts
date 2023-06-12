@@ -50,6 +50,10 @@ export const PAGE_TEMPLATE_FOLDER = 'portal:template-folder';
 
 export const SITE_CONTENTTYPE_NAME = 'portal:site';
 
+export const LOCALE_HEADER = 'locale';
+export const LOCALES_HEADER = 'locales';
+export const DEFAULT_LOCALE_HEADER = 'default-locale';
+
 
 // ------------------------------- Exports and auxillary functions derived from values above ------------------------------------
 
@@ -181,13 +185,26 @@ export function getContentApiUrl(context?: MinimalContext): string {
     return fixDoubleSlashes(`${API_URL}/${project}/${branch}`);
 }
 
-export function getJsessionHeaders(context?: MinimalContext): Object {
-    const headers = {};
+export function addJsessionHeaders(headers: Object = {}, context?: MinimalContext): void {
     const jsessionid = context?.req?.headers[JSESSIONID_HEADER];
     if (jsessionid) {
         headers['Cookie'] = `${JSESSIONID_HEADER}=${jsessionid}`;
     }
-    return headers;
+}
+
+export function addLocaleHeaders(headers: Object = {}, context?: Context): void {
+    const locale = context?.locale;
+    if (locale) {
+        headers[LOCALE_HEADER] = locale;
+    }
+    const locales = context?.locales;
+    if (locales) {
+        headers[LOCALES_HEADER] = JSON.stringify(locales);
+    }
+    const defaultLocale = context?.defaultLocale;
+    if (defaultLocale) {
+        headers[DEFAULT_LOCALE_HEADER] = defaultLocale;
+    }
 }
 
 export const getXpBaseUrl = (context?: MinimalContext): string => {

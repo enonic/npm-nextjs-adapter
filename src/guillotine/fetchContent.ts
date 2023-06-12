@@ -1,13 +1,14 @@
 import {getMetaQuery, MetaData, PageComponent, PageData, pageFragmentQuery, PageRegion, RegionTree} from './getMetaData';
 
 import adapterConstants, {
+    addJsessionHeaders,
+    addLocaleHeaders,
     APP_NAME,
     APP_NAME_DASHED,
     Context,
     FRAGMENT_CONTENTTYPE_NAME,
     FRAGMENT_DEFAULT_REGION_NAME,
     getContentApiUrl,
-    getJsessionHeaders,
     getRenderMode,
     getXpBaseUrl,
     IS_DEV_MODE,
@@ -770,7 +771,9 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
 
     return async (contentPathOrArray: string | string[], context: Context): Promise<FetchContentResult> => {
 
-        const headers = getJsessionHeaders(context);
+        const headers = {};
+        addJsessionHeaders(headers, context);
+        addLocaleHeaders(headers, context);
         const xpBaseUrl = getXpBaseUrl(context);
         const contentApiUrl = getContentApiUrl(context);
         const renderMode = getRenderMode(context);
