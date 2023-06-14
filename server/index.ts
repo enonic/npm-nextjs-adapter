@@ -22,11 +22,16 @@ export const withEnonicCache = function (config: any) {
 export default async (next: (options: any) => any) => {
     const nextServer = next({dev}) as NextServer;
     const nextHandler = nextServer.getRequestHandler();
-    return await nextServer.prepare().then(() => {
-        const nextNodeServer = nextServer['server'];
+    return await nextServer.prepare().then(async () => {
+        const nextNodeServer = await nextServer['getServer']?.();
+        if (!nextNodeServer) {
+            console.error('Unable to access incremental cache, cache purge endpoint will be disabled');
+            return nextServer;
+        }
         const opts: NextConfig = nextNodeServer['serverOptions'].conf;
         const purgeUrl = (opts?.basePath || '') + PURGE_CACHE_URL;
 
+        console.info(`Staring cache purge endpoint at ${purgeUrl}...`);
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         const server = createServer(async (req, res) => {
             const parsedUrl = new URL(`http://${host}:${port}${req.url || ''}`);
