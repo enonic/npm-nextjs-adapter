@@ -1,8 +1,11 @@
-import {createElement, ReactNode, useEffect, useRef, useState} from 'react';
+import {createElement, createRef, ReactNode, useEffect, useState} from 'react';
 
-function useStaticContent() {
-    const ref = useRef(null);
-    const [render, setRender] = useState(typeof window === 'undefined');
+function useStaticContent(ref, isServer) {
+    if (isServer) {
+        return true;
+    }
+
+    const [render, setRender] = useState(isServer);
 
     useEffect(() => {
         // check if the innerHTML is empty as client side navigation
@@ -13,7 +16,7 @@ function useStaticContent() {
         }
     }, []);
 
-    return [render, ref];
+    return render;
 }
 
 export interface StaticContentProps extends Record<string, any> {
@@ -23,7 +26,9 @@ export interface StaticContentProps extends Record<string, any> {
 }
 
 export default function StaticContent({children, element = 'div', condition = true, ...props}: StaticContentProps) {
-    const [render, ref] = useStaticContent();
+    const isServer = typeof window === 'undefined';
+    const ref = createRef();
+    const render = useStaticContent(ref, isServer);
 
     // just render if:
     // - condition is false
