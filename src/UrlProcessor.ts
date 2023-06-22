@@ -1,4 +1,4 @@
-import {commonChars, RENDER_MODE, SITE_KEY} from './utils';
+import {commonChars, fixDoubleSlashes, RENDER_MODE, SITE_KEY} from './utils';
 import {ImageData, LinkData, MetaData} from './guillotine/getMetaData';
 import {useRouter} from 'next/router';
 
@@ -21,23 +21,33 @@ export class UrlProcessor {
 
     public static process(url: string, meta: MetaData): string {
         let result;
-        if (this.startsWithHash(url) || !meta || !this.isPageUrl(url) && meta.renderMode === RENDER_MODE.NEXT) {
-            // keep page-relative urls starting with hash
-            // keep urls absolute in next mode for everything but page urls
+        if (this.startsWithHash(url) || !meta || (this.isAttachmentUrl(url)) && meta.renderMode === RENDER_MODE.NEXT) {
+            // do not process if:
+            // - url starts with #
+            // - meta is absent
+            // - attachment urls in NEXT mode
             result = url;
         } else {
             const apiUrl = this.getApiUrl(meta);
             const strippedUrl = this.stripApiUrl(url, apiUrl);
-            let basePath: string | undefined;
+            let basePath = '';
+            let locale = '';
             // only add basePath in next
             if (meta.renderMode === RENDER_MODE.NEXT) {
                 try {
-                    basePath = useRouter().basePath;
+                    const router = useRouter();
+                    basePath = router.basePath;
+                    // do not append locale to local assets (having relative urls)
+                    if (!this.isRelative(url) && router.locale !== router.defaultLocale) {
+                        locale = router.locale;
+                    }
                 } catch (e) {
-                    console.error('Error getting basePath from nextjs router', e);
+                    console.error('Error accessing nextjs router', e);
+                    result = url;
                 }
             }
-            result = (basePath && basePath !== '/' ? basePath : '') + (meta?.baseUrl || '') + strippedUrl;
+            const baseUrl = meta?.baseUrl || '';
+            result = fixDoubleSlashes(`${basePath}/${baseUrl}/${locale}/${strippedUrl}`);
         }
 
         return result;
@@ -79,12 +89,16 @@ export class UrlProcessor {
         return (remaining.length > 0 && remaining.charAt(0) === '/') ? remaining.substring(1) : remaining;
     }
 
-    private static isPageUrl(url: string): boolean {
-        return !this.IMG_ATMT_REGEXP.test(url);
+    private static isAttachmentUrl(url: string): boolean {
+        return this.IMG_ATMT_REGEXP.test(url);
     }
 
     private static startsWithHash(url: string): boolean {
         return url?.charAt(0) == '#';
+    }
+
+    private static isRelative(url: string): boolean {
+        return !/^(?:ht|f)tps?:\/\/[^ :\r\n\t]+/.test(url);
     }
 
     private static getApiUrl(meta: MetaData) {

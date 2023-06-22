@@ -1,12 +1,14 @@
 /** Import config values from .env, .env.development and .env.production */
-import {MinimalContext} from './guillotine/fetchContent';
+import {GetServerSidePropsContext} from 'next';
+import {ParsedUrlQuery} from 'node:querystring';
+import {IncomingMessage} from 'http';
+import {NextApiRequestCookies} from 'next/dist/server/api-utils';
 
 const mode = process.env.MODE || process.env.NEXT_PUBLIC_MODE;
 export const IS_DEV_MODE = (mode === 'development');
 
 /** URL to the guillotine API */
-const CONTENT_API_DRAFT = (process.env.CONTENT_API_DRAFT || process.env.NEXT_PUBLIC_CONTENT_API_DRAFT);
-const CONTENT_API_MASTER = (process.env.CONTENT_API_MASTER || process.env.NEXT_PUBLIC_CONTENT_API_MASTER);
+const CONTENT_API = (process.env.CONTENT_API || process.env.NEXT_PUBLIC_CONTENT_API);
 
 /** Optional utility value - defining in one place the name of the target app (the app that defines the content types, the app name is therefore part of the content type strings used both in typeselector and in query introspections) */
 
@@ -26,7 +28,10 @@ export const SITE_KEY = (process.env.SITE_KEY || process.env.NEXT_PUBLIC_SITE_KE
 // URI parameter marking that a request is for a preview for CS. MUST MATCH THE VALUE OF 'FROM_XP_PARAM' on XP side.
 export const XP_BASE_URL_HEADER = 'xpbaseurl';
 export const RENDER_MODE_HEADER = 'content-studio-mode';
+export const PROJECT_ID_HEADER = 'content-studio-project';
 export const JSESSIONID_HEADER = 'jsessionid';
+
+export const LOCALE_PROJECT_PREFIX = 'LAYER';
 
 export const PORTAL_COMPONENT_ATTRIBUTE = 'data-portal-component-type';
 export const PORTAL_REGION_ATTRIBUTE = 'data-portal-region';
@@ -66,15 +71,67 @@ export enum XP_COMPONENT_TYPE {
     PAGE = 'page',
 }
 
+export interface ServerSideParams
+    extends ParsedUrlQuery {
+    // String array catching a sub-path assumed to match the site-relative path of an XP content.
+    contentPath?: string[];
+    mode?: string;
+}
+
+export interface PreviewParams {
+    contentPath: string[];
+    headers: Record<string, string>;
+    params: Record<string, string>;
+}
+
+export type Context = GetServerSidePropsContext<ServerSideParams, PreviewParams>;
+
+export interface MinimalContext {
+    req: IncomingMessage & {
+        cookies: NextApiRequestCookies
+    }
+    locale?: string
+    defaultLocale?: string
+    locales?: string[]
+}
+
 export const getRenderMode = (context?: MinimalContext): RENDER_MODE => {
     const value = (context?.req?.headers || {})[RENDER_MODE_HEADER] as string | undefined;
     const enumValue = RENDER_MODE[<keyof typeof RENDER_MODE>value?.toUpperCase()];
     return enumValue || RENDER_MODE[process.env.RENDER_MODE] || RENDER_MODE.NEXT;
 };
 
+function getProjectId(context?: MinimalContext): string | undefined {
+    let project = (context?.req?.headers || {})[PROJECT_ID_HEADER] as string | undefined;
+    if (project) {
+        return project;
+    }
+
+    const locale = context?.locale || context?.defaultLocale;
+    if (locale) {
+        project = process.env[`${LOCALE_PROJECT_PREFIX}_${locale.toUpperCase()}`];
+        if (!project) {
+            throw new Error(`Could not find project id for locale "${locale}". Did you forget to add '${LOCALE_PROJECT_PREFIX}_${locale?.toUpperCase()}=XP_PROJECT_ID' mapping in you .env file ?`);
+        }
+    } else {
+        project = process.env[`${LOCALE_PROJECT_PREFIX}_DEFAULT`];
+        if (!project) {
+            throw new Error(`Could not find default project id. Did you forget to add '${LOCALE_PROJECT_PREFIX}_DEFAULT=XP_PROJECT_ID' mapping in you .env file ?`);
+        }
+    }
+
+    return project;
+}
+
+export function fixDoubleSlashes(str: string) {
+    return str.replace(/(^|[^:/])\/{2,}/g, '$1/');
+}
+
 export function getContentApiUrl(context?: MinimalContext): string {
-    const mode = getRenderMode(context);
-    return mode === RENDER_MODE.NEXT ? CONTENT_API_MASTER : CONTENT_API_DRAFT;
+    const project = getProjectId(context);
+    const branch = getRenderMode(context) === RENDER_MODE.NEXT ? 'master' : 'draft';
+
+    return fixDoubleSlashes(`${CONTENT_API}/${project}/${branch}`);
 }
 
 export function getJsessionHeaders(context?: MinimalContext): Object {
@@ -86,32 +143,11 @@ export function getJsessionHeaders(context?: MinimalContext): Object {
     return headers;
 }
 
-/** For '<a href="..."' link values in props when clicking the link should navigate to an XP content item page
- *  and the query returns the XP _path to the target content item:
- *  When viewed directly, the header will have a `<base href='/' />` (see src/pages/_app.tsx), and when viewed through an
- *  XP Content Studio preview, lib-nextjs-proxy will add `<base href='xp/relevant/root/site/url/' />`.
- *  So for content-item links to work in BOTH contexts, the href value should be the path relative to the root site item, not starting with a slash.
- * */
-// export const getContentLinkUrlFromXpPath = (_path: string): string => _path.replace(siteNamePattern, '')
-
-const xpBaseUrlMap: Record<string, string> = {};
-
 export const getXpBaseUrl = (context?: MinimalContext): string => {
-    const mode = getRenderMode(context);
-
-    const existingUrl = xpBaseUrlMap[mode];
-    if (existingUrl) {
-        return existingUrl;
-    }
-
     const header = ((context?.req?.headers || {})[XP_BASE_URL_HEADER] || '') as string;
 
     // TODO: workaround for XP pattern controller mapping not picked up in edit mode
-    const resultingUrl = (header || '/').replace(/\/edit\//, '/inline/');
-
-    xpBaseUrlMap[mode] = resultingUrl;
-
-    return resultingUrl;
+    return (header || '/').replace(/\/edit\//, '/inline/');
 };
 
 
