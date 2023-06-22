@@ -3,6 +3,7 @@ import {getMetaQuery, MetaData, PageComponent, PageData, pageFragmentQuery, Page
 import adapterConstants, {
     APP_NAME,
     APP_NAME_DASHED,
+    Context,
     FRAGMENT_CONTENTTYPE_NAME,
     FRAGMENT_DEFAULT_REGION_NAME,
     getContentApiUrl,
@@ -19,10 +20,6 @@ import adapterConstants, {
     XP_REQUEST_TYPE,
 } from '../utils';
 import {ComponentDefinition, ComponentRegistry, SelectedQueryMaybeVariablesFunc} from '../ComponentRegistry';
-import {ParsedUrlQuery} from 'node:querystring';
-import {type GetServerSidePropsContext} from 'next';
-import {IncomingMessage} from 'http';
-import {type NextApiRequestCookies} from 'next/dist/server/api-utils';
 
 type AdapterConstants = {
     APP_NAME: string,
@@ -75,27 +72,6 @@ type FetcherConfig<T extends AdapterConstants> = T & {
 interface QueryAndVariables {
     query: string;
     variables?: Record<string, any>;
-}
-
-export interface ServerSideParams
-    extends ParsedUrlQuery {
-    // String array catching a sub-path assumed to match the site-relative path of an XP content.
-    contentPath?: string[];
-    mode?: string;
-}
-
-export interface PreviewParams {
-    contentPath: string[];
-    headers: Record<string, string>;
-    params: Record<string, string>;
-}
-
-export type Context = GetServerSidePropsContext<ServerSideParams, PreviewParams>;
-
-export interface MinimalContext {
-    req: IncomingMessage & {
-        cookies: NextApiRequestCookies
-    }
 }
 
 /**
