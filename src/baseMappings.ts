@@ -7,6 +7,7 @@ import BaseLayout from './views/BaseLayout';
 import TextView from './views/Text';
 import DefaultMacro from './views/macros/DefaultMacro';
 import DisableMacro from './views/macros/DisableMacro';
+import {getShortcutQuery} from './query/Shortcut';
 
 // Base Content Types
 
@@ -14,6 +15,9 @@ ComponentRegistry.addContentType(FRAGMENT_CONTENTTYPE_NAME, {
     view: FragmentView,
 });
 
+ComponentRegistry.addContentType('base:shortcut', {
+    query: getShortcutQuery,
+});
 
 // Base Components
 
