@@ -225,6 +225,7 @@ export interface PageData {
 }
 
 export interface FragmentData {
+    id: string;
     fragment: {
         components: PageComponent[];
     }

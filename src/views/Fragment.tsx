@@ -1,7 +1,7 @@
 import React from 'react';
-import BaseComponent from './BaseComponent';
+import BaseComponent, {MissingComponent, shouldShowMissingView} from './BaseComponent';
 import {FragmentData, MetaData, PageComponent, PageData} from '../guillotine/getMetaData';
-import {FRAGMENT_DEFAULT_REGION_NAME} from '../utils';
+import {FRAGMENT_DEFAULT_REGION_NAME, XP_COMPONENT_TYPE} from '../utils';
 
 interface FragmentProps {
     page?: PageData;
@@ -20,21 +20,26 @@ const FragmentView = (props: FragmentProps) => {
         if (regionComps) {
             comps.push(...regionComps);
         }
-    } else if (component) {
+    } else if (component?.fragment) {
         // rendering a part of a page
         comps.push(...component.fragment.components);
     }
-    const {common, meta} = props;
 
-    return (
-        <>
-            {
-                comps.map((comp: PageComponent, i: number) => (
-                    <BaseComponent key={i} component={comp} common={common} meta={meta}/>
-                ))
-            }
-        </>
-    );
+    if (!comps.length && shouldShowMissingView(props.meta)) {
+        return <MissingComponent type={XP_COMPONENT_TYPE.FRAGMENT} descriptor={page?.descriptor || component?.id}/>;
+    } else {
+        const {common, meta} = props;
+
+        return (
+            <>
+                {
+                    comps.map((comp: PageComponent, i: number) => (
+                        <BaseComponent key={i} component={comp} common={common} meta={meta}/>
+                    ))
+                }
+            </>
+        );
+    }
 };
 
 export default FragmentView;
