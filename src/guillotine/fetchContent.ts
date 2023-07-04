@@ -408,7 +408,7 @@ function buildComponentTree(comps: PageComponent[], rootComp: PageComponent, con
         rootComp.regions = rootTree;
     }
 
-    comps.forEach(cmp => {
+    (comps || []).forEach(cmp => {
         const cmpPath = parseComponentPath(contentType, cmp.path);
 
         if (cmp.path === '/') {
@@ -427,7 +427,7 @@ function buildComponentTree(comps: PageComponent[], rootComp: PageComponent, con
 
         if (cmp.type === XP_COMPONENT_TYPE.FRAGMENT) {
             // build component subtree for fragment
-            cmp = buildComponentTree(cmp.fragment.fragment.components, cmp, contentType);
+            cmp = buildComponentTree(cmp.fragment?.fragment?.components, cmp, contentType);
         }
 
         const region = getParentRegion(rootTree, contentType, cmpPath, comps, true);
@@ -572,7 +572,7 @@ function collectComponentDescriptors(components: PageComponent[],
             }
         } else {
             // look for parts inside fragments
-            const fragPartDescs = collectComponentDescriptors(cmp.fragment.fragment.components, componentRegistry, xpContentPath, context);
+            const fragPartDescs = collectComponentDescriptors(cmp.fragment?.fragment?.components, componentRegistry, xpContentPath, context);
             if (fragPartDescs.length) {
                 descriptors.push(...fragPartDescs);
             }
