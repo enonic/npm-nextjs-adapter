@@ -31,8 +31,6 @@ export const RENDER_MODE_HEADER = 'content-studio-mode';
 export const PROJECT_ID_HEADER = 'content-studio-project';
 export const JSESSIONID_HEADER = 'jsessionid';
 
-export const LOCALE_PROJECT_PREFIX = 'LAYER';
-
 export const PORTAL_COMPONENT_ATTRIBUTE = 'data-portal-component-type';
 export const PORTAL_REGION_ATTRIBUTE = 'data-portal-region';
 
@@ -86,6 +84,11 @@ export interface PreviewParams {
 
 export type Context = GetServerSidePropsContext<ServerSideParams, PreviewParams>;
 
+export type ProjectLocales = {
+    default: string;
+    [project: string]: string;
+};
+
 export interface MinimalContext {
     req: IncomingMessage & {
         cookies: NextApiRequestCookies
@@ -101,7 +104,7 @@ export const getRenderMode = (context?: MinimalContext): RENDER_MODE => {
     return enumValue || RENDER_MODE[process.env.RENDER_MODE] || RENDER_MODE.NEXT;
 };
 
-function getProjectId(context?: MinimalContext): string | undefined {
+function getProjectId(projectLocales: ProjectLocales, context?: MinimalContext): string | undefined {
     let project = (context?.req?.headers || {})[PROJECT_ID_HEADER] as string | undefined;
     if (project) {
         return project;
@@ -109,14 +112,15 @@ function getProjectId(context?: MinimalContext): string | undefined {
 
     const locale = context?.locale || context?.defaultLocale;
     if (locale) {
-        project = process.env[`${LOCALE_PROJECT_PREFIX}_${locale.toUpperCase()}`];
+        project = projectLocales[locale];
         if (!project) {
-            throw new Error(`Could not find project id for locale "${locale}". Did you forget to add '${LOCALE_PROJECT_PREFIX}_${locale?.toUpperCase()}=XP_PROJECT_ID' mapping in you .env file ?`);
+            console.warn(`Could not find project id for locale "${locale}". Falling back to default project "${projectLocales.default}"`);
         }
-    } else {
-        project = process.env[`${LOCALE_PROJECT_PREFIX}_DEFAULT`];
+    }
+    if (!project) {
+        project = projectLocales.default;
         if (!project) {
-            throw new Error(`Could not find default project id. Did you forget to add '${LOCALE_PROJECT_PREFIX}_DEFAULT=XP_PROJECT_ID' mapping in you .env file ?`);
+            throw new Error('Could not find default project. Did you forget to define \'default\' locale in i18n.config.js file ?');
         }
     }
 
@@ -127,8 +131,8 @@ export function fixDoubleSlashes(str: string) {
     return str.replace(/(^|[^:/])\/{2,}/g, '$1/');
 }
 
-export function getContentApiUrl(context?: MinimalContext): string {
-    const project = getProjectId(context);
+export function getContentApiUrl(projectLocales: ProjectLocales, context?: MinimalContext): string {
+    const project = getProjectId(projectLocales, context);
     const branch = getRenderMode(context) === RENDER_MODE.NEXT ? 'master' : 'draft';
 
     return fixDoubleSlashes(`${CONTENT_API}/${project}/${branch}`);

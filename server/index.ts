@@ -4,7 +4,7 @@ import {NextServer} from 'next/dist/server/next';
 import path from 'path';
 import {NextConfig} from 'next/dist/server/config-shared';
 
-const host = process.env.HOST || '127.0.0.1';
+const hostname = process.env.HOST || '127.0.0.1';
 const dev = process.env.NODE_ENV !== 'production';
 const port = process.env.PORT && parseInt(process.env.PORT, 10) || (dev ? 3000 : 4242);
 
@@ -20,7 +20,7 @@ export const withEnonicCache = function (config: any) {
 
 // Not typed to prevent collision of local types with end-user ones
 export default async (next: (options: any) => any) => {
-    const nextServer = next({dev}) as NextServer;
+    const nextServer = next({dev, hostname, port}) as NextServer;
     const nextHandler = nextServer.getRequestHandler();
     return await nextServer.prepare().then(async () => {
         const nextNodeServer = await nextServer['getServer']?.();
@@ -34,7 +34,7 @@ export default async (next: (options: any) => any) => {
         console.info(`Staring cache purge endpoint at ${purgeUrl}...`);
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         const server = createServer(async (req, res) => {
-            const parsedUrl = new URL(`http://${host}:${port}${req.url || ''}`);
+            const parsedUrl = new URL(`http://${hostname}:${port}${req.url || ''}`);
             if (parsedUrl.pathname !== purgeUrl) {
                 await nextHandler(req, res);
             } else if (dev) {
@@ -62,8 +62,8 @@ export default async (next: (options: any) => any) => {
                 res.end(JSON.stringify({purged: true}));
             }
 
-        }).listen(port, host, () => {
-            console.info(`Server ready on ${host}:${port}`);
+        }).listen(port, hostname, () => {
+            console.info(`Server ready on ${hostname}:${port}`);
         }).on('error', (e) => {
             console.error('Server error:', e);
             server.close();
