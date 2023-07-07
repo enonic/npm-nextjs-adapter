@@ -10,6 +10,9 @@ export const IS_DEV_MODE = (mode === 'development');
 /** URL to the guillotine API */
 const CONTENT_API = (process.env.CONTENT_API || process.env.NEXT_PUBLIC_CONTENT_API);
 
+/** Accessing to make it available in middleware (because of weird Next.js behavior) */
+const PROJECTS = process.env.PROJECTS;
+
 /** Optional utility value - defining in one place the name of the target app (the app that defines the content types, the app name is therefore part of the content type strings used both in typeselector and in query introspections) */
 
 export const APP_NAME = (process.env.APP_NAME || process.env.NEXT_PUBLIC_APP_NAME);
@@ -30,6 +33,7 @@ export const XP_BASE_URL_HEADER = 'xpbaseurl';
 export const RENDER_MODE_HEADER = 'content-studio-mode';
 export const PROJECT_ID_HEADER = 'content-studio-project';
 export const JSESSIONID_HEADER = 'jsessionid';
+const PROJECTS_CONFIG_KEY = 'PROJECTS';
 
 export const PORTAL_COMPONENT_ATTRIBUTE = 'data-portal-component-type';
 export const PORTAL_REGION_ATTRIBUTE = 'data-portal-region';
@@ -84,7 +88,7 @@ export interface PreviewParams {
 
 export type Context = GetServerSidePropsContext<ServerSideParams, PreviewParams>;
 
-export type ProjectLocales = {
+export type ProjectsConfig = {
     default: string;
     [project: string]: string;
 };
@@ -104,35 +108,55 @@ export const getRenderMode = (context?: MinimalContext): RENDER_MODE => {
     return enumValue || RENDER_MODE[process.env.RENDER_MODE] || RENDER_MODE.NEXT;
 };
 
-function getProjectId(projectLocales: ProjectLocales, context?: MinimalContext): string | undefined {
+function getProjectId(context?: MinimalContext): string | undefined {
     let project = (context?.req?.headers || {})[PROJECT_ID_HEADER] as string | undefined;
     if (project) {
         return project;
     }
 
+    const projectsConfig = getProjectsConfig();
     const locale = context?.locale || context?.defaultLocale;
     if (locale) {
-        project = projectLocales[locale];
-        if (!project) {
-            console.warn(`Could not find project id for locale "${locale}". Falling back to default project "${projectLocales.default}"`);
-        }
+        project = projectsConfig[locale];
     }
     if (!project) {
-        project = projectLocales.default;
-        if (!project) {
-            throw new Error('Could not find default project. Did you forget to define \'default\' locale in i18n.config.js file ?');
-        }
+        project = projectsConfig.default;
+    }
+    if (!project) {
+        throw new Error(`No project for locale "${locale}" and no default project defined. Did you forget to define PROJECTS environmental variable?`);
     }
 
     return project;
+}
+
+export function getProjectsConfig(): ProjectsConfig {
+    const str = process.env[PROJECTS_CONFIG_KEY];
+    if (!str?.length) {
+        throw Error('"PROJECTS" environmental variable is required.');
+    }
+    const result: ProjectsConfig = str.split(',').reduce((config, prjStr) => {
+        const [lang, prj] = prjStr.split(':');
+        if (lang && !prj) {
+            config.default = lang;
+        } else if (lang && prj) {
+            config[lang] = prj;
+        }
+        return config;
+    }, {
+        default: '',
+    });
+    if (!result.default) {
+        throw Error('"PROJECTS" environmental variable should contain default value.');
+    }
+    return result;
 }
 
 export function fixDoubleSlashes(str: string) {
     return str.replace(/(^|[^:/])\/{2,}/g, '$1/');
 }
 
-export function getContentApiUrl(projectLocales: ProjectLocales, context?: MinimalContext): string {
-    const project = getProjectId(projectLocales, context);
+export function getContentApiUrl(context?: MinimalContext): string {
+    const project = getProjectId(context);
     const branch = getRenderMode(context) === RENDER_MODE.NEXT ? 'master' : 'draft';
 
     return fixDoubleSlashes(`${CONTENT_API}/${project}/${branch}`);
