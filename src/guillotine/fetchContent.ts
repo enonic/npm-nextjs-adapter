@@ -13,7 +13,6 @@ import adapterConstants, {
     IS_DEV_MODE,
     PAGE_TEMPLATE_CONTENTTYPE_NAME,
     PAGE_TEMPLATE_FOLDER,
-    ProjectLocales,
     RENDER_MODE,
     sanitizeGraphqlName,
     SITE_KEY,
@@ -80,7 +79,7 @@ interface QueryAndVariables {
  * @param contentPath string or string array: pre-split or slash-delimited _path to a content available on the API
  * @returns FetchContentResult object: {data?: T, error?: {code, message}}
  */
-export type ContentFetcher = (contentPath: string | string[], projectLocales: ProjectLocales, context?: Context) => Promise<FetchContentResult>;
+export type ContentFetcher = (contentPath: string | string[], context?: Context) => Promise<FetchContentResult>;
 
 const NO_PROPS_PROCESSOR = async (props: any) => await props ?? {};
 
@@ -768,11 +767,11 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
         componentRegistry,
     } = config;
 
-    return async (contentPathOrArray: string | string[], projectLocales: ProjectLocales, context: Context): Promise<FetchContentResult> => {
+    return async (contentPathOrArray: string | string[], context: Context): Promise<FetchContentResult> => {
 
         const headers = getJsessionHeaders(context);
         const xpBaseUrl = getXpBaseUrl(context);
-        const contentApiUrl = getContentApiUrl(projectLocales, context);
+        const contentApiUrl = getContentApiUrl(context);
         const renderMode = getRenderMode(context);
         let requestType = XP_REQUEST_TYPE.TYPE;
 
