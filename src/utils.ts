@@ -135,7 +135,7 @@ export function getProjectsConfig(): ProjectsConfig {
         throw Error('"PROJECTS" environmental variable is required.');
     }
     const result: ProjectsConfig = str.split(',').reduce((config, prjStr) => {
-        const [lang, prj] = prjStr.split(':');
+        const [lang, prj] = prjStr.split(':').map(s => s?.trim());
         if (lang && !prj) {
             config.default = lang;
         } else if (lang && prj) {
