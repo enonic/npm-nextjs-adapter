@@ -1,8 +1,7 @@
 /** Import config values from .env, .env.development and .env.production */
 import {GetServerSidePropsContext} from 'next';
 import {ParsedUrlQuery} from 'node:querystring';
-import {IncomingMessage} from 'http';
-import {NextApiRequestCookies} from 'next/dist/server/api-utils';
+import {IncomingHttpHeaders} from 'http';
 
 const mode = process.env.MODE || process.env.NEXT_PUBLIC_MODE;
 export const IS_DEV_MODE = (mode === 'development');
@@ -94,12 +93,12 @@ export type ProjectsConfig = {
 };
 
 export interface MinimalContext {
-    req: IncomingMessage & {
-        cookies: NextApiRequestCookies
+    req?: {
+        headers: IncomingHttpHeaders;
     }
-    locale?: string
-    defaultLocale?: string
-    locales?: string[]
+    locale?: string;
+    defaultLocale?: string;
+    locales?: string[];
 }
 
 export const getRenderMode = (context?: MinimalContext): RENDER_MODE => {
@@ -108,25 +107,39 @@ export const getRenderMode = (context?: MinimalContext): RENDER_MODE => {
     return enumValue || RENDER_MODE[process.env.RENDER_MODE] || RENDER_MODE.NEXT;
 };
 
-function getProjectId(context?: MinimalContext): string | undefined {
-    let project = (context?.req?.headers || {})[PROJECT_ID_HEADER] as string | undefined;
-    if (project) {
-        return project;
+export function getProjectId(context?: MinimalContext): string {
+    let projectId = (context?.req?.headers || {})[PROJECT_ID_HEADER] as string | undefined;
+    if (projectId) {
+        return projectId;
     }
 
     const projectsConfig = getProjectsConfig();
     const locale = context?.locale || context?.defaultLocale;
     if (locale) {
-        project = projectsConfig[locale];
+        projectId = projectsConfig[locale];
     }
-    if (!project) {
-        project = projectsConfig.default;
+    if (!projectId) {
+        projectId = projectsConfig.default;
     }
-    if (!project) {
+    if (!projectId) {
         throw new Error(`No project for locale "${locale}" and no default project defined. Did you forget to define PROJECTS environmental variable?`);
     }
 
-    return project;
+    return projectId;
+}
+
+export function getProjectLocale(projectId?: string): string {
+    const projects: ProjectsConfig = getProjectsConfig();
+
+    if (!projectId) {
+        return projects.default;
+    }
+
+    const locale = Object.keys(projects).find(l => {
+        return projects[l]?.toLowerCase() === projectId.toLowerCase();
+    });
+
+    return locale || projects.default;
 }
 
 export function getProjectsConfig(): ProjectsConfig {
