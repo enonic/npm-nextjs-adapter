@@ -34,7 +34,7 @@ type Result = {
     } | null;
 };
 
-type GuillotineResult = Result & {
+export type GuillotineResult = Result & {
     [dataKey: string]: any;
 };
 
@@ -96,6 +96,7 @@ export type ContentApiBaseBody = {
     query?: string,                 // Override the default base-data query
     variables?: {                   // GraphQL variables inserted into the query
         path?: string,              // Full content item _path
+        [key: string]: string | number | undefined,
     }
 };
 
