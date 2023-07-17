@@ -6,23 +6,29 @@ import {IncomingHttpHeaders} from 'http';
 const mode = process.env.MODE || process.env.NEXT_PUBLIC_MODE;
 export const IS_DEV_MODE = (mode === 'development');
 
-/** URL to the guillotine API */
-const CONTENT_API = (process.env.CONTENT_API || process.env.NEXT_PUBLIC_CONTENT_API);
+export enum ENV_VARS {
+    PROJECTS = 'ENONIC_PROJECTS',
+    API = 'ENONIC_API',
+    SITE_KEY = 'ENONIC_SITE_KEY',
+    API_TOKEN = 'ENONIC_API_TOKEN',
+}
 
-/** Accessing to make it available in middleware (because of weird Next.js behavior) */
-const PROJECTS = process.env.PROJECTS;
+/** URL to the guillotine API */
+const API_URL = (process.env.ENONIC_API || process.env.NEXT_PUBLIC_ENONIC_API);
+
+/** Locales and Enonic XP projects correspondence list */
+const PROJECTS = (process.env.ENONIC_PROJECTS || process.env.NEXT_PUBLIC_ENONIC_PROJECTS);
+
+export const SITE_KEY = (process.env.ENONIC_SITE_KEY || process.env.NEXT_PUBLIC_ENONIC_SITE_KEY);
 
 /** Optional utility value - defining in one place the name of the target app (the app that defines the content types, the app name is therefore part of the content type strings used both in typeselector and in query introspections) */
+export const APP_NAME = (process.env.ENONIC_APP_NAME || process.env.NEXT_PUBLIC_ENONIC_APP_NAME);
 
-export const APP_NAME = (process.env.APP_NAME || process.env.NEXT_PUBLIC_APP_NAME);
 /** Optional utility value - derived from APP_NAME, only with underscores instead of dots */
-
 export const APP_NAME_UNDERSCORED = (APP_NAME || '').replace(/\./g, '_');
+
 /** Optional utility value - derived from APP_NAME, only with dashes instead of dots */
-
 export const APP_NAME_DASHED = (APP_NAME || '').replace(/\./g, '-');
-
-export const SITE_KEY = (process.env.SITE_KEY || process.env.NEXT_PUBLIC_SITE_KEY);
 
 
 // ////////////////////////////////////////////////////////////////////////  Hardcode-able constants
@@ -32,7 +38,6 @@ export const XP_BASE_URL_HEADER = 'xpbaseurl';
 export const RENDER_MODE_HEADER = 'content-studio-mode';
 export const PROJECT_ID_HEADER = 'content-studio-project';
 export const JSESSIONID_HEADER = 'jsessionid';
-const PROJECTS_CONFIG_KEY = 'PROJECTS';
 
 export const PORTAL_COMPONENT_ATTRIBUTE = 'data-portal-component-type';
 export const PORTAL_REGION_ATTRIBUTE = 'data-portal-region';
@@ -122,7 +127,7 @@ export function getProjectId(context?: MinimalContext): string {
         projectId = projectsConfig.default;
     }
     if (!projectId) {
-        throw new Error(`No project for locale "${locale}" and no default project defined. Did you forget to define PROJECTS environmental variable?`);
+        throw new Error(`No project for locale "${locale}" and no default project defined. Did you forget to define "${ENV_VARS.PROJECTS}" environmental variable?`);
     }
 
     return projectId;
@@ -143,9 +148,10 @@ export function getProjectLocale(projectId?: string): string {
 }
 
 export function getProjectsConfig(): ProjectsConfig {
-    const str = process.env[PROJECTS_CONFIG_KEY];
+    const str = PROJECTS;
+    const envVarName = ENV_VARS.PROJECTS;
     if (!str?.length) {
-        throw Error('"PROJECTS" environmental variable is required.');
+        throw Error(`"${envVarName}" environmental variable is required.`);
     }
     const result: ProjectsConfig = str.split(',').reduce((config, prjStr) => {
         const [lang, prj] = prjStr.split(':').map(s => s?.trim());
@@ -159,7 +165,7 @@ export function getProjectsConfig(): ProjectsConfig {
         default: '',
     });
     if (!result.default) {
-        throw Error('"PROJECTS" environmental variable should contain default value.');
+        throw Error(`"${envVarName}" environmental variable should contain default value.`);
     }
     return result;
 }
@@ -172,7 +178,7 @@ export function getContentApiUrl(context?: MinimalContext): string {
     const project = getProjectId(context);
     const branch = getRenderMode(context) === RENDER_MODE.NEXT ? 'master' : 'draft';
 
-    return fixDoubleSlashes(`${CONTENT_API}/${project}/${branch}`);
+    return fixDoubleSlashes(`${API_URL}/${project}/${branch}`);
 }
 
 export function getJsessionHeaders(context?: MinimalContext): Object {
