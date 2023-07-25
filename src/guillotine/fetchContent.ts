@@ -9,23 +9,24 @@ import adapterConstants, {
     FRAGMENT_CONTENTTYPE_NAME,
     FRAGMENT_DEFAULT_REGION_NAME,
     getContentApiUrl,
+    getLocaleProjectConfig,
     getRenderMode,
     getXpBaseUrl,
     IS_DEV_MODE,
+    LocaleProjectConfig,
     PAGE_TEMPLATE_CONTENTTYPE_NAME,
     PAGE_TEMPLATE_FOLDER,
     RENDER_MODE,
     sanitizeGraphqlName,
-    SITE_KEY,
     XP_COMPONENT_TYPE,
     XP_REQUEST_TYPE,
 } from '../utils';
 import {ComponentDefinition, ComponentRegistry, SelectedQueryMaybeVariablesFunc} from '../ComponentRegistry';
+import {UrlProcessor} from '../UrlProcessor';
 
 type AdapterConstants = {
     APP_NAME: string,
     APP_NAME_DASHED: string,
-    SITE_KEY: string,
 };
 
 type Result = {
@@ -105,6 +106,7 @@ export type ContentApiBaseBody = {
 export const fetchFromApi = async (
     apiUrl: string,
     body: ContentApiBaseBody,
+    projectConfig: LocaleProjectConfig,
     headers?: {},
     method = 'POST',
 ) => {
@@ -113,7 +115,7 @@ export const fetchFromApi = async (
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'X-Guillotine-SiteKey': SITE_KEY,
+            'X-Guillotine-SiteKey': projectConfig.site,
         },
         body: JSON.stringify(body),
     };
@@ -164,6 +166,7 @@ export const fetchFromApi = async (
 export const fetchGuillotine = async (
     contentApiUrl: string,
     body: ContentApiBaseBody,
+    projectConfig: LocaleProjectConfig,
     headers?: {}): Promise<GuillotineResult> => {
     if (typeof body.query !== 'string' || !body.query.trim()) {
         return {
@@ -174,10 +177,11 @@ export const fetchGuillotine = async (
         };
     }
     const path = body.variables?.path;
-    const pathMessage = path ? `(path = ${JSON.stringify(path)})` : '';
+    const pathMessage = path ? JSON.stringify(path) : '';
     const result = await fetchFromApi(
         contentApiUrl,
         body,
+        projectConfig,
         headers,
     )
         .then(json => {
@@ -187,12 +191,12 @@ export const fetchGuillotine = async (
                 if (!Array.isArray(errors)) {
                     errors = [errors];
                 }
-                console.warn(`${errors.length} error(s) when trying to fetch data ${pathMessage}:`);
+                console.error(`${errors.length} error(s) when fetching data from: ${contentApiUrl}`);
+                console.error(`headers: ${JSON.stringify(headers, null, 2)}
+                variables: ${JSON.stringify(body.variables, null, 2)}`);
                 errors.forEach(error => {
                     console.error(error);
                 });
-                console.warn(`Query:\n${body.query}`);
-                console.warn(`Variables: ${JSON.stringify(body.variables, null, 2)}`);
 
                 return {
                     error: {
@@ -218,14 +222,14 @@ export const fetchGuillotine = async (
 
 // /////////////////////////////////////////////////////////////////////////////// Specific fetch wrappers:
 
-const fetchMetaData = async (contentApiUrl: string, xpContentPath: string, headers?: {}): Promise<MetaResult> => {
+const fetchMetaData = async (contentApiUrl: string, xpContentPath: string, projectConfig: LocaleProjectConfig, headers?: {}): Promise<MetaResult> => {
     const body: ContentApiBaseBody = {
         query: getMetaQuery(pageFragmentQuery()),
         variables: {
             path: xpContentPath,
         },
     };
-    const metaResult = await fetchGuillotine(contentApiUrl, body, headers);
+    const metaResult = await fetchGuillotine(contentApiUrl, body, projectConfig, headers);
     if (metaResult.error) {
         return metaResult;
     } else {
@@ -239,6 +243,7 @@ const fetchMetaData = async (contentApiUrl: string, xpContentPath: string, heade
 const fetchContentData = async <T>(
     contentApiUrl: string,
     xpContentPath: string,
+    projectConfig: LocaleProjectConfig,
     query: string,
     variables?: {},
     headers?: {},
@@ -248,7 +253,7 @@ const fetchContentData = async <T>(
     if (variables && Object.keys(variables).length > 0) {
         body.variables = variables;
     }
-    const contentResults = await fetchGuillotine(contentApiUrl, body, headers);
+    const contentResults = await fetchGuillotine(contentApiUrl, body, projectConfig, headers);
 
     if (contentResults.error) {
         return contentResults;
@@ -776,8 +781,11 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
         addLocaleHeaders(headers, context);
         const xpBaseUrl = getXpBaseUrl(context);
         const contentApiUrl = getContentApiUrl(context);
+        const projectConfig = getLocaleProjectConfig(context);
         const renderMode = getRenderMode(context);
         let requestType = XP_REQUEST_TYPE.TYPE;
+
+        UrlProcessor.setSiteKey(projectConfig.site);
 
         try {
             const requestContentPath = getCleanContentPathArrayOrThrow400(contentPathOrArray);
@@ -788,7 +796,7 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
             }
 
             // /////////////  FIRST GUILLOTINE CALL FOR METADATA     /////////////////
-            const metaResult = await fetchMetaData(contentApiUrl, '${site}/' + siteRelativeContentPath, headers);
+            const metaResult = await fetchMetaData(contentApiUrl, '${site}/' + siteRelativeContentPath, projectConfig, headers);
             // ///////////////////////////////////////////////////////////////////////
 
             const {_path, type} = metaResult.meta || {};
@@ -871,7 +879,7 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
             }
 
             // ///////////////    SECOND GUILLOTINE CALL FOR DATA   //////////////////////
-            const contentResults = await fetchContentData(contentApiUrl, contentPath, query, variables, headers);
+            const contentResults = await fetchContentData(contentApiUrl, contentPath, projectConfig, query, variables, headers);
             // ///////////////////////////////////////////////////////////////////////////
 
             if (contentResults.error) {

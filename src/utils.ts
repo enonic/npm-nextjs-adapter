@@ -9,7 +9,6 @@ export const IS_DEV_MODE = (mode === 'development');
 export enum ENV_VARS {
     PROJECTS = 'ENONIC_PROJECTS',
     API = 'ENONIC_API',
-    SITE_KEY = 'ENONIC_SITE_KEY',
     API_TOKEN = 'ENONIC_API_TOKEN',
 }
 
@@ -19,8 +18,6 @@ const API_URL = (process.env.ENONIC_API || process.env.NEXT_PUBLIC_ENONIC_API);
 /** Locales and Enonic XP projects correspondence list */
 const PROJECTS = (process.env.ENONIC_PROJECTS || process.env.NEXT_PUBLIC_ENONIC_PROJECTS);
 
-export const SITE_KEY = (process.env.ENONIC_SITE_KEY || process.env.NEXT_PUBLIC_ENONIC_SITE_KEY);
-
 /** Optional utility value - defining in one place the name of the target app (the app that defines the content types, the app name is therefore part of the content type strings used both in typeselector and in query introspections) */
 export const APP_NAME = (process.env.ENONIC_APP_NAME || process.env.NEXT_PUBLIC_ENONIC_APP_NAME);
 
@@ -29,6 +26,8 @@ export const APP_NAME_UNDERSCORED = (APP_NAME || '').replace(/\./g, '_');
 
 /** Optional utility value - derived from APP_NAME, only with dashes instead of dots */
 export const APP_NAME_DASHED = (APP_NAME || '').replace(/\./g, '-');
+
+const PROJECT_CONFIG_REGEXP = new RegExp('^(?:([\\w-]+):)?([^\\/\\s]+)(\\/[\\w-.]+)?$', 'i');
 
 
 // ////////////////////////////////////////////////////////////////////////  Hardcode-able constants
@@ -96,9 +95,15 @@ export interface PreviewParams {
 
 export type Context = GetServerSidePropsContext<ServerSideParams, PreviewParams>;
 
-export type ProjectsConfig = {
-    default: string;
-    [project: string]: string;
+export type LocaleProjectConfig = {
+    project: string;
+    site: string;
+    locale: string;
+};
+
+export type LocaleProjectConfigs = {
+    default: LocaleProjectConfig;
+    [locale: string]: LocaleProjectConfig;
 };
 
 export interface MinimalContext {
@@ -116,60 +121,74 @@ export const getRenderMode = (context?: MinimalContext): RENDER_MODE => {
     return enumValue || RENDER_MODE[process.env.RENDER_MODE] || RENDER_MODE.NEXT;
 };
 
-export function getProjectId(context?: MinimalContext): string {
-    let projectId = (context?.req?.headers || {})[PROJECT_ID_HEADER] as string | undefined;
+export function getLocaleProjectConfig(context?: MinimalContext): LocaleProjectConfig {
+    const projectId = (context?.req?.headers || {})[PROJECT_ID_HEADER] as string | undefined;
     if (projectId) {
-        return projectId;
+        return getLocaleProjectConfigById(projectId);
     }
 
-    const projectsConfig = getProjectsConfig();
+    const projectsConfig = getLocaleProjectConfigs();
     const locale = context?.locale || context?.defaultLocale;
-    if (locale) {
-        projectId = projectsConfig[locale];
+    let config: LocaleProjectConfig = projectsConfig[locale];
+    if (!config) {
+        config = projectsConfig.default;
     }
-    if (!projectId) {
-        projectId = projectsConfig.default;
-    }
-    if (!projectId) {
-        throw new Error(`No project for locale "${locale}" and no default project defined. Did you forget to define "${ENV_VARS.PROJECTS}" environmental variable?`);
+    if (!config) {
+        throw new Error(`No config for locale "${locale}" found in "${ENV_VARS.PROJECTS}" environmental variable.
+        Format: <default-repository-name>/<site-path>,<language>:<repository-name>/<site-path>,...`);
     }
 
-    return projectId;
+    return config;
 }
 
-export function getProjectLocale(projectId?: string): string {
-    const projects: ProjectsConfig = getProjectsConfig();
-
+export function getLocaleProjectConfigById(projectId?: string): LocaleProjectConfig | undefined {
     if (!projectId) {
-        return projects.default;
+        return;
     }
+    const projects: LocaleProjectConfigs = getLocaleProjectConfigs();
 
-    const locale = Object.keys(projects).find(l => {
-        return projects[l]?.toLowerCase() === projectId.toLowerCase();
+    return Object.values(projects).find(p => {
+        return p?.project?.toLowerCase() === projectId.toLowerCase();
     });
-
-    return locale || projects.default;
 }
 
-export function getProjectsConfig(): ProjectsConfig {
+export function getLocaleProjectConfigs(): LocaleProjectConfigs {
     const str = PROJECTS;
     const envVarName = ENV_VARS.PROJECTS;
     if (!str?.length) {
         throw Error(`"${envVarName}" environmental variable is required.`);
     }
-    const result: ProjectsConfig = str.split(',').reduce((config, prjStr) => {
-        const [lang, prj] = prjStr.split(':').map(s => s?.trim());
-        if (lang && !prj) {
-            config.default = lang;
-        } else if (lang && prj) {
-            config[lang] = prj;
+    const result: LocaleProjectConfigs = str.split(',').reduce((config, prjStr) => {
+        const matches: RegExpExecArray = PROJECT_CONFIG_REGEXP.exec(prjStr?.trim());
+        if (!matches?.length) {
+            return config;
+        }
+        // eslint-disable-next-line prefer-const
+        let [full, lang, project, site] = matches;
+        if (!lang) {
+            lang = 'default';
+        }
+        if (project && site) {
+            config[lang] = {
+                project,
+                site,
+                locale: lang,
+            };
+        } else {
+            throw Error(`Wrong configuration in "${envVarName}": ${prjStr}.
+            Format: <default-repository-name>/<site-path>,<language>:<repository-name>/<site-path>,...`);
         }
         return config;
     }, {
-        default: '',
+        default: {
+            project: '',
+            site: '',
+            locale: '',
+        },
     });
-    if (!result.default) {
-        throw Error(`"${envVarName}" environmental variable should contain default value.`);
+    if (!result.default.site || !result.default.project) {
+        throw Error(`"${envVarName}" environmental variable should contain default value.
+        Format: <default-repository-name>/<site-path>,<language>:<repository-name>/<site-path>,...`);
     }
     return result;
 }
@@ -179,7 +198,7 @@ export function fixDoubleSlashes(str: string) {
 }
 
 export function getContentApiUrl(context?: MinimalContext): string {
-    const project = getProjectId(context);
+    const project = getLocaleProjectConfig(context).project;
     const branch = getRenderMode(context) === RENDER_MODE.NEXT ? 'master' : 'draft';
 
     return fixDoubleSlashes(`${API_URL}/${project}/${branch}`);
@@ -250,7 +269,6 @@ const adapterConstants = {
     APP_NAME,
     APP_NAME_UNDERSCORED,
     APP_NAME_DASHED,
-    SITE_KEY,
     PORTAL_COMPONENT_ATTRIBUTE,
     PORTAL_REGION_ATTRIBUTE,
 };
