@@ -5,15 +5,19 @@ import adapterConstants, {
     addLocaleHeaders,
     APP_NAME,
     APP_NAME_DASHED,
+    ContentPathItem,
     Context,
     FRAGMENT_CONTENTTYPE_NAME,
     FRAGMENT_DEFAULT_REGION_NAME,
+    GET_STATIC_PATHS_QUERY,
     getContentApiUrl,
     getLocaleProjectConfig,
+    getLocaleProjectConfigs,
     getRenderMode,
     getXpBaseUrl,
     IS_DEV_MODE,
     LocaleProjectConfig,
+    normalizeLocale,
     PAGE_TEMPLATE_CONTENTTYPE_NAME,
     PAGE_TEMPLATE_FOLDER,
     RENDER_MODE,
@@ -22,7 +26,8 @@ import adapterConstants, {
     XP_REQUEST_TYPE,
 } from '../utils';
 import {ComponentDefinition, ComponentRegistry, SelectedQueryMaybeVariablesFunc} from '../ComponentRegistry';
-import {UrlProcessor} from '../UrlProcessor';
+import {getUrl, UrlProcessor} from '../UrlProcessor';
+import {GetStaticPropsResult} from 'next';
 
 type AdapterConstants = {
     APP_NAME: string,
@@ -776,6 +781,10 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
 
     return async (contentPathOrArray: string | string[], context: Context): Promise<FetchContentResult> => {
 
+        if (context.preview) {
+            populateEnonicHeaders(context);
+        }
+
         const headers = {};
         addJsessionHeaders(headers, context);
         addLocaleHeaders(headers, context);
@@ -964,3 +973,86 @@ export const fetchContent: ContentFetcher = buildContentFetcher<AdapterConstants
     ...adapterConstants,
     componentRegistry: ComponentRegistry,
 });
+
+export function createResponse(props: FetchContentResult, context?: Context): GetStaticPropsResult<FetchContentResult> {
+    const {data, meta, error} = props;
+    const pageUrl = data?.get?.data?.target?.pageUrl;
+
+    if (meta.type === 'base:shortcut' && pageUrl) {
+        if (meta.renderMode !== RENDER_MODE.NEXT) {
+            // do not show shortcut targets in preview/edit mode
+            return {
+                notFound: true,
+            };
+        }
+
+        let destination = getUrl(pageUrl, meta);
+        // TODO: temporary fix for locales, but basePath is not handled, because getUrl doesn't have access to router outside of views !
+        if (context.locale !== context.defaultLocale) {
+            destination = `/${context.locale}${destination}`;
+        }
+
+        return {
+            redirect: {
+                statusCode: 307,
+                destination,
+            },
+        };
+    }
+
+    // we can not set 418 for static paths,
+    // but we can show 404 instead to be handled in CS
+    const canNotRender = meta && !meta.canRender && meta.renderMode !== RENDER_MODE.EDIT;
+
+    const catchAllInNextProdMode = meta?.renderMode === RENDER_MODE.NEXT && !IS_DEV_MODE && meta?.catchAll;
+
+    const notFound = (error && error.code === '404') || context.res?.statusCode === 404 || canNotRender || catchAllInNextProdMode || undefined;
+
+    return {
+        notFound,
+        props,
+        revalidate: 3600,   // In seconds, meaning every hour
+    };
+}
+
+function populateEnonicHeaders(context: Context) {
+    const pd = context.previewData;
+    if (!pd) {
+        return;
+    }
+    const req = context.req || {} as any;
+    req.headers = Object.assign(req.headers || {}, pd.headers);
+    context.params = Object.assign(context.params || {}, pd.params);
+    context.req = req;
+}
+
+export async function fetchContentPathsForAllLocales(path: string, query: string = GET_STATIC_PATHS_QUERY, countPerLocale?: number): Promise<ContentPathItem[]> {
+    const promises = Object.values(getLocaleProjectConfigs()).map(config => fetchContentPathsForLocale(path, config, query, countPerLocale));
+    return Promise.all(promises).then(results => {
+        return results.reduce((all, localePaths) => all.concat(localePaths), []);
+    });
+}
+
+export async function fetchContentPathsForLocale(path: string, config: LocaleProjectConfig, query: string = GET_STATIC_PATHS_QUERY, count?: number): Promise<ContentPathItem[]> {
+    const contentApiUrl = getContentApiUrl({locale: config.locale});
+    const body: ContentApiBaseBody = {
+        query,
+        variables: {
+            path,
+            count,
+        },
+    };
+    return fetchGuillotine(contentApiUrl, body, config).then((results: GuillotineResult) => {
+        return results.guillotine.query.reduce((prev: ContentPathItem[], child: any) => {
+            const regexp = new RegExp(`/${child.site?._name}/?`);
+            const contentPath = child._path.replace(regexp, '');
+            prev.push({
+                params: {
+                    contentPath: contentPath.split('/'),
+                },
+                locale: normalizeLocale(config.locale),
+            });
+            return prev;
+        }, []);
+    });
+}
