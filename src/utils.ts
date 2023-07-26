@@ -53,6 +53,24 @@ export const LOCALE_HEADER = 'locale';
 export const LOCALES_HEADER = 'locales';
 export const DEFAULT_LOCALE_HEADER = 'default-locale';
 
+/** excluded contents:
+ * - folder
+ * - shortcuts (redirect can't be used in prerender)
+ * - media
+ * - paths with '/_' in them
+ */
+export const GET_STATIC_PATHS_QUERY = `query ($count: Int = 100){
+  guillotine {
+    query(query: "type != 'base:folder' AND type != 'base:shortcut' AND type NOT LIKE 'media:*' AND _path NOT LIKE '*/_*'", first: $count) {
+      _name
+      _path
+      site {
+        _name
+      }
+    }
+  }
+}`;
+
 
 // ------------------------------- Exports and auxillary functions derived from values above ------------------------------------
 
@@ -115,11 +133,20 @@ export interface MinimalContext {
     locales?: string[];
 }
 
+export interface ContentPathItem {
+    params: { contentPath: string[] },
+    locale?: string,
+}
+
 export const getRenderMode = (context?: MinimalContext): RENDER_MODE => {
     const value = (context?.req?.headers || {})[RENDER_MODE_HEADER] as string | undefined;
     const enumValue = RENDER_MODE[<keyof typeof RENDER_MODE>value?.toUpperCase()];
     return enumValue || RENDER_MODE[process.env.RENDER_MODE] || RENDER_MODE.NEXT;
 };
+
+export function normalizeLocale(locale: string): string | undefined {
+    return locale !== 'default' ? locale : undefined;
+}
 
 export function getLocaleProjectConfig(context?: MinimalContext): LocaleProjectConfig {
     const projectId = (context?.req?.headers || {})[PROJECT_ID_HEADER] as string | undefined;
@@ -141,15 +168,17 @@ export function getLocaleProjectConfig(context?: MinimalContext): LocaleProjectC
     return config;
 }
 
-export function getLocaleProjectConfigById(projectId?: string): LocaleProjectConfig | undefined {
-    if (!projectId) {
-        return;
-    }
+export function getLocaleProjectConfigById(projectId?: string, useDefault = true): LocaleProjectConfig {
     const projects: LocaleProjectConfigs = getLocaleProjectConfigs();
+    if (!projectId) {
+        return useDefault ? projects.default : undefined;
+    }
 
-    return Object.values(projects).find(p => {
+    const match = Object.values(projects).find(p => {
         return p?.project?.toLowerCase() === projectId.toLowerCase();
     });
+
+    return match || (useDefault ? projects.default : undefined);
 }
 
 export function getLocaleProjectConfigs(): LocaleProjectConfigs {
