@@ -1,6 +1,6 @@
 import {commonChars, fixDoubleSlashes, getLocaleProjectConfigs, RENDER_MODE} from './utils';
 import {ImageData, LinkData, MetaData} from './guillotine/getMetaData';
-import {useRouter} from 'next/router';
+import {addBasePath} from 'next/dist/client/add-base-path';
 
 export class UrlProcessor {
 
@@ -19,38 +19,35 @@ export class UrlProcessor {
 
     private static siteKey: string;
 
-    public static process(url: string, meta: MetaData): string {
-        let result;
+    public static process(url: string, meta: MetaData, serverSide = false): string {
         if (this.startsWithHash(url) || !meta || (this.isAttachmentUrl(url)) && meta.renderMode === RENDER_MODE.NEXT) {
             // do not process if:
             // - url starts with #
             // - meta is absent
             // - attachment urls in NEXT mode
-            result = url;
-        } else {
-            const apiUrl = this.getApiUrl(meta);
-            const strippedUrl = this.stripApiUrl(url, apiUrl);
-            let basePath = '';
-            let locale = '';
-            // only add basePath in next
-            if (meta.renderMode === RENDER_MODE.NEXT) {
-                try {
-                    const router = useRouter();
-                    basePath = router.basePath;
-                    // do not append locale to local assets (having relative urls)
-                    if (!this.isRelative(url) && router.locale !== router.defaultLocale) {
-                        locale = router.locale;
-                    }
-                } catch (e) {
-                    console.error('Error accessing nextjs router', e);
-                    result = url;
-                }
-            }
-            const baseUrl = meta?.baseUrl || '';
-            result = fixDoubleSlashes(`${basePath}/${baseUrl}/${locale}/${strippedUrl}`);
+            return url;
         }
 
-        return result;
+        let result: string;
+        const apiUrl = this.getApiUrl(meta);
+        const strippedUrl = this.stripApiUrl(url, apiUrl);
+        const baseUrl = meta?.baseUrl && meta?.baseUrl !== '/' ? meta.baseUrl : '';
+        if (meta.renderMode === RENDER_MODE.NEXT) {
+            // only add basePath and locale in next mode
+            result = `/${strippedUrl}`;
+            if (!this.isRelative(url) && meta.locale !== meta.defaultLocale) {
+                // do not append locale to local assets (having relative urls)
+                result = `/${meta.locale}${result}`;
+            }
+            if (!serverSide) {
+                // no need for baseurl and basepath on server
+                result = addBasePath(`${baseUrl}${result}`);
+            }
+        } else {
+            result = `${baseUrl}/${strippedUrl}`;
+        }
+
+        return fixDoubleSlashes(result);
     }
 
     public static setSiteKey(key: string): void {
@@ -114,5 +111,5 @@ export class UrlProcessor {
 const defaultConfig = getLocaleProjectConfigs().default;
 UrlProcessor.setSiteKey(defaultConfig.site);
 
-export const getUrl: (url: string, meta: MetaData) => string = UrlProcessor.process.bind(UrlProcessor);
+export const getUrl: (url: string, meta: MetaData, serverSide?: boolean) => string = UrlProcessor.process.bind(UrlProcessor);
 
