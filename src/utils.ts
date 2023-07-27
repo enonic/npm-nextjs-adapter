@@ -192,11 +192,7 @@ export function getLocaleProjectConfigs(): LocaleProjectConfigs {
         if (!matches?.length) {
             return config;
         }
-        // eslint-disable-next-line prefer-const
-        let [full, lang, project, site] = matches;
-        if (!lang) {
-            lang = 'default';
-        }
+        let [full, lang='default', project, site] = matches;
         if (project && site) {
             config[lang] = {
                 project,
