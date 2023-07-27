@@ -241,4 +241,6 @@ export interface MetaData {
     catchAll: boolean,
     apiUrl: string,
     baseUrl: string,
+    locale: string,
+    defaultLocale: string,
 }
