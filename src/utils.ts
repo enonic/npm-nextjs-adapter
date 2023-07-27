@@ -192,7 +192,7 @@ export function getLocaleProjectConfigs(): LocaleProjectConfigs {
         if (!matches?.length) {
             return config;
         }
-        let [full, lang='default', project, site] = matches;
+        const [full, lang = 'default', project, site] = matches;
         if (project && site) {
             config[lang] = {
                 project,
