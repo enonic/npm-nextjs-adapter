@@ -44,7 +44,7 @@ export default async (next: (options: any) => any) => {
                 res.end(JSON.stringify({purged: false}));
             } else {
                 const tokenParam = parsedUrl.searchParams.get('token');
-                if (tokenParam !== process.env.API_TOKEN) {
+                if (tokenParam !== process.env.ENONIC_API_TOKEN) {
                     // XP hijacks 401 to show login page, so send 407 instead
                     res.statusCode = 407;
                     res.end(JSON.stringify({message: 'Invalid token'}));
