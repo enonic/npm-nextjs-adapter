@@ -1051,7 +1051,7 @@ export async function fetchContentPathsForLocale(path: string, config: LocalePro
         },
     };
     return fetchGuillotine(contentApiUrl, body, config).then((results: GuillotineResult) => {
-        return results.guillotine.query.reduce((prev: ContentPathItem[], child: any) => {
+        return results.guillotine.queryDsl.reduce((prev: ContentPathItem[], child: any) => {
             const regexp = new RegExp(`/${child.site?._name}/?`);
             const contentPath = child._path.replace(regexp, '');
             prev.push({
