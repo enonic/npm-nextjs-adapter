@@ -59,10 +59,14 @@ export const DEFAULT_LOCALE_HEADER = 'default-locale';
  * - media
  * - paths with '/_' in them
  */
-export const GET_STATIC_PATHS_QUERY = `query ($count: Int = 100) {
+export const GET_STATIC_PATHS_QUERY = `query ($count: Int) {
   guillotine {
     queryDsl(
       first: $count,
+      sort: {
+        field: "modifiedTime",
+        direction: DESC     
+      }
       query: {boolean: {mustNot: [
         {in: {field: "type", stringValues: ["base:folder", "base:shortcut"]}}
         {like: {field: "type", value: {string: "media:*"}}}
