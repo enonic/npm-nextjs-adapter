@@ -20,6 +20,7 @@ import adapterConstants, {
     normalizeLocale,
     PAGE_TEMPLATE_CONTENTTYPE_NAME,
     PAGE_TEMPLATE_FOLDER,
+    PURGE_CACHE_URL,
     RENDER_MODE,
     sanitizeGraphqlName,
     XP_COMPONENT_TYPE,
@@ -804,6 +805,12 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
 
         try {
             const requestContentPath = getCleanContentPathArrayOrThrow400(contentPathOrArray);
+
+            if ('/' + requestContentPath === PURGE_CACHE_URL) {
+                // return 404 for /_/cache/enonic/purge because it should've been handled by standalone endpoint
+                return errorResponse('404', 'Not found', requestType, renderMode, contentApiUrl, xpBaseUrl, context.locale, context.defaultLocale, requestContentPath);
+            }
+
             const [siteRelativeContentPath, componentPath] = getContentAndComponentPaths(requestContentPath, context);
             if (componentPath) {
                 // set component request type because url contains component path
