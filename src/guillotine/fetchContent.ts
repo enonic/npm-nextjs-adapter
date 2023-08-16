@@ -1034,14 +1034,14 @@ function populateEnonicHeaders(context: Context) {
     context.req = req;
 }
 
-export async function fetchContentPathsForAllLocales(path: string, query: string = GET_STATIC_PATHS_QUERY, countPerLocale?: number): Promise<ContentPathItem[]> {
+export async function fetchContentPathsForAllLocales(path: string, query: string = GET_STATIC_PATHS_QUERY, countPerLocale = 999): Promise<ContentPathItem[]> {
     const promises = Object.values(getLocaleProjectConfigs()).map(config => fetchContentPathsForLocale(path, config, query, countPerLocale));
     return Promise.all(promises).then(results => {
         return results.reduce((all, localePaths) => all.concat(localePaths), []);
     });
 }
 
-export async function fetchContentPathsForLocale(path: string, config: LocaleProjectConfig, query: string = GET_STATIC_PATHS_QUERY, count?: number): Promise<ContentPathItem[]> {
+export async function fetchContentPathsForLocale(path: string, config: LocaleProjectConfig, query: string = GET_STATIC_PATHS_QUERY, count = 999): Promise<ContentPathItem[]> {
     const contentApiUrl = getContentApiUrl({locale: config.locale});
     const body: ContentApiBaseBody = {
         query,
