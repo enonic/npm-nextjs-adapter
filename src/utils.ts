@@ -6,6 +6,8 @@ import {IncomingHttpHeaders} from 'http';
 const mode = process.env.MODE || process.env.NEXT_PUBLIC_MODE;
 export const IS_DEV_MODE = (mode === 'development');
 
+export const PURGE_CACHE_URL = '/_/enonic/cache/purge';
+
 export enum ENV_VARS {
     PROJECTS = 'ENONIC_PROJECTS',
     API = 'ENONIC_API',
