@@ -3,7 +3,8 @@ import {LRUCache} from 'lru-cache';
 import {CacheHandler, CacheHandlerContext, CacheHandlerValue} from 'next/dist/server/lib/incremental-cache';
 import {CacheFs} from 'next/dist/shared/lib/utils';
 import {CachedFetchValue, IncrementalCacheValue} from 'next/dist/server/response-cache';
-import {CACHE_ONE_YEAR} from 'next/dist/lib/constants';
+import type {OutgoingHttpHeaders} from 'http';
+import {getDerivedTags} from 'next/dist/server/lib/incremental-cache/utils';
 
 type FileSystemCacheContext = Omit<
     CacheHandlerContext,
@@ -20,18 +21,20 @@ type TagsManifest = {
 let memoryCache: LRUCache<string, CacheHandlerValue> | undefined;
 let tagsManifest: TagsManifest | undefined;
 
-export default class ClearableFileCache implements CacheHandler {
+export default class FileSystemCache implements CacheHandler {
     private fs: FileSystemCacheContext['fs'];
     private flushToDisk?: FileSystemCacheContext['flushToDisk'];
     private serverDistDir: FileSystemCacheContext['serverDistDir'];
     private appDir: boolean;
     private tagsManifestPath?: string;
+    private revalidatedTags: string[];
 
     constructor(ctx: FileSystemCacheContext) {
         this.fs = ctx.fs;
         this.flushToDisk = ctx.flushToDisk;
         this.serverDistDir = ctx.serverDistDir;
         this.appDir = !!ctx._appDir;
+        this.revalidatedTags = ctx.revalidatedTags;
 
         if (ctx.maxMemoryCacheSize && !memoryCache) {
             memoryCache = new LRUCache({
@@ -77,7 +80,7 @@ export default class ClearableFileCache implements CacheHandler {
     }
 
     private loadTagsManifest() {
-        if (!this.tagsManifestPath || !this.fs) return;
+        if (!this.tagsManifestPath || !this.fs || tagsManifest) return;
         try {
             tagsManifest = JSON.parse(
                 this.fs.readFileSync(this.tagsManifestPath).toString('utf8'),
@@ -208,12 +211,28 @@ export default class ClearableFileCache implements CacheHandler {
                                 )
                             ).toString('utf8'),
                         );
+
+                    let meta: { status?: number; headers?: OutgoingHttpHeaders } = {};
+
+                    if (isAppPath) {
+                        try {
+                            meta = JSON.parse(
+                                (
+                                    await this.fs.readFile(filePath.replace(/\.html$/, '.meta'))
+                                ).toString('utf-8'),
+                            );
+                        } catch (_) { /* empty */
+                        }
+                    }
+
                     data = {
                         lastModified: mtime.getTime(),
                         value: {
                             kind: 'PAGE',
                             html: fileData,
                             pageData,
+                            headers: meta.headers,
+                            status: meta.status,
                         },
                     };
                 }
@@ -225,19 +244,56 @@ export default class ClearableFileCache implements CacheHandler {
                 // unable to get data from disk
             }
         }
+        let cacheTags: undefined | string[];
 
-        if (data && data?.value?.kind === 'FETCH') {
+        if (data?.value?.kind === 'PAGE') {
+            const tagsHeader = data.value.headers?.['x-next-cache-tags'];
+
+            if (typeof tagsHeader === 'string') {
+                cacheTags = tagsHeader.split(',');
+            }
+        }
+
+        if (data?.value?.kind === 'PAGE' && cacheTags?.length) {
             this.loadTagsManifest();
-            const innerData = data.value.data;
-            const isStale = innerData.tags?.some((tag) => {
+            const derivedTags = getDerivedTags(cacheTags || []);
+
+            const isStale = derivedTags.some((tag) => {
                 return (
                     tagsManifest?.items[tag]?.revalidatedAt &&
                     tagsManifest?.items[tag].revalidatedAt >=
                     (data?.lastModified || Date.now())
                 );
             });
+
+            // we trigger a blocking validation if an ISR page
+            // had a tag revalidated, if we want to be a background
+            // revalidation instead we return data.lastModified = -1
             if (isStale) {
-                data.lastModified = Date.now() - CACHE_ONE_YEAR;
+                data = undefined;
+            }
+        }
+
+        if (data && data?.value?.kind === 'FETCH') {
+            this.loadTagsManifest();
+            const innerData = data.value.data;
+            const derivedTags = getDerivedTags(innerData.tags || []);
+
+            const wasRevalidated = derivedTags.some((tag) => {
+                if (this.revalidatedTags.includes(tag)) {
+                    return true;
+                }
+
+                return (
+                    tagsManifest?.items[tag]?.revalidatedAt &&
+                    tagsManifest?.items[tag].revalidatedAt >=
+                    (data?.lastModified || Date.now())
+                );
+            });
+            // When revalidate tag is called we don't return
+            // stale data so it's updated right away
+            if (wasRevalidated) {
+                data = undefined;
             }
         }
 
@@ -283,6 +339,16 @@ export default class ClearableFileCache implements CacheHandler {
                 ).filePath,
                 isAppPath ? data.pageData : JSON.stringify(data.pageData),
             );
+
+            if (data.headers || data.status) {
+                await this.fs.writeFile(
+                    htmlPath.replace(/\.html$/, '.meta'),
+                    JSON.stringify({
+                        headers: data.headers,
+                        status: data.status,
+                    }),
+                );
+            }
         } else if (data?.kind === 'FETCH') {
             const {filePath} = await this.getFsPath({
                 pathname: key,
