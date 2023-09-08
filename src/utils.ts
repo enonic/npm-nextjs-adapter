@@ -71,8 +71,8 @@ export const GET_STATIC_PATHS_QUERY = `query ($count: Int) {
       }
       query: {boolean: {mustNot: [
         {in: {field: "type", stringValues: ["base:folder", "base:shortcut"]}}
-        {like: {field: "type", value: {string: "media:*"}}}
-        {like: {field: "_path", value: {string: "*/_*"}}}
+        {like: {field: "type", value: "media:*"}}
+        {like: {field: "_path", value: "*/_*"}}
       ]}}
     ) {
       _name
