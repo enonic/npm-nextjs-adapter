@@ -28,7 +28,7 @@ import adapterConstants, {
 } from '../utils';
 import {ComponentDefinition, ComponentRegistry, SelectedQueryMaybeVariablesFunc} from '../ComponentRegistry';
 import {getUrl, UrlProcessor} from '../UrlProcessor';
-import {GetStaticPropsResult} from 'next';
+import {GetServerSidePropsResult, GetStaticPropsResult} from 'next';
 
 type AdapterConstants = {
     APP_NAME: string,
@@ -991,10 +991,11 @@ export const fetchContent: ContentFetcher = buildContentFetcher<AdapterConstants
     componentRegistry: ComponentRegistry,
 });
 
-export function createResponse(props: FetchContentResult, context?: Context): GetStaticPropsResult<FetchContentResult> {
+export function createResponse(props: FetchContentResult, context?: Context, isStatic?: true): GetStaticPropsResult<FetchContentResult>;
+export function createResponse(props: FetchContentResult, context?: Context, isStatic?: false): GetServerSidePropsResult<FetchContentResult>;
+export function createResponse(props: FetchContentResult, context?: Context, isStatic = true): GetStaticPropsResult<FetchContentResult> | GetServerSidePropsResult<FetchContentResult> {
     const {data, meta, error} = props;
     const pageUrl = data?.get?.data?.target?.pageUrl;
-
     if (meta.type === 'base:shortcut' && pageUrl) {
         if (meta.renderMode !== RENDER_MODE.NEXT) {
             // console.debug(`Returning 404 for shortcut in ${RENDER_MODE.NEXT} mode`);
@@ -1023,11 +1024,16 @@ export function createResponse(props: FetchContentResult, context?: Context): Ge
     const notFound = (error && error.code === '404') || context.res?.statusCode === 404 || canNotRender || catchAllInNextProdMode || undefined;
 
     // console.debug('Returning view ' + (notFound ? '(not found)' : ''));
-    return {
+    const result: GetStaticPropsResult<FetchContentResult> | GetServerSidePropsResult<FetchContentResult> = {
         notFound,
         props,
-        revalidate: 3600,   // In seconds, meaning every hour
     };
+
+    if (isStatic) {
+        (<GetStaticPropsResult<FetchContentResult>>result).revalidate = 3600;   // In seconds, meaning every hour
+    }
+
+    return result;
 }
 
 function populateEnonicHeaders(context: Context) {
