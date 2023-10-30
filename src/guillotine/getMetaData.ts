@@ -127,8 +127,8 @@ export const pageFragmentQuery = () => `
       }`;
 
 export function getMetaQuery(pageFragment?: string): string {
-    return `query($path:ID!){
-              guillotine {
+    return `query($path:ID!, $siteKey: String, $repo: String, $branch: String){
+              guillotine(siteKey: $siteKey, repo: $repo, branch: $branch) {
                 get(key:$path) {
                   _path
                   type

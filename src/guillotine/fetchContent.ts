@@ -11,6 +11,7 @@ import adapterConstants, {
     FRAGMENT_DEFAULT_REGION_NAME,
     GET_STATIC_PATHS_QUERY,
     getContentApiUrl,
+    getContentBranch,
     getLocaleProjectConfig,
     getLocaleProjectConfigs,
     getRenderMode,
@@ -93,7 +94,7 @@ const NO_PROPS_PROCESSOR = async (props: any) => await props ?? {};
 
 const ALIAS_PREFIX = 'request';
 
-const GUILLOTINE_QUERY_REGEXP = /^\s*query\s*(?:\((.*)*\))?\s*{\s*guillotine\s*{((?:.|\s)+)}\s*}\s*$/;
+const GUILLOTINE_QUERY_REGEXP = /^\s*query\s*(?:\(([^)]*)\))?\s*{\s*((?:.|\s)+)\s*}\s*$/;
 
 const GRAPHQL_FRAGMENTS_REGEXP = /fragment\s+.+\s+on\s+.+\s*{[\s\w{}().,:"'`]+}/;
 
@@ -112,7 +113,6 @@ export type ContentApiBaseBody = {
 export const fetchFromApi = async (
     apiUrl: string,
     body: ContentApiBaseBody,
-    projectConfig: LocaleProjectConfig,
     headers?: {},
     method = 'POST',
 ) => {
@@ -121,7 +121,6 @@ export const fetchFromApi = async (
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'X-Guillotine-SiteKey': projectConfig.site,
         },
         body: JSON.stringify(body),
     };
@@ -172,7 +171,6 @@ export const fetchFromApi = async (
 export const fetchGuillotine = async (
     contentApiUrl: string,
     body: ContentApiBaseBody,
-    projectConfig: LocaleProjectConfig,
     headers?: {}): Promise<GuillotineResult> => {
     if (typeof body.query !== 'string' || !body.query.trim()) {
         return {
@@ -187,7 +185,6 @@ export const fetchGuillotine = async (
     const result = await fetchFromApi(
         contentApiUrl,
         body,
-        projectConfig,
         headers,
     )
         .then(json => {
@@ -228,14 +225,17 @@ export const fetchGuillotine = async (
 
 // /////////////////////////////////////////////////////////////////////////////// Specific fetch wrappers:
 
-const fetchMetaData = async (contentApiUrl: string, xpContentPath: string, projectConfig: LocaleProjectConfig, headers?: {}): Promise<MetaResult> => {
+const fetchMetaData = async (contentApiUrl: string, xpContentPath: string, projectConfig: LocaleProjectConfig, branch: string, headers?: {}): Promise<MetaResult> => {
     const body: ContentApiBaseBody = {
         query: getMetaQuery(pageFragmentQuery()),
         variables: {
             path: xpContentPath,
+            siteKey: projectConfig.site,
+            repo: projectConfig.project,
+            branch,
         },
     };
-    const metaResult = await fetchGuillotine(contentApiUrl, body, projectConfig, headers);
+    const metaResult = await fetchGuillotine(contentApiUrl, body, headers);
     if (metaResult.error) {
         return metaResult;
     } else {
@@ -248,19 +248,25 @@ const fetchMetaData = async (contentApiUrl: string, xpContentPath: string, proje
 
 const fetchContentData = async <T>(
     contentApiUrl: string,
-    xpContentPath: string,
     projectConfig: LocaleProjectConfig,
+    branch: string,
     query: string,
     variables?: {},
     headers?: {},
 ): Promise<ContentResult> => {
 
-    const body: ContentApiBaseBody = {query};
+    const body: ContentApiBaseBody = {
+        query,
+        variables: {
+            siteKey: projectConfig.site,
+            repo: projectConfig.project,
+            branch,
+        },
+    };
     if (variables && Object.keys(variables).length > 0) {
-        body.variables = variables;
+        body.variables = Object.assign(body.variables, variables);
     }
-    const contentResults = await fetchGuillotine(contentApiUrl, body, projectConfig, headers);
-
+    const contentResults = await fetchGuillotine(contentApiUrl, body, headers);
     if (contentResults.error) {
         return contentResults;
     } else {
@@ -471,19 +477,19 @@ function combineMultipleQueries(queriesWithVars: ComponentDescriptor[]): QueryAn
             const args = match[1];
             if (args) {
                 args.split(',').forEach(originalParamString => {
-                    const [originalKey, originalVal] = originalParamString.trim().split(':');
+                    const [originalKey, originalVal] = originalParamString.trim().split(':').map(s => s.trim());
                     const [prefixedKey, prefixedVal] = [`$${ALIAS_PREFIX}${index}_${originalKey.substr(1)}`, originalVal];
                     superParams.push(`${prefixedKey}:${prefixedVal}`);
                     // also update param references in query itself !
                     // query = query.replaceAll(originalKey, prefixedKey);
                     // replaceAll is not supported in older nodejs versions
-                    const origKeyPattern = new RegExp(originalKey.replace(/\$/g, '\\$'), 'g');
+                    const origKeyPattern = new RegExp(`\\$${originalKey.replace(/^\$/, '')}`, 'g');
                     query = query.replace(origKeyPattern, prefixedKey);
                 });
             }
         }
         if (query.length) {
-            queries.push(`${ALIAS_PREFIX}${index}:guillotine {${query}}`);
+            queries.push(`${ALIAS_PREFIX}${index}:${query}`);
         }
 
         // Update variables with the same prefixes
@@ -633,9 +639,21 @@ function getQueryAndVariables(type: string,
     }
 
     if (query) {
+        const branch = getContentBranch(context);
+        const localeConfig = getLocaleProjectConfig(context);
+        let variables = {
+            path,
+            repo: localeConfig.project,
+            siteKey: localeConfig.site,
+            branch,
+        };
+        if (getVariables) {
+            variables = Object.assign(variables, getVariables(path, context, config));
+        }
+
         return {
             query,
-            variables: getVariables ? getVariables(path, context, config) : {path},
+            variables,
         };
     }
 }
@@ -796,9 +814,10 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
         addJsessionHeaders(headers, context);
         addLocaleHeaders(headers, context);
         const xpBaseUrl = getXpBaseUrl(context);
-        const contentApiUrl = getContentApiUrl(context);
+        const contentApiUrl = getContentApiUrl();
         const projectConfig = getLocaleProjectConfig(context);
         const renderMode = getRenderMode(context);
+        const branch = getContentBranch(context);
         let requestType = XP_REQUEST_TYPE.TYPE;
 
         UrlProcessor.setSiteKey(projectConfig.site);
@@ -818,7 +837,7 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
             }
 
             // /////////////  FIRST GUILLOTINE CALL FOR METADATA     /////////////////
-            const metaResult = await fetchMetaData(contentApiUrl, '${site}/' + siteRelativeContentPath, projectConfig, headers);
+            const metaResult = await fetchMetaData(contentApiUrl, `${projectConfig.site}/${siteRelativeContentPath}`, projectConfig, branch, headers);
             // ///////////////////////////////////////////////////////////////////////
 
             const {_path, type} = metaResult.meta || {};
@@ -903,7 +922,7 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
             }
 
             // ///////////////    SECOND GUILLOTINE CALL FOR DATA   //////////////////////
-            const contentResults = await fetchContentData(contentApiUrl, contentPath, projectConfig, query, variables, headers);
+            const contentResults = await fetchContentData(contentApiUrl, projectConfig, branch, query, variables, headers);
             // ///////////////////////////////////////////////////////////////////////////
 
             if (contentResults.error) {
@@ -1006,7 +1025,6 @@ export function createResponse(props: FetchContentResult, context?: Context, isS
         }
 
         const destination = getUrl(pageUrl, meta, true);
-        // console.debug('Redirecting to', destination);
         return {
             redirect: {
                 statusCode: 307,
@@ -1023,7 +1041,6 @@ export function createResponse(props: FetchContentResult, context?: Context, isS
 
     const notFound = (error && error.code === '404') || context.res?.statusCode === 404 || canNotRender || catchAllInNextProdMode || undefined;
 
-    // console.debug('Returning view ' + (notFound ? '(not found)' : ''));
     const result: GetStaticPropsResult<FetchContentResult> | GetServerSidePropsResult<FetchContentResult> = {
         notFound,
         props,
@@ -1055,12 +1072,15 @@ export async function fetchContentPathsForAllLocales(path: string, query: string
 }
 
 export async function fetchContentPathsForLocale(path: string, config: LocaleProjectConfig, query: string = GET_STATIC_PATHS_QUERY, count = 999): Promise<ContentPathItem[]> {
-    const contentApiUrl = getContentApiUrl({locale: config.locale});
+    const contentApiUrl = getContentApiUrl();
     const body: ContentApiBaseBody = {
         query,
         variables: {
             path,
             count,
+            repo: config.project,
+            siteKey: config.site,
+            branch: getContentBranch(),
         },
     };
     return fetchGuillotine(contentApiUrl, body, config).then((results: GuillotineResult) => {

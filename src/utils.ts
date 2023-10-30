@@ -61,8 +61,8 @@ export const DEFAULT_LOCALE_HEADER = 'default-locale';
  * - media
  * - paths with '/_' in them
  */
-export const GET_STATIC_PATHS_QUERY = `query ($count: Int) {
-  guillotine {
+export const GET_STATIC_PATHS_QUERY = `query ($count: Int, $repo: String, $siteKey: String, $branch: String) {
+  guillotine(siteKey: $siteKey, repo: $repo, branch: $branch) {
     queryDsl(
       first: $count,
       sort: {
@@ -233,11 +233,12 @@ export function fixDoubleSlashes(str: string) {
     return str.replace(/(^|[^:/])\/{2,}/g, '$1/');
 }
 
-export function getContentApiUrl(context?: MinimalContext): string {
-    const project = getLocaleProjectConfig(context).project;
-    const branch = getRenderMode(context) === RENDER_MODE.NEXT ? 'master' : 'draft';
+export function getContentApiUrl(): string {
+    return API_URL;
+}
 
-    return fixDoubleSlashes(`${API_URL}/${project}/${branch}`);
+export function getContentBranch(context?: MinimalContext): string {
+    return getRenderMode(context) === RENDER_MODE.NEXT ? 'master' : 'draft';
 }
 
 export function addJsessionHeaders(headers: Object = {}, context?: MinimalContext): void {
