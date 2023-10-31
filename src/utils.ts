@@ -2,6 +2,7 @@
 import {GetServerSidePropsContext} from 'next';
 import {ParsedUrlQuery} from 'node:querystring';
 import {IncomingHttpHeaders} from 'http';
+import {queryGuillotine} from './guillotine/getMetaData';
 
 const mode = process.env.MODE || process.env.NEXT_PUBLIC_MODE;
 export const IS_DEV_MODE = (mode === 'development');
@@ -61,9 +62,7 @@ export const DEFAULT_LOCALE_HEADER = 'default-locale';
  * - media
  * - paths with '/_' in them
  */
-export const GET_STATIC_PATHS_QUERY = `query ($count: Int, $repo: String, $siteKey: String, $branch: String) {
-  guillotine(siteKey: $siteKey, repo: $repo, branch: $branch) {
-    queryDsl(
+export const GET_STATIC_PATHS_QUERY = queryGuillotine(`queryDsl(
       first: $count,
       sort: {
         field: "modifiedTime",
@@ -78,9 +77,10 @@ export const GET_STATIC_PATHS_QUERY = `query ($count: Int, $repo: String, $siteK
       _name
       _path
       site {_name}
-    }
-  }
-}`;
+    }`,
+    {
+        '$count': 'Int',
+    });
 
 
 // ------------------------------- Exports and auxillary functions derived from values above ------------------------------------

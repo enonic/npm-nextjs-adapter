@@ -127,15 +127,24 @@ export const pageFragmentQuery = () => `
       }`;
 
 export function getMetaQuery(pageFragment?: string): string {
-    return `query($path:ID!, $siteKey: String, $repo: String, $branch: String){
+    return queryGuillotineWithPath(`get(key:$path) {
+      _path
+      type
+      ${pageFragment || ''}
+    }`);
+}
+
+export function queryGuillotine(query: string, args?: { [key: string]: string }): string {
+    const argsString = args && Object.entries(args).map(([name, type]) => `${name}: ${type}`);
+    return `query($siteKey: String, $repo: String, $branch: String${argsString ? ', ' + argsString.join(', ') : ''}) {
               guillotine(siteKey: $siteKey, repo: $repo, branch: $branch) {
-                get(key:$path) {
-                  _path
-                  type
-                  ${pageFragment || ''}
-                }
+                ${query}
               }
             }`;
+}
+
+export function queryGuillotineWithPath(query: string, args?: { [key: string]: string }): string {
+    return queryGuillotine(query, Object.assign({'$path': 'ID!'}, args));
 }
 
 export interface PageComponent {
