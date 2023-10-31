@@ -1,4 +1,4 @@
-import {commonChars, fixDoubleSlashes, getLocaleProjectConfigs, RENDER_MODE} from './utils';
+import {fixDoubleSlashes, RENDER_MODE} from './utils';
 import {ImageData, LinkData, MetaData} from './guillotine/getMetaData';
 import {addBasePath} from 'next/dist/client/add-base-path';
 
@@ -13,32 +13,24 @@ export class UrlProcessor {
     public static MACRO_ATTR = 'data-macro-ref';
 
     private static IMG_ATMT_REGEXP = /_\/image\/|_\/attachment\//;
-    private static endSlashPattern = /\/+$/;
-    private static startSlashPattern = /^\/+/;
-    private static localhostPattern = /localhost/;
-
-    private static siteKey: string;
 
     public static process(url: string, meta: MetaData, serverSide = false): string {
-        if (this.startsWithHash(url) || !meta || (this.isAttachmentUrl(url)) && meta.renderMode === RENDER_MODE.NEXT) {
+
+        if (this.startsWithHash(url) || this.isAbsolute(url) || !meta) {
             // do not process if:
             // - url starts with #
+            // - url is absolute
             // - meta is absent
-            // - attachment urls in NEXT mode
             return url;
         }
 
-        let result: string;
-        const apiUrl = this.getApiUrl(meta);
-        const strippedUrl = this.stripApiUrl(url, apiUrl);
+        const strippedUrl = url.replace(`/${meta.project}/${meta.branch}/${meta.project}`, '');
         const baseUrl = meta?.baseUrl && meta?.baseUrl !== '/' ? meta.baseUrl : '';
+
+        let result;
         if (meta.renderMode === RENDER_MODE.NEXT) {
             // only add basePath and locale in next mode
             result = `/${strippedUrl}`;
-            if (!this.isRelative(url) && meta.locale !== meta.defaultLocale) {
-                // do not append locale to local assets (having relative urls)
-                result = `/${meta.locale}${result}`;
-            }
             if (!serverSide) {
                 // no need for baseurl and basepath on server
                 result = addBasePath(`${baseUrl}${result}`);
@@ -48,10 +40,6 @@ export class UrlProcessor {
         }
 
         return fixDoubleSlashes(result);
-    }
-
-    public static setSiteKey(key: string): void {
-        this.siteKey = key;
     }
 
     public static isMediaLink(ref: string, linkData: LinkData[]): boolean {
@@ -77,15 +65,6 @@ export class UrlProcessor {
         }).join(', ');
     }
 
-    private static stripApiUrl(url: string, apiUrl: string): string {
-        // normalise localhost-127.0.0.1 if present in urls
-        const normalUrl = url.replace(this.localhostPattern, '127.0.0.1');
-        const normalApiUrl = apiUrl.replace(this.localhostPattern, '127.0.0.1');
-        const common = commonChars(normalUrl, normalApiUrl);
-        const remaining = common.length > 0 ? normalUrl.substring(common.length) : normalUrl;
-        return (remaining.length > 0 && remaining.charAt(0) === '/') ? remaining.substring(1) : remaining;
-    }
-
     private static isAttachmentUrl(url: string): boolean {
         return this.IMG_ATMT_REGEXP.test(url);
     }
@@ -94,22 +73,10 @@ export class UrlProcessor {
         return url?.charAt(0) == '#';
     }
 
-    private static isRelative(url: string): boolean {
-        return !/^(?:ht|f)tps?:\/\/[^ :\r\n\t]+/.test(url);
-    }
-
-    private static getApiUrl(meta: MetaData) {
-        let combinedUrl = meta.apiUrl?.replace(this.endSlashPattern, '') || '';
-        if (this.siteKey?.length) {
-            combinedUrl += '/' + this.siteKey.replace(this.startSlashPattern, '');
-        }
-        return combinedUrl;
+    private static isAbsolute(url: string): boolean {
+        return /^(?:ht|f)tps?:\/\/[^ :\r\n\t]+/.test(url);
     }
 }
-
-// Actual site is going to be set in fetchContent method, but set a default fallback here too
-const defaultConfig = getLocaleProjectConfigs().default;
-UrlProcessor.setSiteKey(defaultConfig.site);
 
 export const getUrl: (url: string, meta: MetaData, serverSide?: boolean) => string = UrlProcessor.process.bind(UrlProcessor);
 

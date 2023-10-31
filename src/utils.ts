@@ -15,7 +15,7 @@ export enum ENV_VARS {
 }
 
 /** URL to the guillotine API */
-const API_URL = (process.env.ENONIC_API || process.env.NEXT_PUBLIC_ENONIC_API);
+export const API_URL = (process.env.ENONIC_API || process.env.NEXT_PUBLIC_ENONIC_API);
 
 /** Locales and Enonic XP projects correspondence list */
 const PROJECTS = (process.env.ENONIC_PROJECTS || process.env.NEXT_PUBLIC_ENONIC_PROJECTS);
@@ -231,10 +231,6 @@ export function getLocaleProjectConfigs(): LocaleProjectConfigs {
 
 export function fixDoubleSlashes(str: string) {
     return str.replace(/(^|[^:/])\/{2,}/g, '$1/');
-}
-
-export function getContentApiUrl(): string {
-    return API_URL;
 }
 
 export function getContentBranch(context?: MinimalContext): string {

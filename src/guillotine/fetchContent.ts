@@ -3,6 +3,7 @@ import {getMetaQuery, MetaData, PageComponent, PageData, pageFragmentQuery, Page
 import adapterConstants, {
     addJsessionHeaders,
     addLocaleHeaders,
+    API_URL,
     APP_NAME,
     APP_NAME_DASHED,
     ContentPathItem,
@@ -10,7 +11,6 @@ import adapterConstants, {
     FRAGMENT_CONTENTTYPE_NAME,
     FRAGMENT_DEFAULT_REGION_NAME,
     GET_STATIC_PATHS_QUERY,
-    getContentApiUrl,
     getContentBranch,
     getLocaleProjectConfig,
     getLocaleProjectConfigs,
@@ -28,7 +28,7 @@ import adapterConstants, {
     XP_REQUEST_TYPE,
 } from '../utils';
 import {ComponentDefinition, ComponentRegistry, SelectedQueryMaybeVariablesFunc} from '../ComponentRegistry';
-import {getUrl, UrlProcessor} from '../UrlProcessor';
+import {getUrl} from '../UrlProcessor';
 import {GetServerSidePropsResult, GetStaticPropsResult} from 'next';
 
 type AdapterConstants = {
@@ -673,13 +673,18 @@ function createPageData(contentType: string, components: PageComponent[], compon
 
 function createMetaData(contentType: string, contentPath: string,
                         requestType: XP_REQUEST_TYPE, renderMode: RENDER_MODE,
-                        apiUrl: string, baseUrl: string,
-                        locale: string, defaultLocale: string,
+                        projectConfig: LocaleProjectConfig,
+                        branch: string, baseUrl: string,
+                        context: Context,
                         requestedComponentPath: string | undefined,
                         pageCmp?: PageComponent, components: PageComponent[] = []): MetaData {
     // .meta will be visible in final rendered inline props.
     // Only adding some .meta attributes here on certain conditions
     // (instead of always adding them and letting them be visible as false/undefined etc)
+
+    const {project, site} = projectConfig;
+    const {locale, defaultLocale} = context;
+
     const meta: MetaData = {
         type: contentType,
         path: contentPath,
@@ -687,7 +692,9 @@ function createMetaData(contentType: string, contentPath: string,
         renderMode: renderMode,
         canRender: false,
         catchAll: false,  // catchAll only refers to content type catch-all
-        apiUrl,
+        branch,
+        project,
+        site,
         baseUrl,
         locale,
         defaultLocale,
@@ -717,7 +724,8 @@ function createMetaData(contentType: string, contentPath: string,
 
 function errorResponse(code = '500', message = 'Unknown error',
                        requestType: XP_REQUEST_TYPE, renderMode: RENDER_MODE,
-                       apiUrl: string, baseUrl: string, locale: string, defaultLocale: string,
+                       project: string, site: string, branch: string,
+                       baseUrl: string, locale: string, defaultLocale: string,
                        contentPath?: string): FetchContentResult {
     return {
         error: {
@@ -734,7 +742,9 @@ function errorResponse(code = '500', message = 'Unknown error',
             path: contentPath || '',
             canRender: false,
             catchAll: false,
-            apiUrl,
+            project,
+            site,
+            branch,
             baseUrl,
             locale,
             defaultLocale,
@@ -789,6 +799,16 @@ const getContentAndComponentPaths = (requestPath: string, context: Context): str
     return [contentPath, componentPath];
 };
 
+const buildErrorHandler = (requestType: XP_REQUEST_TYPE, renderMode: RENDER_MODE,
+                           xpBaseUrl: string, contentPath: string, branch: string,
+                           defaultLocale: string, localeConfig: LocaleProjectConfig): (code: string, msg: string) => FetchContentResult => {
+
+    const {locale, site, project} = localeConfig;
+
+    return (code: string, msg: string) => errorResponse(code, msg, requestType, renderMode, project, site, branch, xpBaseUrl,
+        locale, defaultLocale, contentPath);
+};
+
 // /////////////////////////////  ENTRY 1 - THE BUILDER:
 
 /**
@@ -814,20 +834,20 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
         addJsessionHeaders(headers, context);
         addLocaleHeaders(headers, context);
         const xpBaseUrl = getXpBaseUrl(context);
-        const contentApiUrl = getContentApiUrl();
+        const contentApiUrl = API_URL;
         const projectConfig = getLocaleProjectConfig(context);
         const renderMode = getRenderMode(context);
         const branch = getContentBranch(context);
         let requestType = XP_REQUEST_TYPE.TYPE;
 
-        UrlProcessor.setSiteKey(projectConfig.site);
+        const errorHandler = buildErrorHandler(requestType, renderMode, xpBaseUrl, contentPathOrArray as string, branch, context.defaultLocale, projectConfig);
 
         try {
             const requestContentPath = getCleanContentPathArrayOrThrow400(contentPathOrArray);
 
             if ('/' + requestContentPath === PURGE_CACHE_URL) {
                 // return 404 for /_/cache/enonic/purge because it should've been handled by standalone endpoint
-                return errorResponse('404', 'Not found', requestType, renderMode, contentApiUrl, xpBaseUrl, context.locale, context.defaultLocale, requestContentPath);
+                return errorHandler('404', 'Not found');
             }
 
             const [siteRelativeContentPath, componentPath] = getContentAndComponentPaths(requestContentPath, context);
@@ -845,30 +865,25 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
 
             if (metaResult.error) {
                 console.error(metaResult.error);
-                return errorResponse(metaResult.error.code, metaResult.error.message, requestType, renderMode, contentApiUrl, xpBaseUrl,
-                    context.locale, context.defaultLocale, contentPath);
+                return errorHandler(metaResult.error.code, metaResult.error.message);
             }
 
             if (!metaResult.meta) {
-                return errorResponse('404', 'No meta data found for content, most likely content does not exist', requestType, renderMode,
-                    contentApiUrl, xpBaseUrl, context.locale, context.defaultLocale, contentPath);
+                return errorHandler('404', 'No meta data found for content, most likely content does not exist');
             } else if (!type) {
-                return errorResponse('500', "Server responded with incomplete meta data: missing content 'type' attribute.", requestType,
-                    renderMode, contentApiUrl, xpBaseUrl, context.locale, context.defaultLocale, contentPath);
+                return errorHandler('500', "Server responded with incomplete meta data: missing content 'type' attribute.");
 
             } else if (renderMode === RENDER_MODE.NEXT && !IS_DEV_MODE &&
                 (type === FRAGMENT_CONTENTTYPE_NAME ||
                     type === PAGE_TEMPLATE_CONTENTTYPE_NAME ||
                     type === PAGE_TEMPLATE_FOLDER)) {
-                return errorResponse('404', `Content type [${type}] is not accessible in ${renderMode} mode`, requestType, renderMode,
-                    contentApiUrl, xpBaseUrl, context.locale, context.defaultLocale, contentPath);
+                return errorHandler('404', `Content type [${type}] is not accessible in ${renderMode} mode`);
             }
 
             const components = restrictComponentsToPath(type, metaResult.meta.components, componentPath);
             if (componentPath && !components.length) {
                 // component was not found
-                return errorResponse('404', `Component ${componentPath} was not found`, requestType, renderMode,
-                    contentApiUrl, xpBaseUrl, context.locale, context.defaultLocale, contentPath);
+                return errorHandler('404', `Component ${componentPath} was not found`);
             }
 
             if (requestType !== XP_REQUEST_TYPE.COMPONENT && components.length > 0) {
@@ -917,8 +932,7 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
             const {query, variables} = combineMultipleQueries(allDescriptors);
 
             if (!query.trim()) {
-                return errorResponse('400', `Missing or empty query override for content type ${type}`, requestType, renderMode,
-                    contentApiUrl, xpBaseUrl, context.locale, context.defaultLocale, contentPath);
+                return errorHandler('400', `Missing or empty query override for content type ${type}`);
             }
 
             // ///////////////    SECOND GUILLOTINE CALL FOR DATA   //////////////////////
@@ -927,8 +941,7 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
 
             if (contentResults.error) {
                 console.error(contentResults.error);
-                return errorResponse(contentResults.error.code, contentResults.error.message, requestType, renderMode, contentApiUrl,
-                    xpBaseUrl, context.locale, context.defaultLocale, contentPath);
+                return errorHandler(contentResults.error.code, contentResults.error.message);
             }
 
             // Apply processors to every component
@@ -967,7 +980,8 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
             }
 
             const page = createPageData(type, components);
-            const meta = createMetaData(type, siteRelativeContentPath, requestType, renderMode, contentApiUrl, xpBaseUrl, context.locale, context.defaultLocale, componentPath, page, components);
+            const meta = createMetaData(type, siteRelativeContentPath, requestType, renderMode,
+                projectConfig, branch, xpBaseUrl, context, componentPath, page, components);
 
             return {
                 data: contentData,
@@ -988,8 +1002,7 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
                     message: e.message,
                 };
             }
-            return errorResponse(error.code, error.message, requestType, renderMode, contentApiUrl, xpBaseUrl, context.locale,
-                context.defaultLocale, contentPathOrArray.toString());
+            return errorHandler(error.code, error.message);
         }
     };
 };
@@ -1072,7 +1085,7 @@ export async function fetchContentPathsForAllLocales(path: string, query: string
 }
 
 export async function fetchContentPathsForLocale(path: string, config: LocaleProjectConfig, query: string = GET_STATIC_PATHS_QUERY, count = 999): Promise<ContentPathItem[]> {
-    const contentApiUrl = getContentApiUrl();
+    const contentApiUrl = API_URL;
     const body: ContentApiBaseBody = {
         query,
         variables: {
