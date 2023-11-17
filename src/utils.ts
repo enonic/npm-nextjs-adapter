@@ -29,7 +29,7 @@ export const APP_NAME_UNDERSCORED = (APP_NAME || '').replace(/\./g, '_');
 /** Optional utility value - derived from APP_NAME, only with dashes instead of dots */
 export const APP_NAME_DASHED = (APP_NAME || '').replace(/\./g, '-');
 
-const PROJECT_CONFIG_REGEXP = new RegExp('^(?:([\\w-]+):)?([^\\/\\s]+)(\\/[\\w-.]+)?$', 'i');
+const PROJECT_CONFIG_REGEXP = new RegExp('^([\\w-]+):([^\\/\\s]+)(\\/[\\w-.]+)?$', 'i');
 
 
 // ////////////////////////////////////////////////////////////////////////  Hardcode-able constants
@@ -125,13 +125,13 @@ export interface PreviewParams {
 export type Context = GetServerSidePropsContext<ServerSideParams, PreviewParams>;
 
 export type LocaleProjectConfig = {
+    default: boolean;
     project: string;
     site: string;
     locale: string;
 };
 
 export type LocaleProjectConfigs = {
-    default: LocaleProjectConfig;
     [locale: string]: LocaleProjectConfig;
 };
 
@@ -145,8 +145,10 @@ export interface MinimalContext {
 }
 
 export interface ContentPathItem {
-    params: { contentPath: string[] },
-    locale?: string,
+    params: {
+        contentPath: string[]
+    },
+    locale: string,
 }
 
 export const getRenderMode = (context?: MinimalContext): RENDER_MODE => {
@@ -169,7 +171,7 @@ export function getLocaleProjectConfig(context?: MinimalContext): LocaleProjectC
     const locale = context?.locale || context?.defaultLocale;
     let config: LocaleProjectConfig = projectsConfig[locale];
     if (!config) {
-        config = projectsConfig.default;
+        config = getLocaleProjectConfigById();
     }
     if (!config) {
         throw new Error(`No config for locale "${locale}" found in "${ENV_VARS.PROJECTS}" environmental variable.
@@ -181,15 +183,16 @@ export function getLocaleProjectConfig(context?: MinimalContext): LocaleProjectC
 
 export function getLocaleProjectConfigById(projectId?: string, useDefault = true): LocaleProjectConfig {
     const projects: LocaleProjectConfigs = getLocaleProjectConfigs();
+    const defaultConfig = Object.values(projects).find(config => config.default);
     if (!projectId) {
-        return useDefault ? projects.default : undefined;
+        return useDefault ? defaultConfig : undefined;
     }
 
     const match = Object.values(projects).find(p => {
         return p?.project?.toLowerCase() === projectId.toLowerCase();
     });
 
-    return match || (useDefault ? projects.default : undefined);
+    return match || (useDefault ? defaultConfig : undefined);
 }
 
 export function getLocaleProjectConfigs(): LocaleProjectConfigs {
@@ -198,14 +201,15 @@ export function getLocaleProjectConfigs(): LocaleProjectConfigs {
     if (!str?.length) {
         throw Error(`"${envVarName}" environmental variable is required.`);
     }
-    const result: LocaleProjectConfigs = str.split(',').reduce((config, prjStr) => {
+    const result: LocaleProjectConfigs = str.split(',').reduce((config, prjStr, index: number) => {
         const matches: RegExpExecArray = PROJECT_CONFIG_REGEXP.exec(prjStr?.trim());
         if (!matches?.length) {
             return config;
         }
-        const [full, lang = 'default', project, site] = matches;
+        const [full, lang, project, site] = matches;
         if (project && site) {
             config[lang] = {
+                default: index === 0,
                 project,
                 site,
                 locale: lang,
@@ -215,17 +219,7 @@ export function getLocaleProjectConfigs(): LocaleProjectConfigs {
             Format: <default-repository-name>/<site-path>,<language>:<repository-name>/<site-path>,...`);
         }
         return config;
-    }, {
-        default: {
-            project: '',
-            site: '',
-            locale: '',
-        },
-    });
-    if (!result.default.site || !result.default.project) {
-        throw Error(`"${envVarName}" environmental variable should contain default value.
-        Format: <default-repository-name>/<site-path>,<language>:<repository-name>/<site-path>,...`);
-    }
+    }, {});
     return result;
 }
 

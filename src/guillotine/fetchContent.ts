@@ -198,8 +198,7 @@ export const fetchGuillotine = async (
                     errors = [errors];
                 }
                 console.error(`${errors.length} error(s) when fetching data from: ${contentApiUrl}`);
-                console.error(`headers: ${JSON.stringify(headers, null, 2)}
-                variables: ${JSON.stringify(body.variables, null, 2)}`);
+                console.error(`headers: ${JSON.stringify(headers, null, 2)} \nvariables: ${JSON.stringify(body.variables, null, 2)}`);
                 errors.forEach(error => {
                     console.error(error);
                 });
@@ -788,7 +787,7 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
 
     return async (contentPathOrArray: string | string[], context: Context): Promise<FetchContentResult> => {
 
-        if (context.preview) {
+        if (context?.preview) {
             populateEnonicHeaders(context);
         }
 
@@ -808,7 +807,7 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
 
             if ('/' + requestContentPath === PURGE_CACHE_URL) {
                 // return 404 for /_/cache/enonic/purge because it should've been handled by standalone endpoint
-                return errorResponse('404', 'Not found', requestType, renderMode, contentApiUrl, xpBaseUrl, context.locale, context.defaultLocale, requestContentPath);
+                return errorResponse('404', 'Not found', requestType, renderMode, contentApiUrl, xpBaseUrl, context?.locale, context?.defaultLocale, requestContentPath);
             }
 
             const [siteRelativeContentPath, componentPath] = getContentAndComponentPaths(requestContentPath, context);
@@ -827,29 +826,29 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
             if (metaResult.error) {
                 console.error(metaResult.error);
                 return errorResponse(metaResult.error.code, metaResult.error.message, requestType, renderMode, contentApiUrl, xpBaseUrl,
-                    context.locale, context.defaultLocale, contentPath);
+                    context?.locale, context?.defaultLocale, contentPath);
             }
 
             if (!metaResult.meta) {
                 return errorResponse('404', 'No meta data found for content, most likely content does not exist', requestType, renderMode,
-                    contentApiUrl, xpBaseUrl, context.locale, context.defaultLocale, contentPath);
+                    contentApiUrl, xpBaseUrl, context?.locale, context?.defaultLocale, contentPath);
             } else if (!type) {
                 return errorResponse('500', "Server responded with incomplete meta data: missing content 'type' attribute.", requestType,
-                    renderMode, contentApiUrl, xpBaseUrl, context.locale, context.defaultLocale, contentPath);
+                    renderMode, contentApiUrl, xpBaseUrl, context?.locale, context?.defaultLocale, contentPath);
 
             } else if (renderMode === RENDER_MODE.NEXT && !IS_DEV_MODE &&
                 (type === FRAGMENT_CONTENTTYPE_NAME ||
                     type === PAGE_TEMPLATE_CONTENTTYPE_NAME ||
                     type === PAGE_TEMPLATE_FOLDER)) {
                 return errorResponse('404', `Content type [${type}] is not accessible in ${renderMode} mode`, requestType, renderMode,
-                    contentApiUrl, xpBaseUrl, context.locale, context.defaultLocale, contentPath);
+                    contentApiUrl, xpBaseUrl, context?.locale, context?.defaultLocale, contentPath);
             }
 
             const components = restrictComponentsToPath(type, metaResult.meta.components, componentPath);
             if (componentPath && !components.length) {
                 // component was not found
                 return errorResponse('404', `Component ${componentPath} was not found`, requestType, renderMode,
-                    contentApiUrl, xpBaseUrl, context.locale, context.defaultLocale, contentPath);
+                    contentApiUrl, xpBaseUrl, context?.locale, context?.defaultLocale, contentPath);
             }
 
             if (requestType !== XP_REQUEST_TYPE.COMPONENT && components.length > 0) {
@@ -899,7 +898,7 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
 
             if (!query.trim()) {
                 return errorResponse('400', `Missing or empty query override for content type ${type}`, requestType, renderMode,
-                    contentApiUrl, xpBaseUrl, context.locale, context.defaultLocale, contentPath);
+                    contentApiUrl, xpBaseUrl, context?.locale, context?.defaultLocale, contentPath);
             }
 
             // ///////////////    SECOND GUILLOTINE CALL FOR DATA   //////////////////////
@@ -909,7 +908,7 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
             if (contentResults.error) {
                 console.error(contentResults.error);
                 return errorResponse(contentResults.error.code, contentResults.error.message, requestType, renderMode, contentApiUrl,
-                    xpBaseUrl, context.locale, context.defaultLocale, contentPath);
+                    xpBaseUrl, context?.locale, context?.defaultLocale, contentPath);
             }
 
             // Apply processors to every component
@@ -948,7 +947,7 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
             }
 
             const page = createPageData(type, components);
-            const meta = createMetaData(type, siteRelativeContentPath, requestType, renderMode, contentApiUrl, xpBaseUrl, context.locale, context.defaultLocale, componentPath, page, components);
+            const meta = createMetaData(type, siteRelativeContentPath, requestType, renderMode, contentApiUrl, xpBaseUrl, context?.locale, context?.defaultLocale, componentPath, page, components);
 
             return {
                 data: contentData,
@@ -969,8 +968,8 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
                     message: e.message,
                 };
             }
-            return errorResponse(error.code, error.message, requestType, renderMode, contentApiUrl, xpBaseUrl, context.locale,
-                context.defaultLocale, contentPathOrArray.toString());
+            return errorResponse(error.code, error.message, requestType, renderMode, contentApiUrl, xpBaseUrl, context?.locale,
+                context?.defaultLocale, contentPathOrArray.toString());
         }
     };
 };
