@@ -4,7 +4,6 @@ import {IS_DEV_MODE, PORTAL_COMPONENT_ATTRIBUTE, RENDER_MODE, XP_COMPONENT_TYPE}
 import {MetaData, PageComponent} from '../guillotine/getMetaData';
 import {ComponentRegistry} from '../ComponentRegistry';
 import Empty from './Empty';
-import * as ReactDOMServer from 'react-dom/server';
 
 
 export type BaseComponentProps = {
@@ -14,7 +13,7 @@ export type BaseComponentProps = {
     // TODO: Use a react contextprovider instead of "manually" passing everything down
 };
 
-const BaseComponent = ({component, meta, common}: BaseComponentProps) => {
+const BaseComponent = async ({component, meta, common}: BaseComponentProps) => {
     const {type, error} = component;
     const cmpData = component[type];
     const descriptor = cmpData && 'descriptor' in cmpData ? cmpData.descriptor : undefined;
@@ -42,8 +41,8 @@ const BaseComponent = ({component, meta, common}: BaseComponentProps) => {
 
     // need to display a placeholder if descriptor is empty as component is not initialized yet
     if (descriptor && shouldShowPlaceholderView(meta)) {
-        const outputHTML = ReactDOMServer.renderToString(ComponentView);
-        if (!outputHTML || outputHTML.trim().length === 0) {
+        const outputHTML = await renderComponent(ComponentView);
+        if (!outputHTML?.trim().length) {
             // render some placeholder in case of empty output
             ComponentView = <PlaceholderComponent type={type} descriptor={descriptor}/>;
         }
@@ -75,6 +74,13 @@ export const MissingComponent = ({descriptor, type}: { descriptor?: string, type
             <p style={{marginBottom: 0, color: 'grey'}}>{`Missing ${type} with descriptor: ${descriptor}`}</p>
         </div>
     );
+};
+
+// Have to import it dynamically because of this issue:
+// https://github.com/vercel/next.js/issues/43810
+const renderComponent = async (component: React.ReactElement) => {
+    const ReactDOMServer = (await import('react-dom/server')).default;
+    return ReactDOMServer.renderToStaticMarkup(component);
 };
 
 export function shouldShowMissingView(meta: MetaData): boolean {
