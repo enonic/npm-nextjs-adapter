@@ -15,7 +15,7 @@
   "dependencies": {
     "html-react-parser": "^5.0.1",
     "lru-cache": "^10.0.1",
-    "next": "14.0.0",
+    "next": "13.4.12",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "unescape": "^1.0.1"
@@ -26,7 +26,7 @@
     "@types/react": "18.2.33",
     "@types/react-dom": "18.2.14",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
-    "@typescript-eslint/parser": "^5.62.0",
+    "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.52.0",
     "eslint-plugin-react": "^7.33.2",
     "typescript": "^5.2.2"

@@ -2,6 +2,7 @@
 import {GetServerSidePropsContext} from 'next';
 import {ParsedUrlQuery} from 'node:querystring';
 import {IncomingHttpHeaders} from 'http';
+import {queryGuillotine} from './guillotine/getMetaData';
 
 const mode = process.env.MODE || process.env.NEXT_PUBLIC_MODE;
 export const IS_DEV_MODE = (mode === 'development');
@@ -15,7 +16,7 @@ export enum ENV_VARS {
 }
 
 /** URL to the guillotine API */
-const API_URL = (process.env.ENONIC_API || process.env.NEXT_PUBLIC_ENONIC_API);
+export const API_URL = (process.env.ENONIC_API || process.env.NEXT_PUBLIC_ENONIC_API);
 
 /** Locales and Enonic XP projects correspondence list */
 const PROJECTS = (process.env.ENONIC_PROJECTS || process.env.NEXT_PUBLIC_ENONIC_PROJECTS);
@@ -61,9 +62,7 @@ export const DEFAULT_LOCALE_HEADER = 'default-locale';
  * - media
  * - paths with '/_' in them
  */
-export const GET_STATIC_PATHS_QUERY = `query ($count: Int) {
-  guillotine {
-    queryDsl(
+export const GET_STATIC_PATHS_QUERY = queryGuillotine(`queryDsl(
       first: $count,
       sort: {
         field: "modifiedTime",
@@ -78,9 +77,10 @@ export const GET_STATIC_PATHS_QUERY = `query ($count: Int) {
       _name
       _path
       site {_name}
-    }
-  }
-}`;
+    }`,
+    {
+        '$count': 'Int',
+    });
 
 
 // ------------------------------- Exports and auxillary functions derived from values above ------------------------------------
@@ -233,11 +233,8 @@ export function fixDoubleSlashes(str: string) {
     return str.replace(/(^|[^:/])\/{2,}/g, '$1/');
 }
 
-export function getContentApiUrl(context?: MinimalContext): string {
-    const project = getLocaleProjectConfig(context).project;
-    const branch = getRenderMode(context) === RENDER_MODE.NEXT ? 'master' : 'draft';
-
-    return fixDoubleSlashes(`${API_URL}/${project}/${branch}`);
+export function getContentBranch(context?: MinimalContext): string {
+    return getRenderMode(context) === RENDER_MODE.NEXT ? 'master' : 'draft';
 }
 
 export function addJsessionHeaders(headers: Object = {}, context?: MinimalContext): void {
