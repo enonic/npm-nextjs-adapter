@@ -1,12 +1,11 @@
 /** Import config values from .env, .env.development and .env.production */
-import {GetServerSidePropsContext} from 'next';
 import {ParsedUrlQuery} from 'node:querystring';
-import {IncomingHttpHeaders} from 'http';
+import {ReadonlyHeaders} from 'next/dist/server/web/spec-extension/adapters/headers';
+import Negotiator from 'negotiator';
+import {match as localeMatcher} from '@formatjs/intl-localematcher';
 
 const mode = process.env.MODE || process.env.NEXT_PUBLIC_MODE;
 export const IS_DEV_MODE = (mode === 'development');
-
-export const PURGE_CACHE_URL = '/_/enonic/cache/purge';
 
 export enum ENV_VARS {
     PROJECTS = 'ENONIC_PROJECTS',
@@ -122,86 +121,117 @@ export interface PreviewParams {
     params: Record<string, string>;
 }
 
-export type Context = GetServerSidePropsContext<ServerSideParams, PreviewParams>;
+export type Context = {
+    headers?: ReadonlyHeaders | Headers;
+    locale?: string;
+    contentPath: string | string[],
+};
 
-export type LocaleProjectConfig = {
+export type ProjectLocaleConfig = {
     default: boolean;
     project: string;
     site: string;
     locale: string;
 };
 
-export type LocaleProjectConfigs = {
-    [locale: string]: LocaleProjectConfig;
+export type ProjectLocalesConfig = {
+    [locale: string]: ProjectLocaleConfig;
 };
 
-export interface MinimalContext {
-    req?: {
-        headers: IncomingHttpHeaders;
-    }
-    locale?: string;
-    defaultLocale?: string;
-    locales?: string[];
-}
-
 export interface ContentPathItem {
-    params: {
-        contentPath: string[]
-    },
+    contentPath: string[]
     locale: string,
 }
 
-export const getRenderMode = (context?: MinimalContext): RENDER_MODE => {
-    const value = (context?.req?.headers || {})[RENDER_MODE_HEADER] as string | undefined;
+export const getRenderMode = (context: Context): RENDER_MODE => {
+    const value = context.headers?.get(RENDER_MODE_HEADER);
     const enumValue = RENDER_MODE[<keyof typeof RENDER_MODE>value?.toUpperCase()];
     return enumValue || RENDER_MODE[process.env.RENDER_MODE] || RENDER_MODE.NEXT;
 };
 
-export function normalizeLocale(locale: string): string | undefined {
-    return locale !== 'default' ? locale : undefined;
+export function getRequestLocaleInfo(context: Context) {
+    let locale: string;
+
+    const projectId = context.headers?.get(PROJECT_ID_HEADER);
+    if (projectId) {
+        locale = getProjectLocaleConfigById(projectId, false)?.locale;
+    }
+
+    if (!locale) {
+        locale = context.locale;
+    }
+
+    const configs = getProjectLocaleConfigs();
+    const locales = Object.keys(configs);
+    const defaultLocale = locales.find((locale) => configs[locale].default)!;
+    if (!locale) {
+        const acceptLang = context.headers?.get('accept-language') || '';
+        const langs = new Negotiator({headers: {'accept-language': acceptLang}}).languages();
+        locale = localeMatcher(langs, locales, defaultLocale);
+    }
+
+    return {locale, locales, defaultLocale};
 }
 
-export function getLocaleProjectConfig(context?: MinimalContext): LocaleProjectConfig {
-    const projectId = (context?.req?.headers || {})[PROJECT_ID_HEADER] as string | undefined;
-    if (projectId) {
-        return getLocaleProjectConfigById(projectId);
-    }
+export function getProjectLocaleConfig(context: Context): ProjectLocaleConfig {
+    const projectId = context.headers?.get(PROJECT_ID_HEADER);
 
-    const projectsConfig = getLocaleProjectConfigs();
-    const locale = context?.locale || context?.defaultLocale;
-    let config: LocaleProjectConfig = projectsConfig[locale];
-    if (!config) {
-        config = getLocaleProjectConfigById();
+    let config: ProjectLocaleConfig;
+    if (projectId) {
+        // first use project id header
+        config = getProjectLocaleConfigById(projectId, false);
     }
     if (!config) {
-        throw new Error(`No config for locale "${locale}" found in "${ENV_VARS.PROJECTS}" environmental variable.
-        Format: <default-repository-name>/<site-path>,<language>:<repository-name>/<site-path>,...`);
+        // next try to use locale from url
+        // it will fall back to default locale if not found
+        config = getProjectLocaleConfigByLocale(context.locale);
     }
 
     return config;
 }
 
-export function getLocaleProjectConfigById(projectId?: string, useDefault = true): LocaleProjectConfig {
-    const projects: LocaleProjectConfigs = getLocaleProjectConfigs();
-    const defaultConfig = Object.values(projects).find(config => config.default);
-    if (!projectId) {
-        return useDefault ? defaultConfig : undefined;
-    }
-
-    const match = Object.values(projects).find(p => {
-        return p?.project?.toLowerCase() === projectId.toLowerCase();
-    });
-
-    return match || (useDefault ? defaultConfig : undefined);
+export function getProjectLocales(): string[] {
+    return Object.keys(getProjectLocaleConfigs());
 }
 
-export function getLocaleProjectConfigs(): LocaleProjectConfigs {
+export function getProjectLocaleConfigById(projectId?: string, useDefault = true): ProjectLocaleConfig {
+    const configs = getProjectLocaleConfigs();
+
+    let config: ProjectLocaleConfig;
+    if (projectId) {
+        config = Object.values(configs).find(p => {
+            return p?.project?.toLowerCase() === projectId.toLowerCase();
+        });
+    }
+    if (!config && useDefault) {
+        config = Object.values(configs).find(c => c.default);
+    }
+
+    return config;
+}
+
+export function getProjectLocaleConfigByLocale(locale?: string, useDefault = true): ProjectLocaleConfig {
+    const configs = getProjectLocaleConfigs();
+
+    let config: ProjectLocaleConfig;
+    if (locale) {
+        config = configs[locale];
+    }
+    if (!config && useDefault) {
+        config = Object.values(configs).find(c => c.default);
+    }
+
+    return config;
+}
+
+export function getProjectLocaleConfigs(): ProjectLocalesConfig {
     const str = PROJECTS;
     const envVarName = ENV_VARS.PROJECTS;
     if (!str?.length) {
-        throw Error(`"${envVarName}" environmental variable is required.`);
+        throw new Error(`Did you forget to define "${ENV_VARS.PROJECTS}" environmental variable?
+        Format: <default-language>:<default-repository-name>/<default-site-path>,<language>:<repository-name>/<site-path>,...`);
     }
-    const result: LocaleProjectConfigs = str.split(',').reduce((config, prjStr, index: number) => {
+    return str.split(',').reduce((config, prjStr, index: number) => {
         const matches: RegExpExecArray = PROJECT_CONFIG_REGEXP.exec(prjStr?.trim());
         if (!matches?.length) {
             return config;
@@ -216,48 +246,38 @@ export function getLocaleProjectConfigs(): LocaleProjectConfigs {
             };
         } else {
             throw Error(`Wrong configuration in "${envVarName}": ${prjStr}.
-            Format: <default-repository-name>/<site-path>,<language>:<repository-name>/<site-path>,...`);
+            Format: <default-language>:<default-repository-name>/<default-site-path>,<language>:<repository-name>/<site-path>,...`);
         }
         return config;
     }, {});
-    return result;
 }
 
 export function fixDoubleSlashes(str: string) {
     return str.replace(/(^|[^:/])\/{2,}/g, '$1/');
 }
 
-export function getContentApiUrl(context?: MinimalContext): string {
-    const project = getLocaleProjectConfig(context).project;
+export function getContentApiUrl(context: Context): string {
+    const project = getProjectLocaleConfig(context).project;
     const branch = getRenderMode(context) === RENDER_MODE.NEXT ? 'master' : 'draft';
 
     return fixDoubleSlashes(`${API_URL}/${project}/${branch}`);
 }
 
-export function addJsessionHeaders(headers: Object = {}, context?: MinimalContext): void {
-    const jsessionid = context?.req?.headers[JSESSIONID_HEADER];
+export function addJsessionHeaders(target: Object = {}, context: Context): void {
+    const jsessionid = context.headers?.get(JSESSIONID_HEADER);
     if (jsessionid) {
-        headers['Cookie'] = `${JSESSIONID_HEADER}=${jsessionid}`;
+        target['Cookie'] = `${JSESSIONID_HEADER}=${jsessionid}`;
     }
 }
 
-export function addLocaleHeaders(headers: Object = {}, context?: Context): void {
-    const locale = context?.locale;
-    if (locale) {
-        headers[LOCALE_HEADER] = locale;
-    }
-    const locales = context?.locales;
-    if (locales) {
-        headers[LOCALES_HEADER] = JSON.stringify(locales);
-    }
-    const defaultLocale = context?.defaultLocale;
-    if (defaultLocale) {
-        headers[DEFAULT_LOCALE_HEADER] = defaultLocale;
-    }
+export function addLocaleHeaders(target: Object = {}, locale: string, locales: string[], defaultLocale: string): void {
+    target[LOCALE_HEADER] = locale;
+    target[LOCALES_HEADER] = JSON.stringify(locales);
+    target[DEFAULT_LOCALE_HEADER] = defaultLocale;
 }
 
-export const getXpBaseUrl = (context?: MinimalContext): string => {
-    const header = ((context?.req?.headers || {})[XP_BASE_URL_HEADER] || '') as string;
+export const getXpBaseUrl = (context: Context): string => {
+    const header = context.headers?.get(XP_BASE_URL_HEADER) || '';
 
     // TODO: workaround for XP pattern controller mapping not picked up in edit mode
     return (header || '/').replace(/\/edit\//, '/inline/');

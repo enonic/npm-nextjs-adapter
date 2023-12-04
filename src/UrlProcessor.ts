@@ -1,4 +1,4 @@
-import {commonChars, fixDoubleSlashes, getLocaleProjectConfigById, RENDER_MODE} from './utils';
+import {commonChars, fixDoubleSlashes, getProjectLocaleConfigById, RENDER_MODE} from './utils';
 import {ImageData, LinkData, MetaData} from './guillotine/getMetaData';
 import {addBasePath} from 'next/dist/client/add-base-path';
 
@@ -108,7 +108,7 @@ export class UrlProcessor {
 }
 
 // Actual site is going to be set in fetchContent method, but set a default fallback here too
-const defaultConfig = getLocaleProjectConfigById();
+const defaultConfig = getProjectLocaleConfigById();
 UrlProcessor.setSiteKey(defaultConfig.site);
 
 export const getUrl: (url: string, meta: MetaData, serverSide?: boolean) => string = UrlProcessor.process.bind(UrlProcessor);

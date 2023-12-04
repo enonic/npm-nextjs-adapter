@@ -13,8 +13,10 @@
     "lint:fix": "eslint --fix src"
   },
   "dependencies": {
+    "@formatjs/intl-localematcher": "^0.5.2",
     "html-react-parser": "^5.0.1",
     "lru-cache": "^10.0.1",
+    "negotiator": "^0.6.3",
     "next": "^14.0.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -22,6 +24,7 @@
   },
   "devDependencies": {
     "@enonic/eslint-config": "^1.1.0",
+    "@types/negotiator": "^0.6.3",
     "@types/node": "^20.8.9",
     "@types/react": "18.2.33",
     "@types/react-dom": "18.2.14",

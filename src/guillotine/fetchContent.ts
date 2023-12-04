@@ -11,16 +11,15 @@ import adapterConstants, {
     FRAGMENT_DEFAULT_REGION_NAME,
     GET_STATIC_PATHS_QUERY,
     getContentApiUrl,
-    getLocaleProjectConfig,
-    getLocaleProjectConfigs,
+    getProjectLocaleConfig,
+    getProjectLocaleConfigs,
     getRenderMode,
+    getRequestLocaleInfo,
     getXpBaseUrl,
     IS_DEV_MODE,
-    LocaleProjectConfig,
-    normalizeLocale,
     PAGE_TEMPLATE_CONTENTTYPE_NAME,
     PAGE_TEMPLATE_FOLDER,
-    PURGE_CACHE_URL,
+    ProjectLocaleConfig,
     RENDER_MODE,
     sanitizeGraphqlName,
     XP_COMPONENT_TYPE,
@@ -28,7 +27,8 @@ import adapterConstants, {
 } from '../utils';
 import {ComponentDefinition, ComponentRegistry, SelectedQueryMaybeVariablesFunc} from '../ComponentRegistry';
 import {getUrl, UrlProcessor} from '../UrlProcessor';
-import {GetServerSidePropsResult, GetStaticPropsResult} from 'next';
+import {notFound, redirect, RedirectType} from 'next/navigation';
+import {draftMode, headers} from 'next/headers';
 
 type AdapterConstants = {
     APP_NAME: string,
@@ -87,7 +87,7 @@ interface QueryAndVariables {
  * @param contentPath string or string array: pre-split or slash-delimited _path to a content available on the API
  * @returns FetchContentResult object: {data?: T, error?: {code, message}}
  */
-export type ContentFetcher = (contentPath: string | string[], context?: Context) => Promise<FetchContentResult>;
+export type ContentFetcher = (context: Context) => Promise<FetchContentResult>;
 
 const NO_PROPS_PROCESSOR = async (props: any) => await props ?? {};
 
@@ -112,7 +112,7 @@ export type ContentApiBaseBody = {
 export const fetchFromApi = async (
     apiUrl: string,
     body: ContentApiBaseBody,
-    projectConfig: LocaleProjectConfig,
+    projectConfig: ProjectLocaleConfig,
     headers?: {},
     method = 'POST',
 ) => {
@@ -172,7 +172,7 @@ export const fetchFromApi = async (
 export const fetchGuillotine = async (
     contentApiUrl: string,
     body: ContentApiBaseBody,
-    projectConfig: LocaleProjectConfig,
+    projectConfig: ProjectLocaleConfig,
     headers?: {}): Promise<GuillotineResult> => {
     if (typeof body.query !== 'string' || !body.query.trim()) {
         return {
@@ -227,7 +227,7 @@ export const fetchGuillotine = async (
 
 // /////////////////////////////////////////////////////////////////////////////// Specific fetch wrappers:
 
-const fetchMetaData = async (contentApiUrl: string, xpContentPath: string, projectConfig: LocaleProjectConfig, headers?: {}): Promise<MetaResult> => {
+const fetchMetaData = async (contentApiUrl: string, xpContentPath: string, projectConfig: ProjectLocaleConfig, headers?: {}): Promise<MetaResult> => {
     const body: ContentApiBaseBody = {
         query: getMetaQuery(pageFragmentQuery()),
         variables: {
@@ -248,7 +248,7 @@ const fetchMetaData = async (contentApiUrl: string, xpContentPath: string, proje
 const fetchContentData = async <T>(
     contentApiUrl: string,
     xpContentPath: string,
-    projectConfig: LocaleProjectConfig,
+    projectConfig: ProjectLocaleConfig,
     query: string,
     variables?: {},
     headers?: {},
@@ -505,7 +505,7 @@ function combineMultipleQueries(queriesWithVars: ComponentDescriptor[]): QueryAn
 }
 
 async function applyProcessors(componentDescriptors: ComponentDescriptor[], contentResults: ContentResult,
-                               context?: Context): Promise<PromiseSettledResult<any>[]> {
+                               context: Context): Promise<PromiseSettledResult<any>[]> {
 
     let dataCounter = 0;
     const processorPromises = componentDescriptors.map(async (desc: ComponentDescriptor) => {
@@ -535,7 +535,7 @@ function getComponentConfig(cmp?: PageComponent) {
 function collectComponentDescriptors(components: PageComponent[],
                                      componentRegistry: typeof ComponentRegistry,
                                      xpContentPath: string,
-                                     context: Context | undefined,
+                                     context: Context,
 ): ComponentDescriptor[] {
 
     const descriptors: ComponentDescriptor[] = [];
@@ -549,7 +549,7 @@ function collectComponentDescriptors(components: PageComponent[],
             if (cmpDef) {
                 // const partPath = `${xpContentPath}/_component${cmp.path}`;
                 const config = getComponentConfig(cmp);
-                const queryAndVariables = getQueryAndVariables(cmp.type, xpContentPath, cmpDef.query, context, config);
+                const queryAndVariables = getQueryAndVariables(cmp.type, xpContentPath, context, cmpDef.query, config);
                 if (queryAndVariables) {
                     descriptors.push({
                         component: cmp,
@@ -601,8 +601,8 @@ function processComponentConfig(myAppName: string, myAppNameDashed: string, cmp:
 
 function getQueryAndVariables(type: string,
                               path: string,
+                              context: Context,
                               selectedQuery?: SelectedQueryMaybeVariablesFunc,
-                              context?: Context,
                               config?: any): QueryAndVariables | undefined {
 
     let query, getVariables;
@@ -760,7 +760,7 @@ function restrictComponentsToPath(contentType: string, components?: PageComponen
 
 const COMPONENT_PATH_KEY = /\/?_\/component/;   // first slash is optional for root components
 
-const getContentAndComponentPaths = (requestPath: string, context: Context): string[] => {
+const getContentAndComponentPaths = (requestPath: string): string[] => {
     let contentPath, componentPath;
     if (COMPONENT_PATH_KEY.test(requestPath)) {
         [contentPath, componentPath] = requestPath.split(COMPONENT_PATH_KEY);
@@ -785,39 +785,39 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
         componentRegistry,
     } = config;
 
-    return async (contentPathOrArray: string | string[], context: Context): Promise<FetchContentResult> => {
+    return async (context: Context): Promise<FetchContentResult> => {
 
-        if (context?.preview) {
-            populateEnonicHeaders(context);
+        const {locale, locales, defaultLocale} = getRequestLocaleInfo(context);
+
+        const {isEnabled: draft} = draftMode();
+        if (draft) {
+            if (!context.headers) {
+                context.headers = new Headers(headers());
+            }
         }
 
-        const headers = {};
-        addJsessionHeaders(headers, context);
-        addLocaleHeaders(headers, context);
+        const outHeaders = {};
+        addJsessionHeaders(outHeaders, context);
+        addLocaleHeaders(outHeaders, locale, locales, defaultLocale);
         const xpBaseUrl = getXpBaseUrl(context);
         const contentApiUrl = getContentApiUrl(context);
-        const projectConfig = getLocaleProjectConfig(context);
+        const projectConfig = getProjectLocaleConfig(context);
         const renderMode = getRenderMode(context);
         let requestType = XP_REQUEST_TYPE.TYPE;
 
         UrlProcessor.setSiteKey(projectConfig.site);
 
         try {
-            const requestContentPath = getCleanContentPathArrayOrThrow400(contentPathOrArray);
+            const requestContentPath = getCleanContentPathArrayOrThrow400(context.contentPath);
 
-            if ('/' + requestContentPath === PURGE_CACHE_URL) {
-                // return 404 for /_/cache/enonic/purge because it should've been handled by standalone endpoint
-                return errorResponse('404', 'Not found', requestType, renderMode, contentApiUrl, xpBaseUrl, context?.locale, context?.defaultLocale, requestContentPath);
-            }
-
-            const [siteRelativeContentPath, componentPath] = getContentAndComponentPaths(requestContentPath, context);
+            const [siteRelativeContentPath, componentPath] = getContentAndComponentPaths(requestContentPath);
             if (componentPath) {
                 // set component request type because url contains component path
                 requestType = XP_REQUEST_TYPE.COMPONENT;
             }
 
             // /////////////  FIRST GUILLOTINE CALL FOR METADATA     /////////////////
-            const metaResult = await fetchMetaData(contentApiUrl, '${site}/' + siteRelativeContentPath, projectConfig, headers);
+            const metaResult = await fetchMetaData(contentApiUrl, '${site}/' + siteRelativeContentPath, projectConfig, outHeaders);
             // ///////////////////////////////////////////////////////////////////////
 
             const {_path, type} = metaResult.meta || {};
@@ -826,29 +826,29 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
             if (metaResult.error) {
                 console.error(metaResult.error);
                 return errorResponse(metaResult.error.code, metaResult.error.message, requestType, renderMode, contentApiUrl, xpBaseUrl,
-                    context?.locale, context?.defaultLocale, contentPath);
+                    locale, defaultLocale, contentPath);
             }
 
             if (!metaResult.meta) {
                 return errorResponse('404', 'No meta data found for content, most likely content does not exist', requestType, renderMode,
-                    contentApiUrl, xpBaseUrl, context?.locale, context?.defaultLocale, contentPath);
+                    contentApiUrl, xpBaseUrl, locale, defaultLocale, contentPath);
             } else if (!type) {
                 return errorResponse('500', "Server responded with incomplete meta data: missing content 'type' attribute.", requestType,
-                    renderMode, contentApiUrl, xpBaseUrl, context?.locale, context?.defaultLocale, contentPath);
+                    renderMode, contentApiUrl, xpBaseUrl, locale, defaultLocale, contentPath);
 
             } else if (renderMode === RENDER_MODE.NEXT && !IS_DEV_MODE &&
                 (type === FRAGMENT_CONTENTTYPE_NAME ||
                     type === PAGE_TEMPLATE_CONTENTTYPE_NAME ||
                     type === PAGE_TEMPLATE_FOLDER)) {
                 return errorResponse('404', `Content type [${type}] is not accessible in ${renderMode} mode`, requestType, renderMode,
-                    contentApiUrl, xpBaseUrl, context?.locale, context?.defaultLocale, contentPath);
+                    contentApiUrl, xpBaseUrl, locale, defaultLocale, contentPath);
             }
 
             const components = restrictComponentsToPath(type, metaResult.meta.components, componentPath);
             if (componentPath && !components.length) {
                 // component was not found
                 return errorResponse('404', `Component ${componentPath} was not found`, requestType, renderMode,
-                    contentApiUrl, xpBaseUrl, context?.locale, context?.defaultLocale, contentPath);
+                    contentApiUrl, xpBaseUrl, locale, defaultLocale, contentPath);
             }
 
             if (requestType !== XP_REQUEST_TYPE.COMPONENT && components.length > 0) {
@@ -866,7 +866,7 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
                 processComponentConfig(APP_NAME, APP_NAME_DASHED, pageCmp);
             }
 
-            const contentQueryAndVars = getQueryAndVariables(type, contentPath, contentTypeDef?.query, context, pageCmp?.page?.config);
+            const contentQueryAndVars = getQueryAndVariables(type, contentPath, context, contentTypeDef?.query, pageCmp?.page?.config);
             if (contentQueryAndVars) {
                 allDescriptors.push({
                     type: contentTypeDef,
@@ -874,7 +874,7 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
                 });
             }
 
-            const commonQueryAndVars = getQueryAndVariables(type, contentPath, componentRegistry.getCommonQuery(), context,
+            const commonQueryAndVars = getQueryAndVariables(type, contentPath, context, componentRegistry.getCommonQuery(),
                 pageCmp?.page?.config);
             if (commonQueryAndVars) {
                 allDescriptors.push({
@@ -898,17 +898,17 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
 
             if (!query.trim()) {
                 return errorResponse('400', `Missing or empty query override for content type ${type}`, requestType, renderMode,
-                    contentApiUrl, xpBaseUrl, context?.locale, context?.defaultLocale, contentPath);
+                    contentApiUrl, xpBaseUrl, locale, defaultLocale, contentPath);
             }
 
             // ///////////////    SECOND GUILLOTINE CALL FOR DATA   //////////////////////
-            const contentResults = await fetchContentData(contentApiUrl, contentPath, projectConfig, query, variables, headers);
+            const contentResults = await fetchContentData(contentApiUrl, contentPath, projectConfig, query, variables, outHeaders);
             // ///////////////////////////////////////////////////////////////////////////
 
             if (contentResults.error) {
                 console.error(contentResults.error);
                 return errorResponse(contentResults.error.code, contentResults.error.message, requestType, renderMode, contentApiUrl,
-                    xpBaseUrl, context?.locale, context?.defaultLocale, contentPath);
+                    xpBaseUrl, locale, defaultLocale, contentPath);
             }
 
             // Apply processors to every component
@@ -947,15 +947,18 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
             }
 
             const page = createPageData(type, components);
-            const meta = createMetaData(type, siteRelativeContentPath, requestType, renderMode, contentApiUrl, xpBaseUrl, context?.locale, context?.defaultLocale, componentPath, page, components);
+            const meta = createMetaData(type, siteRelativeContentPath, requestType, renderMode, contentApiUrl, xpBaseUrl, locale, defaultLocale, componentPath, page, components);
 
-            return {
+            const data: FetchContentResult = {
                 data: contentData,
                 common,
                 meta,
                 page,
-            } as FetchContentResult;
+            };
 
+            validateData(data);
+
+            return data;
         } catch (e: any) {
             console.error(e);
 
@@ -968,8 +971,8 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
                     message: e.message,
                 };
             }
-            return errorResponse(error.code, error.message, requestType, renderMode, contentApiUrl, xpBaseUrl, context?.locale,
-                context?.defaultLocale, contentPathOrArray.toString());
+            return errorResponse(error.code, error.message, requestType, renderMode, contentApiUrl, xpBaseUrl, locale,
+                defaultLocale, context.contentPath.toString());
         }
     };
 };
@@ -990,28 +993,19 @@ export const fetchContent: ContentFetcher = buildContentFetcher<AdapterConstants
     componentRegistry: ComponentRegistry,
 });
 
-export function createResponse(props: FetchContentResult, context?: Context, isStatic?: true): GetStaticPropsResult<FetchContentResult>;
-export function createResponse(props: FetchContentResult, context?: Context, isStatic?: false): GetServerSidePropsResult<FetchContentResult>;
-export function createResponse(props: FetchContentResult, context?: Context, isStatic = true): GetStaticPropsResult<FetchContentResult> | GetServerSidePropsResult<FetchContentResult> {
+function validateData(props: FetchContentResult): void {
     const {data, meta, error} = props;
     const pageUrl = data?.get?.data?.target?.pageUrl;
     if (meta.type === 'base:shortcut' && pageUrl) {
         if (meta.renderMode !== RENDER_MODE.NEXT) {
             // console.debug(`Returning 404 for shortcut in ${RENDER_MODE.NEXT} mode`);
             // do not show shortcut targets in preview/edit mode
-            return {
-                notFound: true,
-            };
+            notFound();
         }
 
         const destination = getUrl(pageUrl, meta, true);
         // console.debug('Redirecting to', destination);
-        return {
-            redirect: {
-                statusCode: 307,
-                destination,
-            },
-        };
+        redirect(destination, RedirectType.replace);
     }
 
     // we can not set 418 for static paths,
@@ -1020,41 +1014,25 @@ export function createResponse(props: FetchContentResult, context?: Context, isS
 
     const catchAllInNextProdMode = meta?.renderMode === RENDER_MODE.NEXT && !IS_DEV_MODE && meta?.catchAll;
 
-    const notFound = (error && error.code === '404') || context.res?.statusCode === 404 || canNotRender || catchAllInNextProdMode || undefined;
+    const isNotFound = (error && error.code === '404') || canNotRender || catchAllInNextProdMode;
 
-    // console.debug('Returning view ' + (notFound ? '(not found)' : ''));
-    const result: GetStaticPropsResult<FetchContentResult> | GetServerSidePropsResult<FetchContentResult> = {
-        notFound,
-        props,
-    };
-
-    if (isStatic) {
-        (<GetStaticPropsResult<FetchContentResult>>result).revalidate = 3600;   // In seconds, meaning every hour
+    if (isNotFound) {
+        notFound();
     }
-
-    return result;
-}
-
-function populateEnonicHeaders(context: Context) {
-    const pd = context.previewData;
-    if (!pd) {
-        return;
-    }
-    const req = context.req || {} as any;
-    req.headers = Object.assign(req.headers || {}, pd.headers);
-    context.params = Object.assign(context.params || {}, pd.params);
-    context.req = req;
 }
 
 export async function fetchContentPathsForAllLocales(path: string, query: string = GET_STATIC_PATHS_QUERY, countPerLocale = 999): Promise<ContentPathItem[]> {
-    const promises = Object.values(getLocaleProjectConfigs()).map(config => fetchContentPathsForLocale(path, config, query, countPerLocale));
+    const promises = Object.values(getProjectLocaleConfigs()).map(config => fetchContentPathsForLocale(path, config, query, countPerLocale));
     return Promise.all(promises).then(results => {
         return results.reduce((all, localePaths) => all.concat(localePaths), []);
     });
 }
 
-export async function fetchContentPathsForLocale(path: string, config: LocaleProjectConfig, query: string = GET_STATIC_PATHS_QUERY, count = 999): Promise<ContentPathItem[]> {
-    const contentApiUrl = getContentApiUrl({locale: config.locale});
+export async function fetchContentPathsForLocale(path: string, config: ProjectLocaleConfig, query: string = GET_STATIC_PATHS_QUERY, count = 999): Promise<ContentPathItem[]> {
+    const contentApiUrl = getContentApiUrl({
+        contentPath: path,
+        locale: config.locale,
+    });
     const body: ContentApiBaseBody = {
         query,
         variables: {
@@ -1067,10 +1045,8 @@ export async function fetchContentPathsForLocale(path: string, config: LocalePro
             const regexp = new RegExp(`/${child.site?._name}/?`);
             const contentPath = child._path.replace(regexp, '');
             prev.push({
-                params: {
-                    contentPath: contentPath.split('/'),
-                },
-                locale: normalizeLocale(config.locale),
+                contentPath: contentPath.split('/'),
+                locale: config.locale,
             });
             return prev;
         }, []);
