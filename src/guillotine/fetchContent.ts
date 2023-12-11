@@ -28,7 +28,7 @@ import adapterConstants, {
 import {ComponentDefinition, ComponentRegistry, SelectedQueryMaybeVariablesFunc} from '../ComponentRegistry';
 import {getUrl, UrlProcessor} from '../UrlProcessor';
 import {notFound, redirect, RedirectType} from 'next/navigation';
-import {draftMode, headers} from 'next/headers';
+import {headers} from 'next/headers';
 
 type AdapterConstants = {
     APP_NAME: string,
@@ -789,11 +789,16 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
 
         const {locale, locales, defaultLocale} = getRequestLocaleInfo(context);
 
-        const {isEnabled: draft} = draftMode();
-        if (draft) {
-            if (!context.headers) {
-                context.headers = new Headers(headers());
-            }
+        // ideally we only want to set headers in draft mode,
+        // but draft mode token is not passed in non-static mode
+        // so try to add them whenever they are absent
+        if (!context.headers) {
+            const allHeaders = headers();
+
+            context.headers = new Headers();
+            allHeaders.forEach((value, key) => {
+                context.headers.set(key, value);
+            });
         }
 
         const outHeaders = {};
