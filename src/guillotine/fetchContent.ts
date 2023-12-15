@@ -954,16 +954,12 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
             const page = createPageData(type, components);
             const meta = createMetaData(type, siteRelativeContentPath, requestType, renderMode, contentApiUrl, xpBaseUrl, locale, defaultLocale, componentPath, page, components);
 
-            const data: FetchContentResult = {
+            return {
                 data: contentData,
                 common,
                 meta,
                 page,
             };
-
-            validateData(data);
-
-            return data;
         } catch (e: any) {
             console.error(e);
 
@@ -998,18 +994,39 @@ export const fetchContent: ContentFetcher = buildContentFetcher<AdapterConstants
     componentRegistry: ComponentRegistry,
 });
 
-function validateData(props: FetchContentResult): void {
+export function validateData(props: FetchContentResult): void {
+    validateNotFound(props);
+    validateShortcut(props);
+}
+
+function validateNotFound(props: FetchContentResult): void {
+    const {error} = props;
+    if (error) {
+        switch (error.code) {
+            case '404':
+                console.warn(error.code, error.message);
+                notFound();
+                break;
+            default:
+                console.error(error.code, error.message);
+                throw new Error(error.message);
+        }
+    }
+}
+
+function validateShortcut(props: FetchContentResult): void {
     const {data, meta, error} = props;
     const pageUrl = data?.get?.data?.target?.pageUrl;
     if (meta.type === 'base:shortcut' && pageUrl) {
         if (meta.renderMode !== RENDER_MODE.NEXT) {
             // console.debug(`Returning 404 for shortcut in ${RENDER_MODE.NEXT} mode`);
             // do not show shortcut targets in preview/edit mode
+            console.warn(404, `Shortcuts are not available in ${RENDER_MODE.NEXT} render mode`);
             notFound();
         }
 
         const destination = getUrl(pageUrl, meta, true);
-        // console.debug('Redirecting to', destination);
+        console.debug(`Redirecting shortcut content [${meta.path}] to`, destination);
         redirect(destination, RedirectType.replace);
     }
 
@@ -1022,6 +1039,7 @@ function validateData(props: FetchContentResult): void {
     const isNotFound = (error && error.code === '404') || canNotRender || catchAllInNextProdMode;
 
     if (isNotFound) {
+        console.warn(404, `Can not render content at [${meta.path}]`);
         notFound();
     }
 }
