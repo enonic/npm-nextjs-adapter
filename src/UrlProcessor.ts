@@ -28,15 +28,23 @@ export class UrlProcessor {
             return url;
         }
 
+        let normalUrl: string;
         let result: string;
-        const apiUrl = this.getApiUrl(meta);
-        const strippedUrl = this.stripApiUrl(url, apiUrl);
+        if (this.isRelative(url)) {
+            normalUrl = url;
+        } else {
+            // url is absolute, try to make it relative by striping apiUrl
+            // NB: will fail if content api is not on the same domain as enonic xp
+            const apiUrl = this.getApiUrl(meta);
+            normalUrl = this.stripApiUrl(url, apiUrl);
+        }
         const baseUrl = meta?.baseUrl && meta?.baseUrl !== '/' ? meta.baseUrl : '';
         if (meta.renderMode === RENDER_MODE.NEXT) {
             // only add basePath and locale in next mode
-            result = `/${strippedUrl}`;
-            if (!this.isRelative(url) && meta.locale !== meta.defaultLocale) {
-                // do not append locale to local assets (having relative urls)
+            result = `/${normalUrl}`;
+            if (meta.locale !== meta.defaultLocale) {
+                // append locale if it's not the default one
+                // to avoid additional middleware redirection
                 result = `/${meta.locale}${result}`;
             }
             if (!serverSide) {
@@ -44,7 +52,7 @@ export class UrlProcessor {
                 result = addBasePath(`${baseUrl}${result}`);
             }
         } else {
-            result = `${baseUrl}/${strippedUrl}`;
+            result = `${baseUrl}/${normalUrl}`;
         }
 
         return fixDoubleSlashes(result);
