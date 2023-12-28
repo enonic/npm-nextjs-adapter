@@ -273,10 +273,10 @@ export function addLocaleHeaders(target: Object = {}, locale: string, locales: s
 }
 
 export const getXpBaseUrl = (context: Context): string => {
-    const header = context.headers?.get(XP_BASE_URL_HEADER) || '';
+    const header = context.headers?.get(XP_BASE_URL_HEADER) || '/';
 
     // TODO: workaround for XP pattern controller mapping not picked up in edit mode
-    return (header || '/').replace(/\/edit\//, '/inline/');
+    return header.replace(/\/edit\//, '/inline/');
 };
 
 
