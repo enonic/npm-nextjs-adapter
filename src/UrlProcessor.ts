@@ -19,7 +19,7 @@ export class UrlProcessor {
 
     private static siteKey: string;
 
-    public static process(url: string, meta: MetaData, serverSide = false): string {
+    public static process(url: string, meta: MetaData, serverSide = false, isResource = false): string {
         if (this.startsWithHash(url) || !meta || (this.isAttachmentUrl(url)) && meta.renderMode === RENDER_MODE.NEXT) {
             // do not process if:
             // - url starts with #
@@ -42,9 +42,10 @@ export class UrlProcessor {
         if (meta.renderMode === RENDER_MODE.NEXT) {
             // only add basePath and locale in next mode
             result = `/${normalUrl}`;
-            if (meta.locale !== meta.defaultLocale) {
+            if (!isResource && meta.locale !== meta.defaultLocale) {
                 // append locale if it's not the default one
                 // to avoid additional middleware redirection
+                // NB: don't add locale to resource urls
                 result = `/${meta.locale}${result}`;
             }
             if (!serverSide) {
@@ -119,5 +120,11 @@ export class UrlProcessor {
 const defaultConfig = getProjectLocaleConfigById();
 UrlProcessor.setSiteKey(defaultConfig.site);
 
-export const getUrl: (url: string, meta: MetaData, serverSide?: boolean) => string = UrlProcessor.process.bind(UrlProcessor);
+export function getUrl(url: string, meta: MetaData): string {
+    return UrlProcessor.process(url, meta, false, false);
+}
+
+export function getAsset(url: string, meta: MetaData): string {
+    return UrlProcessor.process(url, meta, false, true);
+}
 

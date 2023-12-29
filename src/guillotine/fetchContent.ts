@@ -26,7 +26,7 @@ import adapterConstants, {
     XP_REQUEST_TYPE,
 } from '../utils';
 import {ComponentDefinition, ComponentRegistry, SelectedQueryMaybeVariablesFunc} from '../ComponentRegistry';
-import {getUrl, UrlProcessor} from '../UrlProcessor';
+import {UrlProcessor} from '../UrlProcessor';
 import {notFound, redirect, RedirectType} from 'next/navigation';
 import {headers} from 'next/headers';
 
@@ -1019,7 +1019,7 @@ function validateShortcut(props: FetchContentResult): void {
             notFound();
         }
 
-        const destination = getUrl(pageUrl, meta, true);
+        const destination = UrlProcessor.process(pageUrl, meta, true);
         console.debug(`Redirecting shortcut content [${meta.path}] to`, destination);
         redirect(destination, RedirectType.replace);
     }
