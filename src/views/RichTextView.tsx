@@ -5,6 +5,8 @@ import HTMLReactParser, {DOMNode} from 'html-react-parser';
 import {ElementType} from 'domelementtype';
 import {Element} from 'domhandler/lib';
 import BaseMacro from './BaseMacro';
+import Link from 'next/link';
+import {Text} from 'domhandler';
 
 export type ReplacerResult = JSX.Element | object | void | undefined | null | false;
 
@@ -50,7 +52,8 @@ export function createReplacer(allData: RichTextData, meta: MetaData, renderMacr
                 const href = el.attribs['href'];
 
                 if (ref && href) {
-                    el.attribs['href'] = getUrl(href, meta);
+                    const textChild = el.children?.find(c => c.type === ElementType.Text) as Text;
+                    return <Link href={getUrl(href, meta)}>{textChild?.data}</Link>;
                 }
                 break;
             case UrlProcessor.MACRO_TAG:
