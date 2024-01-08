@@ -28,7 +28,8 @@ export const APP_NAME_UNDERSCORED = (APP_NAME || '').replace(/\./g, '_');
 /** Optional utility value - derived from APP_NAME, only with dashes instead of dots */
 export const APP_NAME_DASHED = (APP_NAME || '').replace(/\./g, '-');
 
-const PROJECT_CONFIG_REGEXP = new RegExp('^([\\w-]+):([^\\/\\s]+)(\\/[\\w-.]+)?$', 'i');
+// NOTE: Dissallowing slash and any whitespace in 2nd capture group.
+const PROJECT_CONFIG_REGEXP = /^([\w-]+):([^\/\s]+)(\/[\w.-]+)?$/i;
 
 
 // ////////////////////////////////////////////////////////////////////////  Hardcode-able constants
@@ -66,7 +67,7 @@ export const GET_STATIC_PATHS_QUERY = `query ($count: Int) {
       first: $count,
       sort: {
         field: "modifiedTime",
-        direction: DESC     
+        direction: DESC
       }
       query: {boolean: {mustNot: [
         {in: {field: "type", stringValues: ["base:folder", "base:shortcut"]}}
@@ -228,9 +229,13 @@ export function getProjectLocaleConfigs(): ProjectLocalesConfig {
         Format: <default-language>:<default-repository-name>/<default-site-path>,<language>:<repository-name>/<site-path>,...`);
     }
     return str.split(',').reduce((config, prjStr, index: number) => {
-        const matches: RegExpExecArray = PROJECT_CONFIG_REGEXP.exec(prjStr?.trim());
-        if (!matches?.length) {
+        const trimmedprjStr = prjStr.trim();
+        if (!trimmedprjStr.length) {
             return config;
+        }
+        const matches: RegExpExecArray = PROJECT_CONFIG_REGEXP.exec(trimmedprjStr);
+        if (!matches?.length) {
+            throw new Error(`Project "${prjStr}" doesn't match format: <default-language>:<default-repository-name>/<default-site-path>,<language>:<repository-name>/<site-path>`);
         }
         const [full, lang, project, site] = matches;
         if (project && site) {
