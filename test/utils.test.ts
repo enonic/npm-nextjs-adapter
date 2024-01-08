@@ -43,6 +43,57 @@ describe('utils', () => {
         });
     });
 
+    describe('fixDoubleSlashes', () => {
+        it('returns correct string', () => {
+            jest.resetModules();
+            process.env = {
+                ...OLD_ENV,
+                ENONIC_APP_NAME
+            };
+            import('../src/utils').then((moduleName) => {
+                expect(moduleName.fixDoubleSlashes('/content//path')).toEqual('/content/path');
+            });
+        });
+    });
+
+    describe('getContentApiUrl', () => {
+        const TESTS = {
+            'edit': 'draft',
+            'inline': 'draft',
+            'preview': 'draft',
+            'live': 'master',
+            'admin': 'draft',
+            'next': 'master',
+        };
+        Object.entries(TESTS).forEach(([mode, branch]) => {
+            it(`returns correct url with branch ${branch} when mode is ${mode}`, () => {
+                jest.resetModules();
+                process.env = {
+                    ...OLD_ENV,
+                    ENONIC_API: 'http://localhost:8080',
+                    ENONIC_APP_NAME,
+                    ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
+                };
+                import('../src/utils').then((moduleName) => {
+                    const context: Context = {
+                        headers: {
+                            get(name: string) {
+                                if (name === 'content-studio-mode') {
+                                    return mode;
+                                }
+                                if (name === 'content-studio-project') {
+                                    return 'film-db';
+                                }
+                                console.error('headers get name', name);
+                            }
+                        },
+                    } as Context;
+                    expect(moduleName.getContentApiUrl(context)).toEqual(`http://localhost:8080/film-db/${branch}`);
+                });
+            });
+        });
+    });
+
     describe('getProjectLocaleConfig', () => {
         it('returns correct ProjectLocaleConfig when content-studio-project is set', () => {
             jest.resetModules();
@@ -250,28 +301,30 @@ describe('utils', () => {
                 expect(moduleName.getRenderMode(context)).toEqual('next');
             });
         });
-        it('inline', () => {
-            jest.resetModules();
-            process.env = {
-                ...OLD_ENV,
-                ENONIC_APP_NAME
-            };
-            import('../src/utils').then((moduleName) => {
-                const context: Context = {
-                    headers: {
-                        get(name: string) {
-                            if (name === 'content-studio-mode') {
-                                return 'inline';
+        const RENDER_MODES = ['edit','inline','preview','live','admin','next'];
+        RENDER_MODES.forEach((mode) => {
+            it(`return ${mode} when context header content-studio-mode is ${mode}`, () => {
+                jest.resetModules();
+                process.env = {
+                    ...OLD_ENV,
+                    ENONIC_APP_NAME
+                };
+                import('../src/utils').then((moduleName) => {
+                    const context: Context = {
+                        headers: {
+                            get(name: string) {
+                                if (name === 'content-studio-mode') {
+                                    return mode;
+                                }
+                                console.error('headers get name', name);
                             }
-                            console.error('headers get name', name);
-                        }
-                    },
-                    // locale: 'en',
-                    // contentPath: '/content/path',
-                } as Context;
-                expect(moduleName.getRenderMode(context)).toEqual('inline');
+                        },
+                    } as Context;
+                    expect(moduleName.getRenderMode(context)).toEqual(mode);
+                });
             });
         });
+        
     }); // getRenderMode
 
     describe('getRequestLocaleInfo', () => {
@@ -378,8 +431,6 @@ describe('utils', () => {
             jest.resetModules() // Most important - it clears the cache
             process.env = {
                 ...OLD_ENV,  // Make a copy
-                // ENONIC_API: 'http://localhost:8080',
-                // ENONIC_API_TOKEN: 'token',
                 ENONIC_APP_NAME: 'com.enonic.app.enonic',
                 ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/hmdb'
             };
