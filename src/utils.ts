@@ -1,8 +1,10 @@
+import type {Context} from './types';
+
 /** Import config values from .env, .env.development and .env.production */
 import {ParsedUrlQuery} from 'node:querystring';
-import {ReadonlyHeaders} from 'next/dist/server/web/spec-extension/adapters/headers';
 import Negotiator from 'negotiator';
 import {match as localeMatcher} from '@formatjs/intl-localematcher';
+
 
 const mode = process.env.MODE || process.env.NEXT_PUBLIC_MODE;
 export const IS_DEV_MODE = (mode === 'development');
@@ -38,7 +40,6 @@ const PROJECT_CONFIG_REGEXP = /^([\w-]+):([^\/\s]+)(\/[\w.-]+)?$/i;
 export const XP_BASE_URL_HEADER = 'xpbaseurl';
 export const RENDER_MODE_HEADER = 'content-studio-mode';
 export const PROJECT_ID_HEADER = 'content-studio-project';
-export const JSESSIONID_HEADER = 'jsessionid';
 
 export const PORTAL_COMPONENT_ATTRIBUTE = 'data-portal-component-type';
 export const PORTAL_REGION_ATTRIBUTE = 'data-portal-region';
@@ -121,12 +122,6 @@ export interface PreviewParams {
     headers: Record<string, string>;
     params: Record<string, string>;
 }
-
-export type Context = {
-    headers?: ReadonlyHeaders | Headers;
-    locale?: string;
-    contentPath: string | string[],
-};
 
 export type ProjectLocaleConfig = {
     default: boolean;
@@ -261,13 +256,6 @@ export function getContentApiUrl(context: Context): string {
             : 'draft';
 
     return fixDoubleSlashes(`${API_URL}/${project}/${branch}`);
-}
-
-export function addJsessionHeaders(target: Object = {}, context: Context): void {
-    const jsessionid = context.headers?.get(JSESSIONID_HEADER);
-    if (jsessionid) {
-        target['Cookie'] = `${JSESSIONID_HEADER}=${jsessionid}`;
-    }
 }
 
 export function addLocaleHeaders(target: Object = {}, locale: string, locales: string[], defaultLocale: string): void {

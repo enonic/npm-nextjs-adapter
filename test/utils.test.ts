@@ -1,4 +1,4 @@
-import type {Context} from '../src/utils';
+import type {Context} from '../src/types';
 
 import {
     afterAll,
@@ -9,8 +9,8 @@ import {
     jest,
     test as it
 } from '@jest/globals';
+import {ENONIC_APP_NAME} from './constants';
 
-const ENONIC_APP_NAME = 'com.enonic.app.enonic';
 
 describe('utils', () => {
     const OLD_ENV = process.env;
