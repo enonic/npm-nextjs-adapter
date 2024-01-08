@@ -254,7 +254,11 @@ export function fixDoubleSlashes(str: string) {
 
 export function getContentApiUrl(context: Context): string {
     const project = getProjectLocaleConfig(context).project;
-    const branch = getRenderMode(context) === RENDER_MODE.NEXT ? 'master' : 'draft';
+    const branch = getRenderMode(context) === RENDER_MODE.NEXT
+        ? 'master'
+        : getRenderMode(context) === RENDER_MODE.LIVE
+            ? 'master'
+            : 'draft';
 
     return fixDoubleSlashes(`${API_URL}/${project}/${branch}`);
 }
