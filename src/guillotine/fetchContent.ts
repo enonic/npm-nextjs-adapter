@@ -1,12 +1,12 @@
+import type {Context} from '../types';
+
 import {getMetaQuery, MetaData, PageComponent, PageData, pageFragmentQuery, PageRegion, RegionTree} from './getMetaData';
 
 import adapterConstants, {
-    addJsessionHeaders,
     addLocaleHeaders,
     APP_NAME,
     APP_NAME_DASHED,
     ContentPathItem,
-    Context,
     FRAGMENT_CONTENTTYPE_NAME,
     FRAGMENT_DEFAULT_REGION_NAME,
     GET_STATIC_PATHS_QUERY,
@@ -25,6 +25,7 @@ import adapterConstants, {
     XP_COMPONENT_TYPE,
     XP_REQUEST_TYPE,
 } from '../utils';
+import {setJsessionCookieHeader} from '../utils/setJsessionCookieHeader'
 import {ComponentDefinition, ComponentRegistry, SelectedQueryMaybeVariablesFunc} from '../ComponentRegistry';
 import {UrlProcessor} from '../UrlProcessor';
 import {notFound, redirect, RedirectType} from 'next/navigation';
@@ -804,7 +805,7 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
         }
 
         const outHeaders = {};
-        addJsessionHeaders(outHeaders, context);
+        setJsessionCookieHeader(outHeaders, context);
         addLocaleHeaders(outHeaders, locale, locales, defaultLocale);
         const xpBaseUrl = getXpBaseUrl(context);
         const contentApiUrl = getContentApiUrl(context);
