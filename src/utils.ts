@@ -237,18 +237,13 @@ export function getProjectLocaleConfigs(): ProjectLocalesConfig {
         if (!matches?.length) {
             throw new Error(`Project "${prjStr}" doesn't match format: <default-language>:<default-repository-name>/<default-site-path>,<language>:<repository-name>/<site-path>`);
         }
-        const [full, lang, project, site] = matches;
-        if (project && site) {
-            config[lang] = {
-                default: index === 0,
-                project,
-                site,
-                locale: lang,
-            };
-        } else {
-            throw Error(`Wrong configuration in "${envVarName}": ${prjStr}.
-            Format: <default-language>:<default-repository-name>/<default-site-path>,<language>:<repository-name>/<site-path>,...`);
-        }
+        const [_full, lang, project, site] = matches;
+        config[lang] = {
+            default: index === 0,
+            project,
+            site,
+            locale: lang,
+        };
         return config;
     }, {});
 }

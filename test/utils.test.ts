@@ -43,7 +43,137 @@ describe('utils', () => {
         });
     });
 
+    describe('getProjectLocaleConfig', () => {
+        it('returns correct ProjectLocaleConfig when content-studio-project is set', () => {
+            jest.resetModules();
+            process.env = {
+                ...OLD_ENV,
+                ENONIC_APP_NAME,
+                ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
+            };
+            import('../src/utils').then((moduleName) => {
+                const context: Context = {
+                    headers: {
+                        get(name: string) {
+                            if (name === 'accept-language') {
+                                return 'no';
+                            }
+                            if (name === 'content-studio-project') {
+                                return 'film-db';
+                            }
+                            console.error('headers get name', name);
+                        }
+                    },
+                    // contentPath: '/omraade',
+                } as Context;
+                expect(moduleName.getProjectLocaleConfig(context)).toEqual({
+                    default: false,
+                    locale: 'no',
+                    project: 'film-db',
+                    site: '/omraade',
+                });
+            });
+        });
+        it('returns correct ProjectLocaleConfig when content-studio-project is set', () => {
+            jest.resetModules();
+            process.env = {
+                ...OLD_ENV,
+                ENONIC_APP_NAME,
+                ENONIC_PROJECTS: 'en:moviedb/site,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
+            };
+            import('../src/utils').then((moduleName) => {
+                const context: Context = {
+                    headers: {
+                        get(name: string) {
+                            if (name === 'accept-language') {
+                                return 'no';
+                            }
+                            if (name === 'content-studio-project') {
+                                return undefined;
+                            }
+                            console.error('headers get name', name);
+                        }
+                    },
+                    // contentPath: '/omraade',
+                } as Context;
+                expect(moduleName.getProjectLocaleConfig(context)).toEqual({
+                    default: true,
+                    locale: 'en',
+                    project: 'moviedb',
+                    site: '/site',
+                });
+            });
+        });
+    }); // describe getProjectLocaleConfig
+
+    describe('getProjectLocaleConfigById', () => {
+        it('returns correct ProjectLocaleConfig', () => {
+            jest.resetModules();
+            process.env = {
+                ...OLD_ENV,
+                ENONIC_APP_NAME,
+                ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
+            };
+            import('../src/utils').then((moduleName) => {
+                expect(moduleName.getProjectLocaleConfigById('film-db')).toEqual({
+                    default: false,
+                    locale: 'no',
+                    project: 'film-db',
+                    site: '/omraade',
+                });
+            });
+        });
+
+        it('returns default ProjectLocaleConfig when projectId param is missing', () => {
+            jest.resetModules();
+            process.env = {
+                ...OLD_ENV,
+                ENONIC_APP_NAME,
+                ENONIC_PROJECTS: 'en:moviedb/site,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
+            };
+            import('../src/utils').then((moduleName) => {
+                expect(moduleName.getProjectLocaleConfigById()).toEqual({
+                    default: true,
+                    locale: 'en',
+                    project: 'moviedb',
+                    site: '/site',
+                });
+            });
+        });
+    }); // describe getProjectLocaleConfigById
+
+    describe('getProjectLocaleConfigByLocale', () => {
+        it('returns correct ProjectLocaleConfig', () => {
+            jest.resetModules();
+            process.env = {
+                ...OLD_ENV,
+                ENONIC_APP_NAME,
+                ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
+            };
+            import('../src/utils').then((moduleName) => {
+                expect(moduleName.getProjectLocaleConfigByLocale('no')).toEqual({
+                    default: false,
+                    locale: 'no',
+                    project: 'film-db',
+                    site: '/omraade',
+                });
+            });
+        });
+    }); // describe getProjectLocaleConfigByLocale
+
     describe('getProjectLocaleConfigs', () => {
+        it('throws when ENONIC_PROJECTS is missing', () => {
+            jest.resetModules();
+            process.env = {
+                ...OLD_ENV,
+                ENONIC_APP_NAME,
+            };
+            import('../src/utils').then((moduleName) => {
+                expect(() => moduleName.getProjectLocaleConfigs()).toThrow(Error(
+                    `Did you forget to define "ENONIC_PROJECTS" environmental variable?\n        Format: <default-language>:<default-repository-name>/<default-site-path>,<language>:<repository-name>/<site-path>,...`
+                ));
+            });
+        });
         it('throws when default-language is missing from any project', () => {
             jest.resetModules();
             process.env = {
@@ -79,6 +209,20 @@ describe('utils', () => {
                         site: '/omraade',
                     }
                 });
+            });
+        });
+    });
+
+    describe('getProjectLocales', () => {
+        it('returns the correct locales', () => {
+            jest.resetModules();
+            process.env = {
+                ...OLD_ENV,
+                ENONIC_APP_NAME,
+                ENONIC_PROJECTS: 'en:project/site,no:prosjekt/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
+            };
+            import('../src/utils').then((moduleName) => {
+                expect(moduleName.getProjectLocales()).toEqual(['en','no']);
             });
         });
     });
@@ -163,5 +307,103 @@ describe('utils', () => {
                 });
             });
         });
-    });
-});
+
+        it('uses context locale when context header content-studio-project is missing', () => {
+            jest.resetModules() // Most important - it clears the cache
+            process.env = {
+                ...OLD_ENV,  // Make a copy
+                // ENONIC_API: 'http://localhost:8080',
+                // ENONIC_API_TOKEN: 'token',
+                ENONIC_APP_NAME: 'com.enonic.app.enonic',
+                ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/hmdb'
+            };
+            import('../src/utils').then((moduleName) => {
+                const context: Context = {
+                    headers: {
+                        get(name: string) {
+                            if (name === 'accept-language') {
+                                return 'no';
+                            }
+                            if (name === 'content-studio-project') {
+                                return undefined;
+                            }
+                            console.error('headers get name', name);
+                        }
+                    },
+                    locale: 'da',
+                    contentPath: '/content/path',
+                } as Context;
+                expect(moduleName.getRequestLocaleInfo(context)).toEqual({
+                    locale: 'da',
+                    locales: ['en','no'],
+                    defaultLocale: 'en'
+                });
+            });
+        });
+
+        it('uses accept-language when both context header content-studio-project and locale is missing', () => {
+            jest.resetModules() // Most important - it clears the cache
+            process.env = {
+                ...OLD_ENV,  // Make a copy
+                // ENONIC_API: 'http://localhost:8080',
+                // ENONIC_API_TOKEN: 'token',
+                ENONIC_APP_NAME: 'com.enonic.app.enonic',
+                ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/hmdb'
+            };
+            import('../src/utils').then((moduleName) => {
+                const context: Context = {
+                    headers: {
+                        get(name: string) {
+                            if (name === 'accept-language') {
+                                return 'no';
+                            }
+                            if (name === 'content-studio-project') {
+                                return undefined;
+                            }
+                            console.error('headers get name', name);
+                        }
+                    },
+                    // locale: 'da',
+                    contentPath: '/content/path',
+                } as Context;
+                expect(moduleName.getRequestLocaleInfo(context)).toEqual({
+                    locale: 'no',
+                    locales: ['en','no'],
+                    defaultLocale: 'en'
+                });
+            });
+        });
+
+        it('falls back to default language when no matches are found', () => {
+            jest.resetModules() // Most important - it clears the cache
+            process.env = {
+                ...OLD_ENV,  // Make a copy
+                // ENONIC_API: 'http://localhost:8080',
+                // ENONIC_API_TOKEN: 'token',
+                ENONIC_APP_NAME: 'com.enonic.app.enonic',
+                ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/hmdb'
+            };
+            import('../src/utils').then((moduleName) => {
+                const context: Context = {
+                    headers: {
+                        get(name: string) {
+                            if (name === 'accept-language') {
+                                return '';
+                            }
+                            if (name === 'content-studio-project') {
+                                return undefined;
+                            }
+                            console.error('headers get name', name);
+                        }
+                    },
+                    contentPath: '/content/path',
+                } as Context;
+                expect(moduleName.getRequestLocaleInfo(context)).toEqual({
+                    locale: 'en',
+                    locales: ['en','no'],
+                    defaultLocale: 'en'
+                });
+            });
+        });
+    }); // getRequestLocaleInfo
+}); // describe utils
