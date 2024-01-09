@@ -9,7 +9,7 @@ const JSESSIONID_HEADER = 'jsessionid';
 
 export function setJsessionCookieHeader(
     requestHeaders: RequestHeaders,
-    context: Context
+    context: Context,
 ): void {
     const jsessionid = context.headers?.get(JSESSIONID_HEADER);
     if (jsessionid) {
