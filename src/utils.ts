@@ -52,10 +52,6 @@ export const PAGE_TEMPLATE_FOLDER = 'portal:template-folder';
 
 export const SITE_CONTENTTYPE_NAME = 'portal:site';
 
-export const LOCALE_HEADER = 'locale';
-export const LOCALES_HEADER = 'locales';
-export const DEFAULT_LOCALE_HEADER = 'default-locale';
-
 /** excluded contents:
  * - folder
  * - shortcuts (redirect can't be used in prerender)
@@ -256,12 +252,6 @@ export function getContentApiUrl(context: Context): string {
             : 'draft';
 
     return fixDoubleSlashes(`${API_URL}/${project}/${branch}`);
-}
-
-export function addLocaleHeaders(target: Object = {}, locale: string, locales: string[], defaultLocale: string): void {
-    target[LOCALE_HEADER] = locale;
-    target[LOCALES_HEADER] = JSON.stringify(locales);
-    target[DEFAULT_LOCALE_HEADER] = defaultLocale;
 }
 
 export const getXpBaseUrl = (context: Context): string => {
