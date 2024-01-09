@@ -3,7 +3,6 @@ import {getUrl, UrlProcessor} from '../UrlProcessor';
 import {MetaData, RichTextData} from '../guillotine/getMetaData';
 import HTMLReactParser, {DOMNode} from 'html-react-parser';
 import {ElementType} from 'domelementtype';
-import {Element} from 'domhandler/lib';
 import BaseMacro from './BaseMacro';
 import Link from 'next/link';
 import {Text} from 'domhandler';
@@ -28,7 +27,7 @@ export function createReplacer(allData: RichTextData, meta: MetaData, renderMacr
             return domNode;
         }
 
-        const el = domNode as Element;
+        const el = domNode;
         let ref: string;
         switch (el.tagName) {
             case UrlProcessor.IMG_TAG:
