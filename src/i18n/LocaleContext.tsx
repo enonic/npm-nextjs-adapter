@@ -1,6 +1,6 @@
 'use client';
 
-import React, {createContext, useState} from 'react';
+import React, {createContext, useContext, useState} from 'react';
 import {Dict, getPhrase, loadPhrases} from './i18n';
 
 export type LocaleContextType = {
@@ -10,13 +10,15 @@ export type LocaleContextType = {
     localize: (key: string, ...args: any[]) => string,
 };
 
-export const LocaleContext = createContext<LocaleContextType>({
+const LocaleContext = createContext<LocaleContextType>({
     setLocale: (locale: string) => {
     },
     locale: '',
     dictionary: {},
     localize: (key: string, ...args: any[]) => key,
 });
+
+export const useLocaleContext = () => useContext(LocaleContext);
 
 export const LocaleContextProvider = async ({children, locale}: { children: any, locale?: string }) => {
     const [currentLocale, setLocaleState] = useState(locale);
