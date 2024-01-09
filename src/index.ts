@@ -1,3 +1,4 @@
+export {XP_BASE_URL_HEADER} from './constants';
 export * from './utils';
 export * from './guillotine/fetchContent';
 export * from './guillotine/getMetaData';
