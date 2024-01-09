@@ -1,5 +1,6 @@
 export {XP_BASE_URL_HEADER} from './constants';
 export * from './utils';
+export {sanitizeGraphqlName} from './utils/sanitizeGraphqlName';
 export * from './guillotine/fetchContent';
 export * from './guillotine/getMetaData';
 export * from './ComponentRegistry';

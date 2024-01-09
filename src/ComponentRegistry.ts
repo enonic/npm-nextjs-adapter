@@ -1,5 +1,7 @@
+import type {Context} from './types';
+
 import {PageComponent} from './guillotine/getMetaData';
-import {Context, XP_COMPONENT_TYPE} from './utils';
+import {XP_COMPONENT_TYPE} from './utils';
 
 
 /**
