@@ -3,7 +3,6 @@ import type {Context} from '../types';
 import {getMetaQuery, MetaData, PageComponent, PageData, pageFragmentQuery, PageRegion, RegionTree} from './getMetaData';
 
 import adapterConstants, {
-    addLocaleHeaders,
     APP_NAME,
     APP_NAME_DASHED,
     ContentPathItem,
@@ -25,7 +24,7 @@ import adapterConstants, {
     XP_COMPONENT_TYPE,
     XP_REQUEST_TYPE,
 } from '../utils';
-import {setJsessionCookieHeader} from '../utils/setJsessionCookieHeader';
+import {buildGuillotineRequestHeaders} from '../utils/buildGuillotineRequestHeaders';
 import {ComponentDefinition, ComponentRegistry, SelectedQueryMaybeVariablesFunc} from '../ComponentRegistry';
 import {UrlProcessor} from '../UrlProcessor';
 import {notFound, redirect, RedirectType} from 'next/navigation';
@@ -804,9 +803,12 @@ const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T
             });
         }
 
-        const outHeaders = {};
-        setJsessionCookieHeader(outHeaders, context);
-        addLocaleHeaders(outHeaders, locale, locales, defaultLocale);
+        const outHeaders = buildGuillotineRequestHeaders({
+            context,
+            defaultLocale,
+            locale,
+            locales,
+        });
         const xpBaseUrl = getXpBaseUrl(context);
         const contentApiUrl = getContentApiUrl(context);
         const projectConfig = getProjectLocaleConfig(context);

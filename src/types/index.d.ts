@@ -9,6 +9,9 @@ export type Context = {
 
 // Seems like NodeJS.fetch lowercases all headers, so we need to lowercase the
 // header names here.
-export interface RequestHeaders {
+export interface GuillotineRequestHeaders {
     Cookie?: string
+    locale: string
+    locales: string
+    'default-locale': string
 }
