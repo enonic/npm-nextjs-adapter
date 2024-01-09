@@ -7,14 +7,17 @@
     "access": "public"
   },
   "scripts": {
-    "clean:build": "del-cli dist",
-    "clean:test": "del-cli coverage",
+    "clean": "del-cli coverage dist",
     "copy": "npx --yes cpy-cli package.json README.md dist",
+    "copy:types": "npx cpy-cli 'src/types/*' 'dist/types/'",
     "build": "tsc --build tsconfig.json",
+    "build:prod": "concurrently -c auto -g --timings npm:test npm:lint npm:build",
     "lint": "eslint --quiet src",
     "lint:fix": "eslint --fix src",
-    "prebuild": "concurrently -c auto -g --timings npm:clean:build npm:test",
-    "pretest": "concurrently -c auto -g --timings npm:clean:test npm:lint",
+    "postbuild": "npm run copy:types",
+    "prebuild": "del-cli dist",
+    "pretest": "del-cli coverage",
+    "prepack": "npm run build:prod",
     "test": "jest --no-cache --coverage"
   },
   "dependencies": {
@@ -36,6 +39,7 @@
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.0.0",
     "concurrently": "^8.2.2",
+    "cpy-cli": "^5.0.0",
     "del-cli": "^5.1.0",
     "eslint": "^8.52.0",
     "eslint-plugin-react": "^7.33.2",
