@@ -20,7 +20,7 @@ const LocaleContext = createContext<LocaleContextType>({
 
 export const useLocaleContext = () => useContext(LocaleContext);
 
-export const LocaleContextProvider = async ({children, locale}: { children: any, locale?: string }) => {
+export const LocaleContextProvider = ({children, locale}: { children: any, locale?: string }) => {
     const [currentLocale, setLocaleState] = useState(locale);
     const [dictionary, setPhrasesState] = useState<Dict>({});
 
@@ -34,7 +34,8 @@ export const LocaleContextProvider = async ({children, locale}: { children: any,
     };
 
     if (locale && currentLocale !== locale) {
-        await setLocale(locale);
+        // async/await is not supported in client components yet
+        void setLocale(locale);
     }
 
     const localize = (key: string, ...args: any[]) => getPhrase(currentLocale, dictionary, key, ...args);
