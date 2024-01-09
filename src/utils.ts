@@ -36,8 +36,6 @@ const PROJECT_CONFIG_REGEXP = /^([\w-]+):([^/\s]+)(\/[\w.-]+)?$/i;
 
 // ////////////////////////////////////////////////////////////////////////  Hardcode-able constants
 
-// URI parameter marking that a request is for a preview for CS. MUST MATCH THE VALUE OF 'FROM_XP_PARAM' on XP side.
-export const XP_BASE_URL_HEADER = 'xpbaseurl';
 export const RENDER_MODE_HEADER = 'content-studio-mode';
 export const PROJECT_ID_HEADER = 'content-studio-project';
 
@@ -253,14 +251,6 @@ export function getContentApiUrl(context: Context): string {
 
     return fixDoubleSlashes(`${API_URL}/${project}/${branch}`);
 }
-
-export const getXpBaseUrl = (context: Context): string => {
-    const header = context.headers?.get(XP_BASE_URL_HEADER) || '/';
-
-    // TODO: workaround for XP pattern controller mapping not picked up in edit mode
-    return header.replace(/\/edit\//, '/inline/');
-};
-
 
 export const commonChars = (s1?: string, s2?: string) => {
     let result = '';
