@@ -14,16 +14,16 @@ import adapterConstants, {
     getProjectLocaleConfigs,
     getRenderMode,
     getRequestLocaleInfo,
-    getXpBaseUrl,
     IS_DEV_MODE,
     PAGE_TEMPLATE_CONTENTTYPE_NAME,
     PAGE_TEMPLATE_FOLDER,
     ProjectLocaleConfig,
     RENDER_MODE,
-    sanitizeGraphqlName,
     XP_COMPONENT_TYPE,
     XP_REQUEST_TYPE,
 } from '../utils';
+import {getXpBaseUrl} from '../utils/getXpBaseUrl';
+import {sanitizeGraphqlName} from '../utils/sanitizeGraphqlName';
 import {buildGuillotineRequestHeaders} from '../utils/buildGuillotineRequestHeaders';
 import {ComponentDefinition, ComponentRegistry, SelectedQueryMaybeVariablesFunc} from '../ComponentRegistry';
 import {UrlProcessor} from '../UrlProcessor';
