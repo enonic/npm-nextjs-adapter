@@ -1,4 +1,5 @@
-import {commonChars, fixDoubleSlashes, getProjectLocaleConfigById, RENDER_MODE} from './utils';
+import {fixDoubleSlashes, getProjectLocaleConfigById, RENDER_MODE} from './utils';
+import {commonChars} from './utils/commonChars';
 import {ImageData, LinkData, MetaData} from './guillotine/getMetaData';
 import {addBasePath} from 'next/dist/client/add-base-path';
 
