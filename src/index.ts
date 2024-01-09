@@ -1,3 +1,5 @@
+export type {Context} from './types'; // tsc doesn't copy d.ts files to dist
+
 export {XP_BASE_URL_HEADER} from './constants';
 export * from './utils';
 export {sanitizeGraphqlName} from './utils/sanitizeGraphqlName';
