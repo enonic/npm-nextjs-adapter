@@ -1,4 +1,5 @@
-import {RENDER_MODE, sanitizeGraphqlName, XP_COMPONENT_TYPE, XP_REQUEST_TYPE} from '../utils';
+import {RENDER_MODE, XP_COMPONENT_TYPE, XP_REQUEST_TYPE} from '../utils';
+import {sanitizeGraphqlName} from '../utils/sanitizeGraphqlName';
 import {ComponentDefinition, ComponentRegistry} from '../ComponentRegistry';
 
 const macroConfigQuery = (): string => {
