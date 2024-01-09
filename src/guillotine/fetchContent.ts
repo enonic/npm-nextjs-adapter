@@ -25,7 +25,7 @@ import adapterConstants, {
     XP_COMPONENT_TYPE,
     XP_REQUEST_TYPE,
 } from '../utils';
-import {setJsessionCookieHeader} from '../utils/setJsessionCookieHeader'
+import {setJsessionCookieHeader} from '../utils/setJsessionCookieHeader';
 import {ComponentDefinition, ComponentRegistry, SelectedQueryMaybeVariablesFunc} from '../ComponentRegistry';
 import {UrlProcessor} from '../UrlProcessor';
 import {notFound, redirect, RedirectType} from 'next/navigation';
