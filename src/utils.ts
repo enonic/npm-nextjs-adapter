@@ -31,7 +31,7 @@ export const APP_NAME_UNDERSCORED = (APP_NAME || '').replace(/\./g, '_');
 export const APP_NAME_DASHED = (APP_NAME || '').replace(/\./g, '-');
 
 // NOTE: Dissallowing slash and any whitespace in 2nd capture group.
-const PROJECT_CONFIG_REGEXP = /^([\w-]+):([^\/\s]+)(\/[\w.-]+)?$/i;
+const PROJECT_CONFIG_REGEXP = /^([\w-]+):([^/\s]+)(\/[\w.-]+)?$/i;
 
 
 // ////////////////////////////////////////////////////////////////////////  Hardcode-able constants
