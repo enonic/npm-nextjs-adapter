@@ -5,6 +5,7 @@ export default {
     // globals: {
     // },
     coverageProvider: 'v8',
+    testEnvironment: 'node',
     testMatch: [
         '<rootDir>/test/**/*.(spec|test).{ts,tsx}'
     ],
