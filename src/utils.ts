@@ -1,4 +1,8 @@
-import type {Context} from './types';
+import type {
+    Context,
+    ProjectLocaleConfig,
+    ProjectLocalesConfig
+} from './types';
 
 /** Import config values from .env, .env.development and .env.production */
 import {ParsedUrlQuery} from 'node:querystring';
@@ -116,17 +120,6 @@ export interface PreviewParams {
     headers: Record<string, string>;
     params: Record<string, string>;
 }
-
-export type ProjectLocaleConfig = {
-    default: boolean;
-    project: string;
-    site: string;
-    locale: string;
-};
-
-export type ProjectLocalesConfig = {
-    [locale: string]: ProjectLocaleConfig;
-};
 
 export interface ContentPathItem {
     contentPath: string[]
