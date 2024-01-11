@@ -23,6 +23,7 @@ globalThis.console = {
     info: jest.fn(),
     debug: jest.fn(),
 } as unknown as Console;
+globalThis.fetch = fetch;
 
 
 const ENONIC_APP_NAME = 'com.enonic.web.enonic.com';
