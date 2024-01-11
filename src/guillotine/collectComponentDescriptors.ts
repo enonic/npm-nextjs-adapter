@@ -48,7 +48,7 @@ export function collectComponentDescriptors(components: PageComponent[],
                 cmp.fragment?.fragment?.components,
                 componentRegistry,
                 xpContentPath,
-                context
+                context,
             );
             if (fragPartDescs.length) {
                 descriptors.push(...fragPartDescs);
