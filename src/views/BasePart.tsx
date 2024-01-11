@@ -1,5 +1,8 @@
+import type {MetaData} from '../types';
+
+
 import React from 'react';
-import {MetaData, PartData} from '../guillotine/getMetaData';
+import {PartData} from '../guillotine/getMetaData';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {XP_COMPONENT_TYPE} from '../utils';
 import {MissingComponent, shouldShowMissingView} from './BaseComponent';
@@ -21,6 +24,7 @@ interface BasePartProps {
     error?: string;
     meta: MetaData;
 }
+
 
 const BasePart = (props: BasePartProps) => {
     const {component, data, common, meta, path} = props;

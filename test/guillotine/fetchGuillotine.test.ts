@@ -66,6 +66,7 @@ describe('guillotine', () => {
         jest.replaceProperty(process, 'env', {
             ...OLD_ENV,
             // ENONIC_API_TOKEN: '1234567890',
+            ENONIC_API: 'http://localhost:8080/site',
             ENONIC_APP_NAME,
             ENONIC_PROJECTS: 'en:enonic-homepage/enonic-homepage'
         });

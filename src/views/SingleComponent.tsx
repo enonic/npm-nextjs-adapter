@@ -1,8 +1,10 @@
 /** Render only one component as a result of a request from XP-side .../_/component/... during edit refresh. */
+import type {FetchContentResult} from '../types';
+
 
 import BaseComponent from './BaseComponent';
 import React from 'react';
-import {FetchContentResult} from '../guillotine/fetchContent';
+
 
 const SingleComponent = ({meta, common}: FetchContentResult) => {
 

@@ -1,5 +1,4 @@
 import type {
-    AdapterConstants,
     ContentApiBaseBody,
     ContentFetcher,
     FetchContentResult,
@@ -9,7 +8,7 @@ import type {
 
 
 import {notFound, redirect, RedirectType} from 'next/navigation';
-import adapterConstants, {
+import {
     ContentPathItem,
     GET_STATIC_PATHS_QUERY,
     getContentApiUrl,
@@ -31,8 +30,7 @@ import {fetchGuillotine} from './fetchGuillotine';
  * @param context object from Next, contains .query info
  * @returns FetchContentResult object: {data?: T, error?: {code, message}}
  */
-export const fetchContent: ContentFetcher = buildContentFetcher<AdapterConstants>({
-    ...adapterConstants,
+export const fetchContent: ContentFetcher = buildContentFetcher({
     componentRegistry: ComponentRegistry,
 });
 

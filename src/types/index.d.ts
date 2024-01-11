@@ -1,10 +1,5 @@
 import {ReadonlyHeaders} from 'next/dist/server/web/spec-extension/adapters/headers';
 
-export type AdapterConstants = {
-    APP_NAME: string,
-    APP_NAME_DASHED: string,
-};
-
 /**
  *  Object that configures the handling of a particular content type. All attributes are optional (see examples below), and missing values will fall back to default behavior:
  *          - 'query' (used in fetchContent.ts) Guillotine query for fetching content data, may also have a function that supplies guillotine variables. So, 'query' can EITHER be only a query string, OR also add a get-guillotine-variables function. In the latter case, 'query' can be an object with 'query' and 'variables' attributes, or an array where the query string is first and the get-variables function is second. Either way, the get-variables function takes two arguments: path (content path, mandatory) and context (next.js-supplied Context from getServerSideProps etc. Optional, and requires that fetchContent is called with the context, of course).
@@ -53,10 +48,6 @@ export type Context = {
     headers?: ReadonlyHeaders | Headers
     locale?: string
     contentPath: string | string[]
-};
-
-export type FetcherConfig<T extends AdapterConstants> = T & {
-    componentRegistry: typeof ComponentRegistry
 };
 
 export type FetchContentResult = Result & {

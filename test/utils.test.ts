@@ -24,7 +24,8 @@ describe('utils', () => {
             jest.resetModules();
             process.env = {
                 ...OLD_ENV,
-                ENONIC_APP_NAME
+                ENONIC_API: 'http://localhost:8080/site',
+                ENONIC_APP_NAME,
             };
             import('../src/utils').then((moduleName) => {
                 expect(moduleName.APP_NAME).toEqual('com.enonic.app.enonic');
@@ -35,6 +36,7 @@ describe('utils', () => {
             jest.resetModules();
             process.env = {
                 ...OLD_ENV,
+                ENONIC_API: 'http://localhost:8080/site',
                 NEXT_PUBLIC_ENONIC_APP_NAME: 'com.enonic.app.next-public'
             };
             import('../src/utils').then((moduleName) => {
@@ -48,6 +50,7 @@ describe('utils', () => {
             jest.resetModules();
             process.env = {
                 ...OLD_ENV,
+                ENONIC_API: 'http://localhost:8080/site',
                 ENONIC_APP_NAME
             };
             import('../src/utils').then((moduleName) => {
@@ -70,7 +73,7 @@ describe('utils', () => {
                 jest.resetModules();
                 process.env = {
                     ...OLD_ENV,
-                    ENONIC_API: 'http://localhost:8080',
+                    ENONIC_API: 'http://localhost:8080/site',
                     ENONIC_APP_NAME,
                     ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
                 };
@@ -88,7 +91,7 @@ describe('utils', () => {
                             }
                         },
                     } as Context;
-                    expect(moduleName.getContentApiUrl(context)).toEqual(`http://localhost:8080/film-db/${branch}`);
+                    expect(moduleName.getContentApiUrl(context)).toEqual(`http://localhost:8080/site/film-db/${branch}`);
                 });
             });
         });
@@ -99,6 +102,7 @@ describe('utils', () => {
             jest.resetModules();
             process.env = {
                 ...OLD_ENV,
+                ENONIC_API: 'http://localhost:8080/site',
                 ENONIC_APP_NAME,
                 ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
             };
@@ -129,6 +133,7 @@ describe('utils', () => {
             jest.resetModules();
             process.env = {
                 ...OLD_ENV,
+                ENONIC_API: 'http://localhost:8080/site',
                 ENONIC_APP_NAME,
                 ENONIC_PROJECTS: 'en:moviedb/site,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
             };
@@ -162,6 +167,7 @@ describe('utils', () => {
             jest.resetModules();
             process.env = {
                 ...OLD_ENV,
+                ENONIC_API: 'http://localhost:8080/site',
                 ENONIC_APP_NAME,
                 ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
             };
@@ -179,6 +185,7 @@ describe('utils', () => {
             jest.resetModules();
             process.env = {
                 ...OLD_ENV,
+                ENONIC_API: 'http://localhost:8080/site',
                 ENONIC_APP_NAME,
                 ENONIC_PROJECTS: 'en:moviedb/site,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
             };
@@ -198,6 +205,7 @@ describe('utils', () => {
             jest.resetModules();
             process.env = {
                 ...OLD_ENV,
+                ENONIC_API: 'http://localhost:8080/site',
                 ENONIC_APP_NAME,
                 ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
             };
@@ -217,6 +225,7 @@ describe('utils', () => {
             jest.resetModules();
             process.env = {
                 ...OLD_ENV,
+                ENONIC_API: 'http://localhost:8080/site',
                 ENONIC_APP_NAME,
             };
             import('../src/utils').then((moduleName) => {
@@ -229,6 +238,7 @@ describe('utils', () => {
             jest.resetModules();
             process.env = {
                 ...OLD_ENV,
+                ENONIC_API: 'http://localhost:8080/site',
                 ENONIC_APP_NAME,
                 ENONIC_PROJECTS: ',sv:project/site,,prosjekt/omraade,' // NEXT_PUBLIC_ENONIC_PROJECTS
             };
@@ -242,6 +252,7 @@ describe('utils', () => {
             jest.resetModules();
             process.env = {
                 ...OLD_ENV,
+                ENONIC_API: 'http://localhost:8080/site',
                 ENONIC_APP_NAME,
                 ENONIC_PROJECTS: 'en:project/site,no:prosjekt/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
             };
@@ -269,6 +280,7 @@ describe('utils', () => {
             jest.resetModules();
             process.env = {
                 ...OLD_ENV,
+                ENONIC_API: 'http://localhost:8080/site',
                 ENONIC_APP_NAME,
                 ENONIC_PROJECTS: 'en:project/site,no:prosjekt/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
             };
@@ -283,6 +295,7 @@ describe('utils', () => {
             jest.resetModules();
             process.env = {
                 ...OLD_ENV,
+                ENONIC_API: 'http://localhost:8080/site',
                 ENONIC_APP_NAME
             };
             import('../src/utils').then((moduleName) => {
@@ -307,6 +320,7 @@ describe('utils', () => {
                 jest.resetModules();
                 process.env = {
                     ...OLD_ENV,
+                    ENONIC_API: 'http://localhost:8080/site',
                     ENONIC_APP_NAME
                 };
                 import('../src/utils').then((moduleName) => {
@@ -332,7 +346,7 @@ describe('utils', () => {
             jest.resetModules() // Most important - it clears the cache
             process.env = {
                 ...OLD_ENV,  // Make a copy
-                // ENONIC_API: 'http://localhost:8080',
+                ENONIC_API: 'http://localhost:8080/site',
                 // ENONIC_API_TOKEN: 'token',
                 ENONIC_APP_NAME: 'com.enonic.app.enonic',
                 ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/hmdb'
@@ -365,7 +379,7 @@ describe('utils', () => {
             jest.resetModules() // Most important - it clears the cache
             process.env = {
                 ...OLD_ENV,  // Make a copy
-                // ENONIC_API: 'http://localhost:8080',
+                ENONIC_API: 'http://localhost:8080/site',
                 // ENONIC_API_TOKEN: 'token',
                 ENONIC_APP_NAME: 'com.enonic.app.enonic',
                 ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/hmdb'
@@ -398,7 +412,7 @@ describe('utils', () => {
             jest.resetModules() // Most important - it clears the cache
             process.env = {
                 ...OLD_ENV,  // Make a copy
-                // ENONIC_API: 'http://localhost:8080',
+                ENONIC_API: 'http://localhost:8080/site',
                 // ENONIC_API_TOKEN: 'token',
                 ENONIC_APP_NAME: 'com.enonic.app.enonic',
                 ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/hmdb'
@@ -431,6 +445,7 @@ describe('utils', () => {
             jest.resetModules() // Most important - it clears the cache
             process.env = {
                 ...OLD_ENV,  // Make a copy
+                ENONIC_API: 'http://localhost:8080/site',
                 ENONIC_APP_NAME: 'com.enonic.app.enonic',
                 ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/hmdb'
             };
