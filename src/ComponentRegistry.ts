@@ -1,22 +1,14 @@
-import type {Context} from './types';
+import type {
+    ComponentDefinition,
+    ComponentDictionary,
+    Context,
+    PageComponent,
+    SelectedQueryMaybeVariablesFunc,
+} from './types';
 
-import {PageComponent} from './guillotine/getMetaData';
+
 import {XP_COMPONENT_TYPE} from './utils';
 
-
-/**
- *  Object that configures the handling of a particular content type. All attributes are optional (see examples below), and missing values will fall back to default behavior:
- *          - 'query' (used in fetchContent.ts) Guillotine query for fetching content data, may also have a function that supplies guillotine variables. So, 'query' can EITHER be only a query string, OR also add a get-guillotine-variables function. In the latter case, 'query' can be an object with 'query' and 'variables' attributes, or an array where the query string is first and the get-variables function is second. Either way, the get-variables function takes two arguments: path (content path, mandatory) and context (next.js-supplied Context from getServerSideProps etc. Optional, and requires that fetchContent is called with the context, of course).
- *          - 'props' (used in fetchContent.ts) is a function for processing props after fetching them
- *          - 'view' (used in BasePage.tsx) is a React component: top-level content-type-specific rendering with the props first fetched from guillotine (and then optionally preprocessed with the function in 'props').
- */
-export interface ComponentDefinition {
-    catchAll?: boolean; // will be set automatically depending on the binding
-    query?: SelectedQueryMaybeVariablesFunc,
-    configQuery?: string,
-    processor?: DataProcessor,
-    view?: React.FunctionComponent<any>
-}
 
 type SelectorName = 'contentType' | 'page' | 'component' | 'part' | 'layout' | 'macro';
 
@@ -29,10 +21,6 @@ function toSelectorName(type: XP_COMPONENT_TYPE): SelectorName | undefined {
     case XP_COMPONENT_TYPE.PART:
         return 'part';
     }
-}
-
-interface ComponentDictionary {
-    [type: string]: ComponentDefinition;
 }
 
 // NB! Always return null or empty object from processor for next is unable to serialize undefined
@@ -49,9 +37,7 @@ export type VariablesGetterResult = {
     path: string,
 };
 
-export type SelectedQueryMaybeVariablesFunc = string | QueryGetter |
-    { query: string | QueryGetter, variables: VariablesGetter } |
-    [string | QueryGetter, VariablesGetter];
+
 
 export const CATCH_ALL = '*';
 
