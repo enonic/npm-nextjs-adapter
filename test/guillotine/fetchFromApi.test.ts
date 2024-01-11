@@ -14,7 +14,7 @@ import {
 import { afterEach } from 'node:test';
 
 
-global.console = {
+globalThis.console = {
     // error: console.error,
     error: jest.fn(),
     warn: jest.fn(),
@@ -69,7 +69,7 @@ describe('guillotine', () => {
             ENONIC_APP_NAME,
             ENONIC_PROJECTS: 'en:enonic-homepage/enonic-homepage'
         });
-        jest.spyOn(global, 'fetch').mockImplementation((input, init = {}) => {
+        jest.spyOn(globalThis, 'fetch').mockImplementation((input, init = {}) => {
             // console.debug('fetch', input, init);
             const guillotine = {
                 query: [{
@@ -115,7 +115,7 @@ describe('guillotine', () => {
         });
 
         it('throws a nice error when fetch throws', () => {
-            jest.spyOn(global, 'fetch').mockImplementation(() => {
+            jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
                 throw new Error('fetch error');
             });
             import('../../src/guillotine/fetchFromApi').then((moduleName) => {

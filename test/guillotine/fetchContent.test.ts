@@ -11,7 +11,7 @@ import { afterEach } from 'node:test';
 import { XP_BASE_URL_HEADER } from '../../src/constants';
 
 
-global.console = {
+globalThis.console = {
     error: console.error,
     // error: jest.fn(),
     warn: jest.fn(),
@@ -38,7 +38,7 @@ describe('guillotine', () => {
             ENONIC_APP_NAME,
             ENONIC_PROJECTS: 'en:project/site,no:prosjekt/nettsted',
         });
-        jest.spyOn(global, 'fetch').mockImplementation((input, init = {}) => {
+        jest.spyOn(globalThis, 'fetch').mockImplementation((input, init = {}) => {
             // console.debug('fetch', input, init);
             const guillotine = {
                 query: [{

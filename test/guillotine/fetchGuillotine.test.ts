@@ -14,7 +14,7 @@ import {
 import { afterEach } from 'node:test';
 
 
-global.console = {
+globalThis.console = {
     // error: console.error,
     error: jest.fn(),
     warn: jest.fn(),
@@ -70,7 +70,7 @@ describe('guillotine', () => {
             ENONIC_APP_NAME,
             ENONIC_PROJECTS: 'en:enonic-homepage/enonic-homepage'
         });
-        jest.spyOn(global, 'fetch').mockImplementation((input, init = {}) => {
+        jest.spyOn(globalThis, 'fetch').mockImplementation((input, init = {}) => {
             // console.debug('fetch', input, init);
             const guillotine = {
                 query: [{
@@ -159,7 +159,7 @@ describe('guillotine', () => {
         });
 
         it('ensures json.errors is always an array', () => {
-            jest.spyOn(global, 'fetch').mockImplementation((input, init = {}) => {
+            jest.spyOn(globalThis, 'fetch').mockImplementation((input, init = {}) => {
                 const json = {
                     errors: 'Single string error'
                 };
@@ -183,7 +183,7 @@ describe('guillotine', () => {
         });
 
         it('returns a nice error when fetch throws', () => {
-            jest.spyOn(global, 'fetch').mockImplementation(() => {
+            jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
                 throw new Error('fetch error');
             });
             import('../../src/guillotine/fetchGuillotine').then((moduleName) => {
@@ -197,7 +197,7 @@ describe('guillotine', () => {
         });
 
         it('returns a nice error when fetch response not ok', () => {
-            jest.spyOn(global, 'fetch').mockImplementation(() => {
+            jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
                 return Promise.resolve({
                     json: () => Promise.resolve({}),
                     text: () => Promise.resolve('Internal server error'),
@@ -216,7 +216,7 @@ describe('guillotine', () => {
         });
 
         it('returns a nice error when fetch response is not json', () => {
-            jest.spyOn(global, 'fetch').mockImplementation(() => {
+            jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
                 return Promise.resolve({
                     text: () => Promise.resolve('Could this ever happen? I guess if endpoint url is wrong?'),
                     ok: true,
@@ -234,7 +234,7 @@ describe('guillotine', () => {
         });
 
         it('returns a nice error when fetch response is empty', () => {
-            jest.spyOn(global, 'fetch').mockImplementation(() => {
+            jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
                 return Promise.resolve({
                     json: () => Promise.resolve(),
                     text: () => Promise.resolve('Could this ever happen?'),
