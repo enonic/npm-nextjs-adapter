@@ -31,7 +31,7 @@ export const fetchGuillotine = async (
         headers,
     )
         .then(json => {
-            let errors: any[] = (json || {}).errors;
+            let errors: any[] = json.errors; // fetchFromApi ensures json is an object
 
             if (errors) {
                 if (!Array.isArray(errors)) {
