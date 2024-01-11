@@ -1,9 +1,13 @@
+import type {MetaData} from '../types';
+
+
 import React from 'react';
-import {MacroConfig, MacroData, MetaData} from '../guillotine/getMetaData';
+import {MacroConfig, MacroData} from '../guillotine/getMetaData';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {RENDER_MODE} from '../utils';
 import {sanitizeGraphqlName} from '../utils/sanitizeGraphqlName';
 import HTMLReactParser from 'html-react-parser';
+
 
 const unescape = require('unescape');
 

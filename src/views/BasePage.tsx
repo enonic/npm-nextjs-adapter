@@ -1,8 +1,11 @@
+import type {MetaData, PageData} from '../types';
+
+
 import React from 'react';
 import {ComponentRegistry} from '../ComponentRegistry';
-import {MetaData, PageData} from '../guillotine/getMetaData';
 import {XP_COMPONENT_TYPE} from '../utils';
 import {ErrorComponent, MissingComponent, shouldShowErrorView, shouldShowMissingView} from './BaseComponent';
+
 
 export interface PageProps {
     page: PageData;
@@ -20,6 +23,7 @@ export interface BasePageProps {
     error?: string;
     meta: MetaData;
 }
+
 
 const BasePage = (props: BasePageProps) => {
     const {component, data, common, error, meta, path} = props;

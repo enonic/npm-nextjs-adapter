@@ -1,7 +1,4 @@
-import type {
-    ContentApiBaseBody,
-    ProjectLocaleConfig
-} from '../../src/types';
+import type {Context} from '../../src/types';
 
 import {
     beforeEach,
@@ -11,11 +8,12 @@ import {
     test as it
 } from '@jest/globals';
 import { afterEach } from 'node:test';
+import { XP_BASE_URL_HEADER } from '../../src/constants';
 
 
 global.console = {
-    // error: console.error,
-    error: jest.fn(),
+    error: console.error,
+    // error: jest.fn(),
     warn: jest.fn(),
     log: jest.fn(),
     info: jest.fn(),
@@ -25,35 +23,6 @@ global.console = {
 
 const ENONIC_APP_NAME = 'com.enonic.web.enonic.com';
 
-const FETCH_FROM_API_PARAMS_VALID: [
-    string,
-    ContentApiBaseBody,
-    ProjectLocaleConfig,
-    {}
-] = [
-    'http://localhost:8080/site/enonic-homepage/master',
-    {
-        query: `{
-    guillotine {
-        query(first: 1) {
-            valid
-        }
-    }
-}`,
-        variables: {
-            // key: 'value'
-        }
-    },
-    {
-        default: true,
-        project: 'enonic-homepage',
-        site: 'enonic-homepage',
-        locale: 'en'
-    },
-    {
-        // headerKey: 'headerValue'
-    }
-];
 
 const OLD_ENV = process.env;
 
@@ -65,8 +34,9 @@ describe('guillotine', () => {
         jest.replaceProperty(process, 'env', {
             ...OLD_ENV,
             // ENONIC_API_TOKEN: '1234567890',
+            ENONIC_API: 'http://localhost:8080/site',
             ENONIC_APP_NAME,
-            ENONIC_PROJECTS: 'en:enonic-homepage/enonic-homepage'
+            ENONIC_PROJECTS: 'en:project/site,no:prosjekt/nettsted',
         });
         jest.spyOn(global, 'fetch').mockImplementation((input, init = {}) => {
             // console.debug('fetch', input, init);
@@ -97,35 +67,62 @@ describe('guillotine', () => {
 
     // afterAll(() => {});
 
-    // describe('fetchContent', () => {
-    //     const RENDER_MODES = ['edit','inline','preview','live','admin','next'];
-    //     RENDER_MODES.forEach((mode) => {
-    //         it(`${mode}`, () => {
-    //             import('../../src/guillotine/fetchContent').then((moduleName) => {
-    //                 const context: Context = {
-    //                     headers: {
-    //                         get(name: string) {
-    //                             if (name === 'content-studio-mode') {
-    //                                 return mode;
-    //                             }
-    //                             if (name === 'content-studio-project') {
-    //                                 return 'prosjekt';
-    //                             }
-    //                             if (name === 'jsessionid') {
-    //                                 return '1234';
-    //                             }
-    //                             if (name === XP_BASE_URL_HEADER) {
-    //                                 return '/whatnot/edit/1234';
-    //                             }
-    //                             console.error('headers get name', name);
-    //                         }
-    //                     },
-    //                 } as Context;
-    //                 expect(moduleName.fetchContent(context)).toStrictEqual({});
-    //             });
-    //         });
-    //     });
-    // });
+    describe('fetchContent', () => {
+        const TESTS = {
+            'edit': 'draft',
+            'inline': 'draft',
+            'preview': 'draft',
+            'live': 'master',
+            'admin': 'draft',
+            'next': 'master',
+        };
+        Object.entries(TESTS).forEach(([mode, branch]) => {
+            it(`${mode}`, () => {
+                import('../../src/guillotine/fetchContent').then((moduleName) => {
+                    const context: Context = {
+                        headers: {
+                            get(name: string) {
+                                if (name === 'content-studio-mode') {
+                                    return mode;
+                                }
+                                if (name === 'content-studio-project') {
+                                    return 'prosjekt';
+                                }
+                                if (name === 'jsessionid') {
+                                    return '1234';
+                                }
+                                if (name === XP_BASE_URL_HEADER) {
+                                    return '/admin/SOMETHING';
+                                }
+                                console.error('headers get name', name);
+                            }
+                        },
+                    } as Context;
+                    expect(moduleName.fetchContent(context)).resolves.toStrictEqual({
+                        common: null,
+                        data: null,
+                        error: {
+                            code: '404',
+                            message: 'No meta data found for content, most likely content does not exist',
+                        },
+                        meta: {
+                            apiUrl: `http://localhost:8080/site/prosjekt/${branch}`,
+                            baseUrl: '/admin/SOMETHING',
+                            canRender: false,
+                            catchAll: false,
+                            defaultLocale: 'en',
+                            locale: 'no',
+                            path: '',
+                            renderMode: mode,
+                            requestType: 'type',
+                            type: '',
+                        },
+                        page: null,
+                    });
+                });
+            });
+        });
+    });
 
     // describe('fetchMetaData', () => {
     //     import('../../src/guillotine/fetchContent').then((moduleName) => {

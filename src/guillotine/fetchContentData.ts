@@ -4,7 +4,8 @@ import type {
     ProjectLocaleConfig,
 } from '../types';
 
-import {fetchGuillotine} from './fetchContent'; // TODO import cycle?
+
+import {fetchGuillotine} from './fetchGuillotine'; // TODO import cycle?
 
 
 export const fetchContentData = async <T>(
