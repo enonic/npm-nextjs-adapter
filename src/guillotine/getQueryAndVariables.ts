@@ -1,7 +1,7 @@
 import type {
     Context,
     QueryAndVariables,
-    SelectedQueryMaybeVariablesFunc
+    SelectedQueryMaybeVariablesFunc,
 } from '../types';
 
 
@@ -9,7 +9,8 @@ export function getQueryAndVariables(type: string,
     path: string,
     context: Context,
     selectedQuery ? : SelectedQueryMaybeVariablesFunc,
-    config ? : any): QueryAndVariables | undefined {
+    config ? : any,
+): QueryAndVariables | undefined {
 
     let query, getVariables;
 
@@ -41,7 +42,7 @@ export function getQueryAndVariables(type: string,
         return {
             query,
             variables: getVariables ? getVariables(path, context, config) : {
-                path
+                path,
             },
         };
     }

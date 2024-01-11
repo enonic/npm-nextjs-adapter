@@ -1,7 +1,7 @@
 import type {
     ComponentDescriptor,
     ContentResult,
-    Context
+    Context,
 } from '../types';
 
 
@@ -14,7 +14,7 @@ const NO_PROPS_PROCESSOR = async (props: any) => await props ?? {};
 export async function applyProcessors(
     componentDescriptors: ComponentDescriptor[],
     contentResults: ContentResult,
-    context: Context
+    context: Context,
 ): Promise < PromiseSettledResult < any > [] > {
 
     let dataCounter = 0;

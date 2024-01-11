@@ -1,6 +1,6 @@
 import type {
     MetaData,
-    PageComponent
+    PageComponent,
 } from '../types';
 
 

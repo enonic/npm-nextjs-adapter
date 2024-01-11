@@ -1,19 +1,19 @@
 import type {
     ContentApiBaseBody,
     MetaResult,
-    ProjectLocaleConfig
+    ProjectLocaleConfig,
 } from '../types';
 
 
 import {getMetaQuery, pageFragmentQuery} from './getMetaData';
-import {fetchGuillotine} from './fetchContent'; // TODO: Import loop
+import {fetchGuillotine} from './fetchGuillotine'; // TODO: Import loop?
 
 
 export const fetchMetaData = async (
     contentApiUrl: string,
     xpContentPath: string,
     projectConfig: ProjectLocaleConfig,
-    headers?: {}
+    headers?: {},
 ): Promise<MetaResult> => {
     const body: ContentApiBaseBody = {
         query: getMetaQuery(pageFragmentQuery()),
