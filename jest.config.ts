@@ -5,7 +5,10 @@ export default {
     // globals: {
     // },
     coverageProvider: 'v8',
+
+    // testEnvironment: 'jsdom',
     testEnvironment: 'node',
+
     testMatch: [
         '<rootDir>/test/**/*.(spec|test).{ts,tsx}'
     ],
@@ -17,4 +20,7 @@ export default {
             }
         ]
     },
+    // transformIgnorePatterns: [
+	// 	'/node_modules/(?!node-fetch-native)',
+	// ]
 };
