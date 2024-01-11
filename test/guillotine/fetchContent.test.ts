@@ -7,6 +7,7 @@ import {
     jest,
     test as it
 } from '@jest/globals';
+import fetch from 'node-fetch-native';
 import { afterEach } from 'node:test';
 import { XP_BASE_URL_HEADER } from '../../src/constants';
 
@@ -19,7 +20,6 @@ globalThis.console = {
     info: jest.fn(),
     debug: jest.fn(),
 } as unknown as Console;
-globalThis.fetch = fetch;
 
 
 const ENONIC_APP_NAME = 'com.enonic.web.enonic.com';
