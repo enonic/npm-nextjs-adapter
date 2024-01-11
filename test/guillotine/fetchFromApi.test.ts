@@ -1,5 +1,6 @@
 import type {
     ContentApiBaseBody,
+    Context,
     ProjectLocaleConfig
 } from '../../src/types';
 
@@ -59,7 +60,6 @@ const OLD_ENV = process.env;
 
 
 describe('guillotine', () => {
-    // beforeAll(() => {});
 
     beforeEach(() => {
         jest.replaceProperty(process, 'env', {
@@ -95,43 +95,34 @@ describe('guillotine', () => {
         jest.restoreAllMocks(); // Restores all mocks and replaced properties back to their original value.
     });
 
-    // afterAll(() => {});
+    describe('fetchFromApi', () => {
+        it('returns query results', () => {
+            import('../../src/guillotine/fetchFromApi').then((moduleName) => {
+                moduleName.fetchFromApi(...FETCH_FROM_API_PARAMS_VALID).then((result) => {
+                    console.debug(result);
+                    expect(result).toEqual({
+                        data: {
+                            guillotine: {
+                                query: [{
+                                    valid: true
+                                }]
+                            }
+                        }
+                    });
+                });
+            });
+        });
 
-    // describe('fetchContent', () => {
-    //     const RENDER_MODES = ['edit','inline','preview','live','admin','next'];
-    //     RENDER_MODES.forEach((mode) => {
-    //         it(`${mode}`, () => {
-    //             import('../../src/guillotine/fetchContent').then((moduleName) => {
-    //                 const context: Context = {
-    //                     headers: {
-    //                         get(name: string) {
-    //                             if (name === 'content-studio-mode') {
-    //                                 return mode;
-    //                             }
-    //                             if (name === 'content-studio-project') {
-    //                                 return 'prosjekt';
-    //                             }
-    //                             if (name === 'jsessionid') {
-    //                                 return '1234';
-    //                             }
-    //                             if (name === XP_BASE_URL_HEADER) {
-    //                                 return '/whatnot/edit/1234';
-    //                             }
-    //                             console.error('headers get name', name);
-    //                         }
-    //                     },
-    //                 } as Context;
-    //                 expect(moduleName.fetchContent(context)).toStrictEqual({});
-    //             });
-    //         });
-    //     });
-    // });
-
-    // describe('fetchMetaData', () => {
-    //     import('../../src/guillotine/fetchContent').then((moduleName) => {
-    //         it('', () => {
-    //             expect(moduleName.fetchMetaData()).toStrictEqual({});
-    //         });
-    //     });
-    // });
+        it('throws a nice error when fetch throws', () => {
+            jest.spyOn(global, 'fetch').mockImplementation(() => {
+                throw new Error('fetch error');
+            });
+            import('../../src/guillotine/fetchFromApi').then((moduleName) => {
+                expect(() => moduleName.fetchFromApi(...FETCH_FROM_API_PARAMS_VALID)).rejects.toThrow(Error(JSON.stringify({
+                    code: 'API',
+                    message: 'fetch error'
+                })));
+            });
+        });
+    }); // fetchFromApi
 });

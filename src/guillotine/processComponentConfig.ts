@@ -1,6 +1,5 @@
-import type {
-    PageComponent
-} from '../types';
+import type {PageComponent} from '../types';
+
 
 import {sanitizeGraphqlName} from '../utils/sanitizeGraphqlName';
 

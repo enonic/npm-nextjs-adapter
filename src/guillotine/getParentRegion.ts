@@ -15,7 +15,7 @@ export function getParentRegion(
     contentType: string,
     cmpPath: PathFragment[],
     components: PageComponent[] = [],
-    createMissing ? : boolean
+    createMissing ? : boolean,
 ): PageRegion | undefined {
 
     let currentTree: RegionTree = source;

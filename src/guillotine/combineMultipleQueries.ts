@@ -1,6 +1,6 @@
 import type {
     ComponentDescriptor,
-    QueryAndVariables
+    QueryAndVariables,
 } from '../types';
 
 

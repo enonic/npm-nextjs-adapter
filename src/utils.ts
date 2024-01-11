@@ -1,7 +1,7 @@
 import type {
     Context,
     ProjectLocaleConfig,
-    ProjectLocalesConfig
+    ProjectLocalesConfig,
 } from './types';
 
 /** Import config values from .env, .env.development and .env.production */
