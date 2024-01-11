@@ -4,6 +4,7 @@ export default {
     // ],
     // globals: {
     // },
+    coverageProvider: 'v8',
     testMatch: [
         '<rootDir>/test/**/*.(spec|test).{ts,tsx}'
     ],
