@@ -75,6 +75,10 @@ export interface GuillotineRequestHeaders {
     'default-locale': string
 }
 
+export type GuillotineResult = Result & {
+    [dataKey: string]: any;
+};
+
 export interface MetaData {
     type: string,
     path: string,
@@ -143,10 +147,28 @@ export interface QueryAndVariables {
     variables?: Record<string, any>;
 }
 
+export type QueryGetter = (path: string, context?: Context, config?: any) => string;
+
 export interface RegionTree {
     [key: string]: PageRegion;
 }
 
-export type SelectedQueryMaybeVariablesFunc = string | QueryGetter |
-    { query: string | QueryGetter, variables: VariablesGetter } |
-    [string | QueryGetter, VariablesGetter];
+type Result = {
+    error?: {
+        code: string,
+        message: string
+    } | null;
+};
+
+export type SelectedQueryMaybeVariablesFunc =
+    | string
+    | QueryGetter
+    | {
+        query: string | QueryGetter
+        variables: VariablesGetter
+    }
+    | [string | QueryGetter, VariablesGetter];
+
+// TODO: also access as arguments: dataAsJson, pageAsJson, configAsJson from the first (meta) call here?
+//   Another option could be to let the component or page controller pass those values to NextJS by a header
+export type VariablesGetter = (path: string, context?: Context, config?: any) => VariablesGetterResult;

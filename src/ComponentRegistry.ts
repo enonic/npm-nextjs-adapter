@@ -26,17 +26,10 @@ function toSelectorName(type: XP_COMPONENT_TYPE): SelectorName | undefined {
 // NB! Always return null or empty object from processor for next is unable to serialize undefined
 export type DataProcessor = (data: any, context?: Context, config?: any) => Promise<Record<string, any>>;
 
-// TODO: also access as arguments: dataAsJson, pageAsJson, configAsJson from the first (meta) call here?
-//   Another option could be to let the component or page controller pass those values to NextJS by a header
-export type VariablesGetter = (path: string, context?: Context, config?: any) => VariablesGetterResult;
-
-export type QueryGetter = (path: string, context?: Context, config?: any) => string;
-
 export type VariablesGetterResult = {
     [variables: string]: any,
     path: string,
 };
-
 
 
 export const CATCH_ALL = '*';

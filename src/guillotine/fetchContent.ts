@@ -3,7 +3,7 @@ import type {
     ContentApiBaseBody,
     ContentFetcher,
     FetchContentResult,
-    PageComponent,
+    GuillotineResult,
     ProjectLocaleConfig,
 } from '../types';
 
@@ -19,147 +19,9 @@ import adapterConstants, {
 } from '../utils';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {UrlProcessor} from '../UrlProcessor';
-import {buildContentFetcher} from './buildContentFetcher'; // TODO: Import loop
+import {buildContentFetcher} from './buildContentFetcher'; // TODO: Import loop?
+import {fetchGuillotine} from './fetchGuillotine';
 
-
-type Result = {
-    error?: {
-        code: string,
-        message: string
-    } | null;
-};
-
-export type GuillotineResult = Result & {
-    [dataKey: string]: any;
-};
-
-
-// /////////////////////////////////////////////////////////////////////////////// Data
-
-/** Generic fetch */
-export const fetchFromApi = async (
-    apiUrl: string,
-    body: ContentApiBaseBody,
-    projectConfig: ProjectLocaleConfig,
-    headers?: {},
-    method = 'POST',
-) => {
-    const options = {
-        method,
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-Guillotine-SiteKey': projectConfig.site,
-        },
-        body: JSON.stringify(body),
-    };
-
-    if (headers) {
-        Object.assign(options.headers, headers);
-    }
-
-    let res: Response;
-    try {
-        // console.debug(apiUrl, options);
-        res = await fetch(apiUrl, options);
-    } catch (e: any) {
-        console.warn(apiUrl, e);
-        throw new Error(JSON.stringify({
-            code: 'API',
-            message: e.message,
-        }));
-    }
-
-    if (!res.ok) {
-        throw new Error(JSON.stringify({
-            code: res.status,
-            message: `Data fetching failed (message: '${await res.text()}')`,
-        }));
-    }
-
-    let json;
-    try {
-        json = await res.json();
-    } catch (e) {
-        throw new Error(JSON.stringify({
-            code: 500,
-            message: `API call completed but with non-JSON data: ${JSON.stringify(await res.text())}`,
-        }));
-    }
-
-    if (!json) {
-        throw new Error(JSON.stringify({
-            code: 500,
-            message: `API call completed but with unexpectedly empty data: ${JSON.stringify(await res.text())}`,
-        }));
-    }
-
-    return json;
-};
-
-/** Guillotine-specialized fetch, using the generic fetch above */
-export const fetchGuillotine = async (
-    contentApiUrl: string,
-    body: ContentApiBaseBody,
-    projectConfig: ProjectLocaleConfig,
-    headers?: {}): Promise<GuillotineResult> => {
-    if (typeof body.query !== 'string' || !body.query.trim()) {
-        return {
-            error: {
-                code: '400',
-                message: `Invalid or missing query. JSON.stringify(query) = ${JSON.stringify(body.query)}`,
-            },
-        };
-    }
-    const path = body.variables?.path;
-    const pathMessage = path ? JSON.stringify(path) : '';
-    const result: GuillotineResult = await fetchFromApi(
-        contentApiUrl,
-        body,
-        projectConfig,
-        headers,
-    )
-        .then(json => {
-            let errors: any[] = (json || {}).errors;
-
-            if (errors) {
-                if (!Array.isArray(errors)) {
-                    errors = [errors];
-                }
-                console.error(`${errors.length} error(s) when fetching data from: ${contentApiUrl}`);
-                console.error(`headers: ${JSON.stringify(headers, null, 2)} \nvariables: ${JSON.stringify(body.variables, null, 2)}`);
-                errors.forEach(error => {
-                    console.error(error);
-                });
-
-                return {
-                    error: {
-                        code: '500',
-                        message: `Server responded with ${errors.length} error(s), probably from guillotine - see log.`,
-                    },
-                };
-            }
-
-            return json.data;
-        })
-        .catch((err) => {
-            console.warn(`Client-side error when trying to fetch data ${pathMessage}`, err);
-            try {
-                return {error: JSON.parse(err.message)};
-            } catch (e2) {
-                return {error: {code: 'Client-side error', message: err.message}};
-            }
-        });
-
-    return result;
-};
-
-
-// ------------------------------------------------------------- XP view component data handling
-
-
-
-// ////////////////////////////  ENTRY 2: ready-to-use fetchContent function
 
 /**
  * Default fetchContent function, built with params from imports.

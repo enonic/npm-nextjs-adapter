@@ -1,6 +1,6 @@
 import type {
     ComponentDefinition,
-    PageComponent
+    PageComponent,
 } from '../types';
 
 

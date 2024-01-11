@@ -7,7 +7,7 @@ import {buildPage} from './buildPage';
 export function createPageData(
     contentType: string,
     components: PageComponent[],
-    componentPath?: string
+    componentPath?: string,
 ): PageComponent | undefined {
     let page;
     if (components && !componentPath) {
