@@ -62,5 +62,12 @@ export const fetchFromApi = async (
         }));
     }
 
+    if (Array.isArray(json)) {
+        throw new Error(JSON.stringify({
+            code: 500,
+            message: `API call completed but with unexpected array data: ${JSON.stringify(json)}`,
+        }));
+    }
+
     return json;
 };
