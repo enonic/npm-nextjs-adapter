@@ -27,7 +27,15 @@ globalThis.console = {
 
 const ENONIC_APP_NAME = 'com.enonic.web.enonic.com';
 
-const FETCH_FROM_API_PARAMS_VALID: [
+const QUERY = `{
+    guillotine {
+        query(first: 1) {
+            valid
+        }
+    }
+}`;
+
+const FETCH_GUILLOTINE_PARAMS_VALID: [
     string,
     ContentApiBaseBody,
     ProjectLocaleConfig,
@@ -35,13 +43,7 @@ const FETCH_FROM_API_PARAMS_VALID: [
 ] = [
     'http://localhost:8080/site/enonic-homepage/master',
     {
-        query: `{
-    guillotine {
-        query(first: 1) {
-            valid
-        }
-    }
-}`,
+        query: QUERY,
         variables: {
             // key: 'value'
         }
@@ -103,7 +105,76 @@ describe('guillotine', () => {
     describe('fetchGuillotine', () => {
         it('fetches a response from guillotine', () => {
             import('../../src/guillotine/fetchGuillotine').then((moduleName) => {
-                moduleName.fetchGuillotine(...FETCH_FROM_API_PARAMS_VALID).then((result) => {
+                moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID).then((result) => {
+                    expect(result).toEqual({
+                        guillotine: {
+                            query: [{
+                                valid: true
+                            }]
+                        }
+                    });
+                });
+            });
+        });
+
+        it('handles variables = undefined', () => {
+            const [contentApiUrl, body, projectConfig, headers] = [
+                FETCH_GUILLOTINE_PARAMS_VALID[0],
+                {
+                    query: QUERY
+                },
+                FETCH_GUILLOTINE_PARAMS_VALID[2],
+                FETCH_GUILLOTINE_PARAMS_VALID[3],
+            ]
+            import('../../src/guillotine/fetchGuillotine').then((moduleName) => {
+                moduleName.fetchGuillotine(contentApiUrl, body, projectConfig, headers).then((result) => {
+                    expect(result).toEqual({
+                        guillotine: {
+                            query: [{
+                                valid: true
+                            }]
+                        }
+                    });
+                });
+            });
+        });
+
+        it('returns an error when res.json() = []', () => {
+            jest.spyOn(globalThis, 'fetch').mockImplementation((input, init = {}) => {
+                const array = [];
+                return Promise.resolve({
+                    json: () => Promise.resolve(array),
+                    text: () => Promise.resolve(JSON.stringify(array)),
+                    ok: true,
+                    status: 200
+                } as Response);
+            });
+            import('../../src/guillotine/fetchGuillotine').then((moduleName) => {
+                moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID).then((result) => {
+                    expect(result).toEqual({
+                        error: {
+                            code: 500,
+                            message: 'API call completed but with unexpected array data: []'
+                        }
+                    });
+                });
+            });
+        });
+
+        it('handles variables with path', () => {
+            const [contentApiUrl, body, projectConfig, headers] = [
+                FETCH_GUILLOTINE_PARAMS_VALID[0],
+                {
+                    query: QUERY,
+                    variables: {
+                        path: '/HAS_NO_EFFECT_SINCE_RESPONSE_IS_MOCKED'
+                    }
+                },
+                FETCH_GUILLOTINE_PARAMS_VALID[2],
+                FETCH_GUILLOTINE_PARAMS_VALID[3],
+            ]
+            import('../../src/guillotine/fetchGuillotine').then((moduleName) => {
+                moduleName.fetchGuillotine(contentApiUrl, body, projectConfig, headers).then((result) => {
                     expect(result).toEqual({
                         guillotine: {
                             query: [{
@@ -117,13 +188,13 @@ describe('guillotine', () => {
 
         it('returns an error when query is not a string', () => {
             const [contentApiUrl, body, projectConfig, headers] = [
-                FETCH_FROM_API_PARAMS_VALID[0],
+                FETCH_GUILLOTINE_PARAMS_VALID[0],
                 {
                     query: true as unknown as string,
                     variables: {}
                 },
-                FETCH_FROM_API_PARAMS_VALID[2],
-                FETCH_FROM_API_PARAMS_VALID[3]
+                FETCH_GUILLOTINE_PARAMS_VALID[2],
+                FETCH_GUILLOTINE_PARAMS_VALID[3]
             ]
             import('../../src/guillotine/fetchGuillotine').then((moduleName) => {
                 moduleName.fetchGuillotine(contentApiUrl, body, projectConfig, headers).then((result) => {
@@ -139,13 +210,13 @@ describe('guillotine', () => {
 
         it('returns an error when query is an empty string', () => {
             const [contentApiUrl, body, projectConfig, headers] = [
-                FETCH_FROM_API_PARAMS_VALID[0],
+                FETCH_GUILLOTINE_PARAMS_VALID[0],
                 {
                     query: '',
                     variables: {}
                 },
-                FETCH_FROM_API_PARAMS_VALID[2],
-                FETCH_FROM_API_PARAMS_VALID[3],
+                FETCH_GUILLOTINE_PARAMS_VALID[2],
+                FETCH_GUILLOTINE_PARAMS_VALID[3],
             ]
             import('../../src/guillotine/fetchGuillotine').then((moduleName) => {
                 moduleName.fetchGuillotine(contentApiUrl, body, projectConfig, headers).then((result) => {
@@ -172,7 +243,7 @@ describe('guillotine', () => {
                 } as Response);
             });
             import('../../src/guillotine/fetchGuillotine').then((moduleName) => {
-                moduleName.fetchGuillotine(...FETCH_FROM_API_PARAMS_VALID).then((result) => {
+                moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID).then((result) => {
                     expect(result).toEqual({
                         error: {
                             code: '500',
@@ -188,7 +259,7 @@ describe('guillotine', () => {
                 throw new Error('fetch error');
             });
             import('../../src/guillotine/fetchGuillotine').then((moduleName) => {
-                expect(moduleName.fetchGuillotine(...FETCH_FROM_API_PARAMS_VALID)).resolves.toEqual({
+                expect(moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID)).resolves.toEqual({
                     error: {
                         code: 'API',
                         message: 'fetch error'
@@ -207,7 +278,7 @@ describe('guillotine', () => {
                 } as Response);
             });
             import('../../src/guillotine/fetchGuillotine').then((moduleName) => {
-                expect(moduleName.fetchGuillotine(...FETCH_FROM_API_PARAMS_VALID)).resolves.toEqual({
+                expect(moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID)).resolves.toEqual({
                     error: {
                         code: 500,
                         message: "Data fetching failed (message: 'Internal server error')"
@@ -225,7 +296,7 @@ describe('guillotine', () => {
                 } as Response);
             });
             import('../../src/guillotine/fetchGuillotine').then((moduleName) => {
-                expect(moduleName.fetchGuillotine(...FETCH_FROM_API_PARAMS_VALID)).resolves.toEqual({
+                expect(moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID)).resolves.toEqual({
                     error: {
                         code: 500,
                         message: 'API call completed but with non-JSON data: "Could this ever happen? I guess if endpoint url is wrong?"'
@@ -244,7 +315,7 @@ describe('guillotine', () => {
                 } as Response);
             });
             import('../../src/guillotine/fetchGuillotine').then((moduleName) => {
-                expect(moduleName.fetchGuillotine(...FETCH_FROM_API_PARAMS_VALID)).resolves.toEqual({
+                expect(moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID)).resolves.toEqual({
                     error: {
                         code: 500,
                         message: 'API call completed but with unexpectedly empty data: "Could this ever happen?"'
@@ -253,27 +324,23 @@ describe('guillotine', () => {
             });
         });
 
-        // it("returns a nice error when error.message can't be JSON parsed", () => {
-        //     import('../../src/guillotine/fetchGuillotine').then((moduleName) => {
-        //         const spyOnFetchFromApi = jest.spyOn(moduleName, 'fetchFromApi').mockImplementation(async () => {
-        //             throw new Error('not json parseable');
-        //         });
-        //         expect(moduleName.fetchGuillotine(...FETCH_FROM_API_PARAMS_VALID)).resolves.toEqual({
-        //             error: {
-        //                 code: 'Client-side error',
-        //                 message: 'not json parseable'
-        //             }
-        //         });
-        //         expect(spyOnFetchFromApi).toHaveBeenCalledTimes(1);
-        //     });
-        // });
+        it("returns a nice error when error.message can't be JSON parsed", () => {
+            const fetchFromApi = jest.fn(async () => {
+                throw new Error('not json parseable');
+            });
+            jest.resetModules(); // Required or next line wont work
+            jest.doMock<typeof import('../../src/guillotine/fetchFromApi')>(
+                '../../src/guillotine/fetchFromApi', () => ({fetchFromApi})
+            );
+            import('../../src/guillotine/fetchGuillotine').then((moduleName) => {
+                expect(moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID)).resolves.toEqual({
+                    error: {
+                        code: 'Client-side error',
+                        message: 'not json parseable'
+                    }
+                });
+                expect(fetchFromApi.mock.calls).toHaveLength(1);
+            });
+        });
     }); // fetchGuillotine
-
-    // describe('fetchMetaData', () => {
-    //     import('../../src/guillotine/fetchContent').then((moduleName) => {
-    //         it('', () => {
-    //             expect(moduleName.fetchMetaData()).toStrictEqual({});
-    //         });
-    //     });
-    // });
 });
