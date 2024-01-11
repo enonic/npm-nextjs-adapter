@@ -1,6 +1,12 @@
-import {RENDER_MODE, XP_COMPONENT_TYPE, XP_REQUEST_TYPE} from '../utils';
+import type {
+    ComponentDefinition,
+    PageComponent
+} from '../types';
+
+
 import {sanitizeGraphqlName} from '../utils/sanitizeGraphqlName';
-import {ComponentDefinition, ComponentRegistry} from '../ComponentRegistry';
+import {ComponentRegistry} from '../ComponentRegistry';
+
 
 const macroConfigQuery = (): string => {
     return configQuery(ComponentRegistry.getMacros(), false, false);
@@ -139,20 +145,6 @@ export function getMetaQuery(pageFragment?: string): string {
             }`;
 }
 
-export interface PageComponent {
-    [key: string]: any; // keeps ts happy when accessing component data field by XP_COMPONENT_TYPE type
-    type: XP_COMPONENT_TYPE;
-    path: string;
-    page?: PageData;
-    part?: PartData;
-    layout?: LayoutData;
-    fragment?: FragmentData;
-    text?: TextData;
-    image?: any;
-    regions?: RegionTree;
-    data?: any;
-    error?: any;
-}
 
 export interface TextData {
     value: RichTextData;
@@ -194,16 +186,6 @@ export interface MacroConfig {
     [key: string]: any;
 }
 
-
-export interface RegionTree {
-    [key: string]: PageRegion;
-}
-
-export interface PageRegion {
-    name: string;
-    components: PageComponent[];
-}
-
 export interface PartData {
     descriptor: string;
     config: any;
@@ -218,13 +200,6 @@ export interface LayoutData {
     [customKeysFromQuery: string]: any;
 }
 
-export interface PageData {
-    descriptor: string;
-    config?: any;
-    template?: string | null;
-    regions?: RegionTree;
-}
-
 export interface FragmentData {
     id: string;
     fragment: {
@@ -232,16 +207,4 @@ export interface FragmentData {
     }
 }
 
-export interface MetaData {
-    type: string,
-    path: string,
-    requestType: XP_REQUEST_TYPE,
-    renderMode: RENDER_MODE,
-    requestedComponent?: PageComponent,
-    canRender: boolean,
-    catchAll: boolean,
-    apiUrl: string,
-    baseUrl: string,
-    locale: string,
-    defaultLocale: string,
-}
+
