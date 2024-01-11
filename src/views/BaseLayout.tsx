@@ -1,8 +1,12 @@
+import type {MetaData, RegionTree} from '../types';
+
+
 import React from 'react';
-import {LayoutData, MetaData, RegionTree} from '../guillotine/getMetaData';
+import {LayoutData} from '../guillotine/getMetaData';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {XP_COMPONENT_TYPE} from '../utils';
 import {MissingComponent, shouldShowMissingView} from './BaseComponent';
+
 
 export interface LayoutProps {
     layout: LayoutData;
@@ -18,6 +22,7 @@ interface BaseLayoutProps {
     common?: any;
     meta: MetaData;
 }
+
 
 const BaseLayout = (props: BaseLayoutProps) => {
 

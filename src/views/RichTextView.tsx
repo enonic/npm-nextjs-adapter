@@ -1,11 +1,15 @@
+import type {MetaData} from '../types';
+
+
 import React from 'react';
 import {getUrl, UrlProcessor} from '../UrlProcessor';
-import {MetaData, RichTextData} from '../guillotine/getMetaData';
+import {RichTextData} from '../guillotine/getMetaData';
 import HTMLReactParser, {DOMNode} from 'html-react-parser';
 import {ElementType} from 'domelementtype';
 import BaseMacro from './BaseMacro';
 import Link from 'next/link';
 import {Text} from 'domhandler';
+
 
 export type ReplacerResult = JSX.Element | object | void | undefined | null | false;
 
@@ -19,6 +23,7 @@ type Props = {
     renderMacroInEditMode?: boolean,
     customReplacer?: Replacer,
 };
+
 
 export function createReplacer(allData: RichTextData, meta: MetaData, renderMacroInEditMode = true, customReplacer?: Replacer): (domNode: DOMNode) => ReplacerResult {
     // eslint-disable-next-line react/display-name

@@ -1,16 +1,17 @@
 import type {
-    AdapterConstants,
     ComponentDescriptor,
     ContentFetcher,
     Context,
     FetchContentResult,
-    FetcherConfig,
 } from '../types';
 
 
 import {headers} from 'next/headers';
+import {ComponentRegistry} from '../ComponentRegistry';
 import {UrlProcessor} from '../UrlProcessor';
 import {
+    APP_NAME,
+    APP_NAME_DASHED,
     FRAGMENT_CONTENTTYPE_NAME,
     getContentApiUrl,
     getProjectLocaleConfig,
@@ -25,6 +26,7 @@ import {
 } from '../utils';
 import {getXpBaseUrl} from '../utils/getXpBaseUrl';
 import {buildGuillotineRequestHeaders} from '../utils/buildGuillotineRequestHeaders';
+
 import {fetchMetaData} from './fetchMetaData'; // TODO: Import loop
 import {getCleanContentPathArrayOrThrow400} from './getCleanContentPathArrayOrThrow400';
 import {buildErrorResponse} from './buildErrorResponse';
@@ -45,13 +47,11 @@ import {createMetaData} from './createMetaData';
  * @param config object containing ComponentRegistry as well as constants imported from enonic-connecion-config.js
  * @returns ContentFetcher
  */
-export const buildContentFetcher = <T extends AdapterConstants>(config: FetcherConfig<T>): ContentFetcher => {
-
-    const {
-        APP_NAME,
-        APP_NAME_DASHED,
-        componentRegistry,
-    } = config;
+export const buildContentFetcher = ({
+    componentRegistry,
+}: {
+    componentRegistry: typeof ComponentRegistry
+}): ContentFetcher => {
 
     return async (context: Context): Promise<FetchContentResult> => {
 

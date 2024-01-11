@@ -249,6 +249,7 @@ export function getContentApiUrl(context: Context): string {
 
 const adapterConstants = {
     IS_DEV_MODE,
+    API_URL,
     APP_NAME,
     APP_NAME_UNDERSCORED,
     APP_NAME_DASHED,
@@ -260,8 +261,6 @@ const adapterConstants = {
 const NOT_REQUIRED = ['IS_DEV_MODE'];
 Object.keys(adapterConstants).forEach(key => {
     if (NOT_REQUIRED.indexOf(key) === -1 && !adapterConstants[key]) {
-        throw Error(`constants.ts: Config value '${key}' is missing (from .env?)`);
+        throw Error(`Config value '${key}' is missing (from .env?)`);
     }
 });
-
-export default adapterConstants;
