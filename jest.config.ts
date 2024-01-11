@@ -1,12 +1,10 @@
 export default {
-    // collectCoverageFrom: [
-    //     'src/**/*.{ts,tsx}'
-    // ],
-    // globals: {
-    // },
+    collectCoverageFrom: [
+        'src/**/*.{ts,tsx}'
+    ],
+
     coverageProvider: 'v8',
 
-    // testEnvironment: 'jsdom',
     testEnvironment: 'node',
 
     testMatch: [
@@ -20,7 +18,4 @@ export default {
             }
         ]
     },
-    // transformIgnorePatterns: [
-	// 	'/node_modules/(?!node-fetch-native)',
-	// ]
 };
