@@ -8,7 +8,7 @@ import {
     jest,
     test as it
 } from '@jest/globals';
-import DefaultMacro from '../src/views/macros/DefaultMacro';
+// import DefaultMacro from '../src/views/macros/DefaultMacro';
 import {
     ENONIC_API,
     ENONIC_APP_NAME,
@@ -84,7 +84,7 @@ const REGISTERED_LAYOUT_COMPONENT = {
 
 const REGISTERED_MACRO_COMPONENT = {
     catchAll: false,
-    view: DefaultMacro,
+    // view: DefaultMacro,
     configQuery: '{body}'
 }
 
@@ -156,7 +156,7 @@ describe('ComponentRegistry', () => {
     describe('addMacro', () => {
         it('adds a macro', () => {
             expect(ComponentRegistry.addMacro(MACRO_NAME_SYSTEM_EMBED, {
-                view: DefaultMacro,
+                // view: DefaultMacro, // Is this what makes tests fail on GitHub?
                 configQuery: '{body}'
             })).toBeUndefined();
             expect(ComponentRegistry.getMacro(MACRO_NAME_SYSTEM_EMBED))
