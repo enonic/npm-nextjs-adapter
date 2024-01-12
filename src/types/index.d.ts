@@ -1,3 +1,4 @@
+/* eslint spaced-comment: ["error", "always", { "markers": ["/"] }] */
 /// <reference lib="dom" />
 
 import type {ReadonlyHeaders} from 'next/dist/server/web/spec-extension/adapters/headers';
