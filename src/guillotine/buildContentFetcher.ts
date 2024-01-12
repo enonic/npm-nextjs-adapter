@@ -27,7 +27,7 @@ import {
 import {getXpBaseUrl} from '../utils/getXpBaseUrl';
 import {buildGuillotineRequestHeaders} from '../utils/buildGuillotineRequestHeaders';
 
-import {fetchMetaData} from './fetchMetaData'; // TODO: Import loop
+import {fetchMetaData} from './fetchMetaData';
 import {getCleanContentPathArrayOrThrow400} from './getCleanContentPathArrayOrThrow400';
 import {buildErrorResponse} from './buildErrorResponse';
 import {getContentAndComponentPaths} from './getContentAndComponentPaths';
