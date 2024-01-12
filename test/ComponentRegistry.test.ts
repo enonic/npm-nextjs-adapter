@@ -8,6 +8,7 @@ import {
     jest,
     test as it
 } from '@jest/globals';
+import 'node-fetch-native/polyfill'; // Too avoid: "ReferenceError: Headers is not defined"
 // import DefaultMacro from '../src/views/macros/DefaultMacro';
 import {
     ENONIC_API,
