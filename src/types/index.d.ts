@@ -1,3 +1,5 @@
+/// <reference lib="dom" />
+
 import type {ReadonlyHeaders} from 'next/dist/server/web/spec-extension/adapters/headers';
 import type {ParsedUrlQuery} from 'node:querystring';
 import type {ReactNode} from 'react';

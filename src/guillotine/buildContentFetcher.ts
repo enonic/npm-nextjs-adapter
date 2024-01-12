@@ -1,3 +1,5 @@
+/// <reference lib="dom" />
+
 import type {
     ComponentDescriptor,
     ContentFetcher,
