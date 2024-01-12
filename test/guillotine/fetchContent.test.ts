@@ -79,7 +79,7 @@ describe('guillotine', () => {
         };
         Object.entries(TESTS).forEach(([mode, branch]) => {
             it(`${mode}`, () => {
-                import('../../src/guillotine/fetchContent').then((moduleName) => {
+                import('../../src').then((moduleName) => {
                     const context: Context = {
                         headers: {
                             get(name: string) {
@@ -126,7 +126,7 @@ describe('guillotine', () => {
     });
 
     // describe('fetchMetaData', () => {
-    //     import('../../src/guillotine/fetchContent').then((moduleName) => {
+    //     import('../../src').then((moduleName) => {
     //         it('', () => {
     //             expect(moduleName.fetchMetaData()).toStrictEqual({});
     //         });

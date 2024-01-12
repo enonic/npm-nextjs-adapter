@@ -10,23 +10,24 @@ import {headers} from 'next/headers';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {UrlProcessor} from '../UrlProcessor';
 import {
-    APP_NAME,
-    APP_NAME_DASHED,
     FRAGMENT_CONTENTTYPE_NAME,
-    getContentApiUrl,
-    getProjectLocaleConfig,
-    getRenderMode,
-    getRequestLocaleInfo,
-    IS_DEV_MODE,
     PAGE_TEMPLATE_CONTENTTYPE_NAME,
     PAGE_TEMPLATE_FOLDER,
     RENDER_MODE,
     XP_COMPONENT_TYPE,
     XP_REQUEST_TYPE,
-} from '../utils';
+} from '../constants';
+import {
+    APP_NAME,
+    APP_NAME_DASHED,
+    IS_DEV_MODE,
+} from '../env';
+import {getContentApiUrl} from '../utils/getContentApiUrl';
+import {getProjectLocaleConfig} from '../utils/getProjectLocaleConfig';
+import {getRenderMode} from '../utils/getRenderMode';
 import {getXpBaseUrl} from '../utils/getXpBaseUrl';
+import {getRequestLocaleInfo} from '../utils/getRequestLocaleInfo';
 import {buildGuillotineRequestHeaders} from '../utils/buildGuillotineRequestHeaders';
-
 import {fetchMetaData} from './fetchMetaData';
 import {getCleanContentPathArrayOrThrow400} from './getCleanContentPathArrayOrThrow400';
 import {buildErrorResponse} from './buildErrorResponse';

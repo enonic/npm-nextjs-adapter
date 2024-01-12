@@ -2,8 +2,10 @@ import type {MetaData, PageComponent, PageData} from '../types';
 
 
 import React from 'react';
-import {PORTAL_REGION_ATTRIBUTE, RENDER_MODE} from '../utils';
-
+import {
+    PORTAL_REGION_ATTRIBUTE,
+    RENDER_MODE,
+} from '../constants';
 import BaseComponent from './BaseComponent';
 
 

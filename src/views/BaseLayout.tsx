@@ -2,9 +2,9 @@ import type {MetaData, RegionTree} from '../types';
 
 
 import React from 'react';
+import {XP_COMPONENT_TYPE} from '../constants';
 import {LayoutData} from '../guillotine/getMetaData';
 import {ComponentRegistry} from '../ComponentRegistry';
-import {XP_COMPONENT_TYPE} from '../utils';
 import {MissingComponent, shouldShowMissingView} from './BaseComponent';
 
 

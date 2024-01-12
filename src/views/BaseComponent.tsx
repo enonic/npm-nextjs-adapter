@@ -2,8 +2,12 @@ import type {MetaData, PageComponent} from '../types';
 
 
 import React from 'react';
-
-import {IS_DEV_MODE, PORTAL_COMPONENT_ATTRIBUTE, RENDER_MODE, XP_COMPONENT_TYPE} from '../utils';
+import {
+    PORTAL_COMPONENT_ATTRIBUTE,
+    RENDER_MODE,
+    XP_COMPONENT_TYPE,
+} from '../constants';
+import {IS_DEV_MODE} from '../env';
 import {ComponentRegistry} from '../ComponentRegistry';
 import Empty from './Empty';
 

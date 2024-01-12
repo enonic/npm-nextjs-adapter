@@ -1,7 +1,7 @@
 import {
     FRAGMENT_CONTENTTYPE_NAME,
     FRAGMENT_DEFAULT_REGION_NAME,
-} from '../utils';
+} from '../constants';
 
 
 export function prefixLayoutPath(contentType: string, path: string): string {

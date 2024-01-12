@@ -1,16 +1,10 @@
-import type {
-    ComponentDefinition,
-    PageComponent,
-} from '../types';
+import type {PageComponent} from '../types';
 
 
-import {sanitizeGraphqlName} from '../utils/sanitizeGraphqlName';
 import {ComponentRegistry} from '../ComponentRegistry';
+import {configQuery} from './metadata/configQuery';
+import {richTextQuery} from './metadata/richTextQuery';
 
-
-const macroConfigQuery = (): string => {
-    return configQuery(ComponentRegistry.getMacros(), false, false);
-};
 
 const partConfigQuery = (): string => {
     return configQuery(ComponentRegistry.getParts());
@@ -24,72 +18,10 @@ const pageConfigQuery = (): string => {
     return configQuery(ComponentRegistry.getPages());
 };
 
-const configQuery = (list: [string, ComponentDefinition][], includeAppName = true, canUseConfigAsJson = true): string => {
-    const hasQueryList = list?.filter(([key, def]) => def.configQuery) || [];
-    if (hasQueryList.length === 0) {
-        return canUseConfigAsJson ? 'configAsJson' : '';
-    }
-
-    const configsByApp: { [app: string]: string[] } = {};
-    hasQueryList
-        .forEach((entry) => {
-            const nameParts = entry[0].split(':');
-            if (nameParts.length === 2) {
-                const sanitizedAppName = sanitizeGraphqlName(nameParts[0]);
-                let existingConfigs = configsByApp[sanitizedAppName];
-                if (!existingConfigs) {
-                    existingConfigs = [];
-                    configsByApp[sanitizedAppName] = existingConfigs;
-                }
-                existingConfigs.push(`${sanitizeGraphqlName(nameParts[1])}${entry[1].configQuery}`);
-            }
-        });
-
-    // Still query for configAsJson if at least one item has no configQuery defined
-    const configAsJsonQuery = canUseConfigAsJson && hasQueryList.length < list.length ? 'configAsJson' : '';
-
-    if (!includeAppName) {
-        return `${configAsJsonQuery}
-                config {
-                    ${Object.values(configsByApp).reduce((arr, curr) => arr.concat(curr), []).join('\n')}
-                }`;
-    } else {
-        return `${configAsJsonQuery}
-                config {
-                    ${Object.entries(configsByApp).map(entry => entry[0] + '{\n' + entry[1].join('\n') + '\n}')}
-                }`;
-    }
-};
 
 /*
     IMPORTANT: make sure to transform your queries into functions too when using this function inside them !!!
  */
-export const richTextQuery = (fieldName: string) => {
-    return `${fieldName}(processHtml:{type:absolute, imageWidths:[400, 800, 1200], imageSizes:"(max-width: 400px) 400px, (max-width: 800px) 800px, 1200px"}) {
-                processedHtml
-                macros {
-                    ref
-                    name
-                    descriptor
-                    ${macroConfigQuery()}
-                }
-                links {
-                    ref
-                    media {
-                        content {
-                            _id
-                        }
-                    }
-                }
-                images {
-                    ref
-                    image {
-                        _id
-                    }
-                }
-            }`;
-};
-
 const componentsQuery = () => `
         type
         path
@@ -184,13 +116,6 @@ export interface ImageData {
 
 export interface MacroConfig {
     [key: string]: any;
-}
-
-export interface PartData {
-    descriptor: string;
-    config: any;
-
-    [customKeysFromQuery: string]: any;
 }
 
 export interface LayoutData {

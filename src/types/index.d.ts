@@ -1,4 +1,7 @@
-import {ReadonlyHeaders} from 'next/dist/server/web/spec-extension/adapters/headers';
+import type {ReadonlyHeaders} from 'next/dist/server/web/spec-extension/adapters/headers';
+import type {ParsedUrlQuery} from 'node:querystring';
+// import type {NestedRecord} from '@enonic-types/core';
+
 
 /**
  *  Object that configures the handling of a particular content type. All attributes are optional (see examples below), and missing values will fall back to default behavior:
@@ -43,6 +46,11 @@ export type ContentFetcher = (context: Context) => Promise<FetchContentResult>;
 export type ContentResult = Result & {
     contents?: Record<string, any>[];
 };
+
+export interface ContentPathItem {
+    contentPath: string[]
+    locale: string,
+}
 
 export type Context = {
     headers?: ReadonlyHeaders | Headers
@@ -120,7 +128,20 @@ export interface PageRegion {
     components: PageComponent[];
 }
 
+export interface PartData {
+    descriptor: string;
+    config: any; // TODO NestedRecord?;
+
+    [customKeysFromQuery: string]: any;
+}
+
 export type PathFragment = { region: string, index: number };
+
+export interface PreviewParams {
+    contentPath: string[];
+    headers: Record<string, string>;
+    params: Record<string, string>;
+}
 
 export type ProjectLocaleConfig = {
     default: boolean;
@@ -160,6 +181,18 @@ export type SelectedQueryMaybeVariablesFunc =
     }
     | [string | QueryGetter, VariablesGetter];
 
+export interface ServerSideParams
+    extends ParsedUrlQuery {
+    // String array catching a sub-path assumed to match the site-relative path of an XP content.
+    contentPath?: string[];
+    mode?: string;
+}
+
 // TODO: also access as arguments: dataAsJson, pageAsJson, configAsJson from the first (meta) call here?
 //   Another option could be to let the component or page controller pass those values to NextJS by a header
 export type VariablesGetter = (path: string, context?: Context, config?: any) => VariablesGetterResult;
+
+export type VariablesGetterResult = {
+    [variables: string]: any,
+    path: string,
+};

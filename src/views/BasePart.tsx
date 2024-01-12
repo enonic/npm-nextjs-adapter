@@ -1,10 +1,12 @@
-import type {MetaData} from '../types';
+import type {
+    MetaData,
+    PartData,
+} from '../types';
 
 
 import React from 'react';
-import {PartData} from '../guillotine/getMetaData';
 import {ComponentRegistry} from '../ComponentRegistry';
-import {XP_COMPONENT_TYPE} from '../utils';
+import {XP_COMPONENT_TYPE} from '../constants';
 import {MissingComponent, shouldShowMissingView} from './BaseComponent';
 
 

@@ -99,7 +99,7 @@ describe('guillotine', () => {
 
     describe('fetchFromApi', () => {
         it('returns query results', () => {
-            import('../../src/guillotine/fetchFromApi').then((moduleName) => {
+            import('../../src').then((moduleName) => {
                 moduleName.fetchFromApi(...FETCH_FROM_API_PARAMS_VALID).then((result) => {
                     console.debug(result);
                     expect(result).toEqual({
@@ -119,7 +119,7 @@ describe('guillotine', () => {
             jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
                 throw new Error('fetch error');
             });
-            import('../../src/guillotine/fetchFromApi').then((moduleName) => {
+            import('../../src').then((moduleName) => {
                 expect(() => moduleName.fetchFromApi(...FETCH_FROM_API_PARAMS_VALID)).rejects.toThrow(Error(JSON.stringify({
                     code: 'API',
                     message: 'fetch error'

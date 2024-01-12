@@ -2,9 +2,9 @@ import type {MetaData} from '../types';
 
 
 import React from 'react';
-import {MacroConfig, MacroData} from '../guillotine/getMetaData';
 import {ComponentRegistry} from '../ComponentRegistry';
-import {RENDER_MODE} from '../utils';
+import {RENDER_MODE} from '../constants';
+import {MacroConfig, MacroData} from '../guillotine/getMetaData';
 import {sanitizeGraphqlName} from '../utils/sanitizeGraphqlName';
 import HTMLReactParser from 'html-react-parser';
 
