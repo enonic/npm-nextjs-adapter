@@ -1,7 +1,47 @@
 import type {ReadonlyHeaders} from 'next/dist/server/web/spec-extension/adapters/headers';
 import type {ParsedUrlQuery} from 'node:querystring';
+import type {ReactNode} from 'react';
 // import type {NestedRecord} from '@enonic-types/core';
 
+
+export type BaseComponentProps = {
+    component: PageComponent;
+    meta: MetaData;
+    common?: any;                  // Content is passed down for optional consumption in componentviews.
+    // TODO: Use a react contextprovider instead of "manually" passing everything down
+};
+
+export interface BaseLayoutProps {
+    component?: LayoutData;
+    path: string;
+    regions?: RegionTree;
+    common?: any;
+    meta: MetaData;
+}
+
+export interface BaseMacroProps {
+    data: MacroData;
+    meta: MetaData;
+    renderInEditMode?: boolean;
+}
+
+export interface BasePageProps {
+    component?: PageData;
+    path?: string;
+    common?: any;
+    data?: any;
+    error?: string;
+    meta: MetaData;
+}
+
+export interface BasePartProps {
+    component?: PartData;
+    path: string;
+    common?: any;
+    data?: any;
+    error?: string;
+    meta: MetaData;
+}
 
 /**
  *  Object that configures the handling of a particular content type. All attributes are optional (see examples below), and missing values will fall back to default behavior:
@@ -58,12 +98,34 @@ export type Context = {
     contentPath: string | string[]
 };
 
+// NB! Always return null or empty object from processor for next is unable to serialize undefined
+export type DataProcessor = (data: any, context?: Context, config?: any) => Promise<Record<string, any>>;
+
+
+export type Dict = {
+    [key: string]: string,
+};
+
 export type FetchContentResult = Result & {
     data: Record<string, any> | null,
     common: Record<string, any> | null,
     meta: MetaData,
     page: PageComponent | null,
 };
+
+export interface FragmentData {
+    id: string;
+    fragment: {
+        components: PageComponent[];
+    }
+}
+
+export interface FragmentProps {
+    page?: PageData;
+    component?: FragmentData;
+    common?: any;
+    meta: MetaData;
+}
 
 // Seems like NodeJS.fetch lowercases all headers, so we need to lowercase the
 // header names here.
@@ -77,6 +139,62 @@ export interface GuillotineRequestHeaders {
 export type GuillotineResult = Result & {
     [dataKey: string]: any;
 };
+
+export interface ImageData {
+    ref: string;
+    image: {
+        id: string,
+    } | null,
+}
+
+export interface LayoutData {
+    descriptor: string;
+    config?: any;
+
+    [customKeysFromQuery: string]: any;
+}
+
+export interface LayoutProps {
+    layout: LayoutData;
+    path: string;
+    common: any;
+    meta: MetaData;
+}
+
+export interface LinkData {
+    ref: string,
+    media: {
+        content: {
+            id: string,
+        }
+    } | null,
+}
+
+export type LocaleContextType = {
+    setLocale: (locale: string) => void,
+    locale: string,
+    dictionary: Dict,
+    localize: (key: string, ...args: any[]) => string,
+};
+
+export interface MacroConfig {
+    [key: string]: any;
+}
+
+export interface MacroData {
+    ref: string;
+    name: string;
+    descriptor: string;
+    config: {
+        [name: string]: MacroConfig;
+    };
+}
+
+export interface MacroProps {
+    name: string;
+    config: MacroConfig;
+    meta: MetaData;
+}
 
 export interface MetaData {
     type: string,
@@ -123,6 +241,14 @@ export interface PageData {
     regions?: RegionTree;
 }
 
+export interface PageProps {
+    page: PageData;
+    path: string;
+    data?: any;
+    common?: any; // Content is passed down to componentviews. TODO: Use a react contextprovider instead?
+    meta: MetaData;
+}
+
 export interface PageRegion {
     name: string;
     components: PageComponent[];
@@ -133,6 +259,14 @@ export interface PartData {
     config: any; // TODO NestedRecord?;
 
     [customKeysFromQuery: string]: any;
+}
+
+export interface PartProps {
+    part: PartData;
+    path: string;
+    data?: any;
+    common?: any; // Content is passed down to componentviews. TODO: Use a react contextprovider instead?
+    meta: MetaData;
 }
 
 export type PathFragment = { region: string, index: number };
@@ -161,15 +295,55 @@ export interface QueryAndVariables {
 
 export type QueryGetter = (path: string, context?: Context, config?: any) => string;
 
+export interface RegionProps {
+    name: string;
+    components?: PageComponent[];
+    className?: string;
+    common?: any;                  // Content is passed down for optional consumption in componentviews. TODO: Use a react contextprovider instead?
+    meta: MetaData;
+}
+
+export interface RegionsProps {
+    page: PageData | null;
+    name?: string;
+    common?: any;                  // Content is passed down for optional consumption in componentviews. TODO: Use a react contextprovider instead?
+    meta: MetaData;
+}
+
 export interface RegionTree {
     [key: string]: PageRegion;
 }
+
+export type Replacer = (
+    domNode: DOMNode,
+    data: RichTextData,
+    meta: MetaData,
+    renderMacroInEditMode: boolean
+) => ReplacerResult;
+
+export type ReplacerResult = JSX.Element | object | void | undefined | null | false;
 
 type Result = {
     error?: {
         code: string,
         message: string
     } | null;
+};
+
+export interface RichTextData {
+    processedHtml: string,
+    links: LinkData[],
+    macros: MacroData[],
+    images: ImageData[],
+}
+
+export type RichTextViewProps = {
+    data: RichTextData,
+    meta: MetaData,
+    className?: string,
+    tag?: string,
+    renderMacroInEditMode?: boolean,
+    customReplacer?: Replacer,
 };
 
 export type SelectedQueryMaybeVariablesFunc =
@@ -181,11 +355,23 @@ export type SelectedQueryMaybeVariablesFunc =
     }
     | [string | QueryGetter, VariablesGetter];
 
+export type SelectorName = 'contentType' | 'page' | 'component' | 'part' | 'layout' | 'macro';
+
 export interface ServerSideParams
     extends ParsedUrlQuery {
     // String array catching a sub-path assumed to match the site-relative path of an XP content.
     contentPath?: string[];
     mode?: string;
+}
+
+export interface StaticContentProps extends Record<string, any> {
+    children?: ReactNode | ReactNode[];
+    element?: string;
+    condition: boolean;
+}
+
+export interface TextData {
+    value: RichTextData;
 }
 
 // TODO: also access as arguments: dataAsJson, pageAsJson, configAsJson from the first (meta) call here?

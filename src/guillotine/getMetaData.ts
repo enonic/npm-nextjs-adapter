@@ -1,6 +1,3 @@
-import type {PageComponent} from '../types';
-
-
 import {ComponentRegistry} from '../ComponentRegistry';
 import {configQuery} from './metadata/configQuery';
 import {richTextQuery} from './metadata/richTextQuery';
@@ -76,60 +73,3 @@ export function getMetaQuery(pageFragment?: string): string {
               }
             }`;
 }
-
-
-export interface TextData {
-    value: RichTextData;
-}
-
-export interface RichTextData {
-    processedHtml: string,
-    links: LinkData[],
-    macros: MacroData[],
-    images: ImageData[],
-}
-
-export interface LinkData {
-    ref: string,
-    media: {
-        content: {
-            id: string,
-        }
-    } | null,
-}
-
-export interface MacroData {
-    ref: string;
-    name: string;
-    descriptor: string;
-    config: {
-        [name: string]: MacroConfig;
-    };
-}
-
-export interface ImageData {
-    ref: string;
-    image: {
-        id: string,
-    } | null,
-}
-
-export interface MacroConfig {
-    [key: string]: any;
-}
-
-export interface LayoutData {
-    descriptor: string;
-    config?: any;
-
-    [customKeysFromQuery: string]: any;
-}
-
-export interface FragmentData {
-    id: string;
-    fragment: {
-        components: PageComponent[];
-    }
-}
-
-

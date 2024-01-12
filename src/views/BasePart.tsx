@@ -1,31 +1,10 @@
-import type {
-    MetaData,
-    PartData,
-} from '../types';
+import type {BasePartProps} from '../types';
 
 
 import React from 'react';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {XP_COMPONENT_TYPE} from '../constants';
 import {MissingComponent, shouldShowMissingView} from './BaseComponent';
-
-
-export interface PartProps {
-    part: PartData;
-    path: string;
-    data?: any;
-    common?: any; // Content is passed down to componentviews. TODO: Use a react contextprovider instead?
-    meta: MetaData;
-}
-
-interface BasePartProps {
-    component?: PartData;
-    path: string;
-    common?: any;
-    data?: any;
-    error?: string;
-    meta: MetaData;
-}
 
 
 const BasePart = (props: BasePartProps) => {
@@ -53,4 +32,3 @@ const BasePart = (props: BasePartProps) => {
 };
 
 export default BasePart;
-

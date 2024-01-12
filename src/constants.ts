@@ -43,6 +43,8 @@ export enum GUILLOTINE_REQUEST_HEADERS {
     DEFAULT_LOCALE = 'default-locale',
 }
 
+export const JSESSIONID_HEADER = 'jsessionid';
+
 export const PAGE_TEMPLATE_CONTENTTYPE_NAME = 'portal:page-template';
 export const PAGE_TEMPLATE_FOLDER = 'portal:template-folder';
 export const PORTAL_COMPONENT_ATTRIBUTE = 'data-portal-component-type';
@@ -57,6 +59,8 @@ export enum RENDER_MODE {
     ADMIN = 'admin',
     NEXT = 'next'       // Fallback: not using XP proxy but rendering directly with next.js
 }
+
+export const RENDER_MODE_HEADER = 'content-studio-mode';
 
 export const SITE_CONTENTTYPE_NAME = 'portal:site';
 

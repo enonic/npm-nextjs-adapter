@@ -1,10 +1,9 @@
-import type {MetaData} from '../types';
+import type {BaseMacroProps, MacroConfig} from '../types';
 
 
 import React from 'react';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {RENDER_MODE} from '../constants';
-import {MacroConfig, MacroData} from '../guillotine/getMetaData';
 import {sanitizeGraphqlName} from '../utils/sanitizeGraphqlName';
 import HTMLReactParser from 'html-react-parser';
 
@@ -14,17 +13,6 @@ const unescape = require('unescape');
 export const MACRO_DISABLE = 'system:disable';
 export const MACRO_EMBED = 'system:embed';
 
-interface BaseMacroProps {
-    data: MacroData;
-    meta: MetaData;
-    renderInEditMode?: boolean;
-}
-
-export interface MacroProps {
-    name: string;
-    config: MacroConfig;
-    meta: MetaData;
-}
 
 const BaseMacro = (props: BaseMacroProps) => {
     const {data, meta, renderInEditMode} = props;
