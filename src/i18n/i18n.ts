@@ -1,6 +1,5 @@
-export type Dict = {
-    [key: string]: string,
-};
+import type {Dict} from '../types';
+
 
 export class I18n {
     private static locale = '';

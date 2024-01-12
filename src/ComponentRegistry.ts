@@ -1,16 +1,14 @@
 import type {
     ComponentDefinition,
     ComponentDictionary,
-    Context,
     PageComponent,
     SelectedQueryMaybeVariablesFunc,
+    SelectorName,
 } from './types';
 
 
 import {XP_COMPONENT_TYPE} from './constants';
 
-
-type SelectorName = 'contentType' | 'page' | 'component' | 'part' | 'layout' | 'macro';
 
 function toSelectorName(type: XP_COMPONENT_TYPE): SelectorName | undefined {
     switch (type) {
@@ -22,9 +20,6 @@ function toSelectorName(type: XP_COMPONENT_TYPE): SelectorName | undefined {
         return 'part';
     }
 }
-
-// NB! Always return null or empty object from processor for next is unable to serialize undefined
-export type DataProcessor = (data: any, context?: Context, config?: any) => Promise<Record<string, any>>;
 
 export const CATCH_ALL = '*';
 

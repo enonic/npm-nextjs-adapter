@@ -1,18 +1,9 @@
-import type {MetaData, PageComponent, PageData} from '../types';
+import type {FragmentProps, PageComponent} from '../types';
 
 
 import React from 'react';
 import {FRAGMENT_DEFAULT_REGION_NAME, XP_COMPONENT_TYPE} from '../constants';
-import {FragmentData} from '../guillotine/getMetaData';
 import BaseComponent, {MissingComponent, shouldShowMissingView} from './BaseComponent';
-
-
-interface FragmentProps {
-    page?: PageData;
-    component?: FragmentData;
-    common?: any;
-    meta: MetaData;
-}
 
 
 const FragmentView = (props: FragmentProps) => {

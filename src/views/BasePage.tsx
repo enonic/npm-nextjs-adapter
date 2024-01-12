@@ -1,28 +1,10 @@
-import type {MetaData, PageData} from '../types';
+import type {BasePageProps} from '../types';
 
 
 import React from 'react';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {XP_COMPONENT_TYPE} from '../constants';
 import {ErrorComponent, MissingComponent, shouldShowErrorView, shouldShowMissingView} from './BaseComponent';
-
-
-export interface PageProps {
-    page: PageData;
-    path: string;
-    data?: any;
-    common?: any; // Content is passed down to componentviews. TODO: Use a react contextprovider instead?
-    meta: MetaData;
-}
-
-export interface BasePageProps {
-    component?: PageData;
-    path?: string;
-    common?: any;
-    data?: any;
-    error?: string;
-    meta: MetaData;
-}
 
 
 const BasePage = (props: BasePageProps) => {

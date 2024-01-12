@@ -1,4 +1,4 @@
-import type {MacroProps} from '../BaseMacro';
+import type {MacroProps} from '../../types';
 
 
 import React from 'react';

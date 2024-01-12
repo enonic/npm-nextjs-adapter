@@ -1,4 +1,4 @@
-import type {MetaData, PageComponent, PageData} from '../types';
+import type {PageComponent, RegionProps, RegionsProps} from '../types';
 
 
 import React from 'react';
@@ -8,21 +8,6 @@ import {
 } from '../constants';
 import BaseComponent from './BaseComponent';
 
-
-export interface RegionProps {
-    name: string;
-    components?: PageComponent[];
-    className?: string;
-    common?: any;                  // Content is passed down for optional consumption in componentviews. TODO: Use a react contextprovider instead?
-    meta: MetaData;
-}
-
-export interface RegionsProps {
-    page: PageData | null;
-    name?: string;
-    common?: any;                  // Content is passed down for optional consumption in componentviews. TODO: Use a react contextprovider instead?
-    meta: MetaData;
-}
 
 /** Single region */
 export const RegionView = (props: RegionProps) => {
