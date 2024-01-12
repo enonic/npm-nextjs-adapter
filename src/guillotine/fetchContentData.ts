@@ -5,7 +5,7 @@ import type {
 } from '../types';
 
 
-import {fetchGuillotine} from './fetchGuillotine'; // TODO import cycle?
+import {fetchGuillotine} from './fetchGuillotine';
 
 
 export const fetchContentData = async <T>(

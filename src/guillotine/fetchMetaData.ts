@@ -6,7 +6,7 @@ import type {
 
 
 import {getMetaQuery, pageFragmentQuery} from './getMetaData';
-import {fetchGuillotine} from './fetchGuillotine'; // TODO: Import loop?
+import {fetchGuillotine} from './fetchGuillotine';
 
 
 export const fetchMetaData = async (
