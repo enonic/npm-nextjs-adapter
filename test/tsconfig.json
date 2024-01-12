@@ -1,6 +1,9 @@
 {
     "compilerOptions": {
         "esModuleInterop": true,
+        "lib": [
+            "dom", // Needed for "Headers" type
+        ],
         "jsx": "react"
     }
 }
