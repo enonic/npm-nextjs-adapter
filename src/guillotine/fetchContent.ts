@@ -18,7 +18,7 @@ import {
 } from '../utils';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {UrlProcessor} from '../UrlProcessor';
-import {buildContentFetcher} from './buildContentFetcher'; // TODO: Import loop?
+import {buildContentFetcher} from './buildContentFetcher';
 import {fetchGuillotine} from './fetchGuillotine';
 
 
