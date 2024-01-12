@@ -2,10 +2,11 @@ import type {
     FetchContentResult,
 } from '../types';
 
+
 import {
     RENDER_MODE,
     XP_REQUEST_TYPE,
-} from '../utils';
+} from '../constants';
 
 
 export function buildErrorResponse(requestType: XP_REQUEST_TYPE, renderMode: RENDER_MODE,

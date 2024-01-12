@@ -3,7 +3,7 @@ import type {MetaData, PageData} from '../types';
 
 import React from 'react';
 import {ComponentRegistry} from '../ComponentRegistry';
-import {XP_COMPONENT_TYPE} from '../utils';
+import {XP_COMPONENT_TYPE} from '../constants';
 import {ErrorComponent, MissingComponent, shouldShowErrorView, shouldShowMissingView} from './BaseComponent';
 
 

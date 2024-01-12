@@ -1,7 +1,9 @@
 import type {MetaData} from './types';
 
 
-import {fixDoubleSlashes, getProjectLocaleConfigById, RENDER_MODE} from './utils';
+import {RENDER_MODE} from './constants';
+import {fixDoubleSlashes} from './utils/fixDoubleSlashes';
+import {getProjectLocaleConfigById} from './utils/getProjectLocaleConfigById';
 import {commonChars} from './utils/commonChars';
 import {ImageData, LinkData} from './guillotine/getMetaData';
 import {addBasePath} from 'next/dist/client/add-base-path';

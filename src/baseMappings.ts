@@ -1,5 +1,5 @@
 import {ComponentRegistry} from './ComponentRegistry';
-import {FRAGMENT_CONTENTTYPE_NAME, XP_COMPONENT_TYPE} from './utils';
+import {FRAGMENT_CONTENTTYPE_NAME, XP_COMPONENT_TYPE} from './constants';
 import FragmentView from './views/Fragment';
 import BasePage from './views/BasePage';
 import BasePart from './views/BasePart';
@@ -8,6 +8,7 @@ import TextView from './views/Text';
 import DefaultMacro from './views/macros/DefaultMacro';
 import DisableMacro from './views/macros/DisableMacro';
 import {getShortcutQuery} from './query/Shortcut';
+
 
 // Base Content Types
 

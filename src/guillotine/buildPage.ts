@@ -1,7 +1,7 @@
 import type {PageComponent} from '../types';
 
 
-import {XP_COMPONENT_TYPE} from '../utils';
+import {XP_COMPONENT_TYPE} from '../constants';
 import {buildComponentTree} from './buildComponentTree';
 
 
