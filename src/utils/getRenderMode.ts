@@ -1,10 +1,10 @@
 import type {Context} from '../types';
 
 
-import {RENDER_MODE} from '../constants';
-
-
-export const RENDER_MODE_HEADER = 'content-studio-mode';
+import {
+    RENDER_MODE,
+    RENDER_MODE_HEADER,
+} from '../constants';
 
 
 export const getRenderMode = (context: Context): RENDER_MODE => {

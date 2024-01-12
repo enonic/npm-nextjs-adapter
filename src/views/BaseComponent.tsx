@@ -1,4 +1,4 @@
-import type {MetaData, PageComponent} from '../types';
+import type {BaseComponentProps, MetaData, PageComponent} from '../types';
 
 
 import React from 'react';
@@ -11,13 +11,6 @@ import {IS_DEV_MODE} from '../env';
 import {ComponentRegistry} from '../ComponentRegistry';
 import Empty from './Empty';
 
-
-export type BaseComponentProps = {
-    component: PageComponent;
-    meta: MetaData;
-    common?: any;                  // Content is passed down for optional consumption in componentviews.
-    // TODO: Use a react contextprovider instead of "manually" passing everything down
-};
 
 const BaseComponent = async ({component, meta, common}: BaseComponentProps) => {
     const {type, error} = component;

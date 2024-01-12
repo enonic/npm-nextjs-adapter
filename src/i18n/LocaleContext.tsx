@@ -1,14 +1,10 @@
 'use client';
+import type {Dict, LocaleContextType} from '../types';
+
 
 import React, {createContext, useContext, useState} from 'react';
-import {Dict, getPhrase, loadPhrases} from './i18n';
+import {getPhrase, loadPhrases} from './i18n';
 
-export type LocaleContextType = {
-    setLocale: (locale: string) => void,
-    locale: string,
-    dictionary: Dict,
-    localize: (key: string, ...args: any[]) => string,
-};
 
 const LocaleContext = createContext<LocaleContextType>({
     setLocale: (locale: string) => {
