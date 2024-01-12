@@ -1,28 +1,19 @@
-import type {MetaData} from '../types';
+import type {
+    MetaData,
+    Replacer,
+    ReplacerResult,
+    RichTextData,
+    RichTextViewProps,
+} from '../types';
 
 
 import React from 'react';
 import {getUrl, UrlProcessor} from '../UrlProcessor';
-import {RichTextData} from '../guillotine/getMetaData';
 import HTMLReactParser, {DOMNode} from 'html-react-parser';
 import {ElementType} from 'domelementtype';
 import BaseMacro from './BaseMacro';
 import Link from 'next/link';
 import {Text} from 'domhandler';
-
-
-export type ReplacerResult = JSX.Element | object | void | undefined | null | false;
-
-export type Replacer = (domNode: DOMNode, data: RichTextData, meta: MetaData, renderMacroInEditMode: boolean) => ReplacerResult;
-
-type Props = {
-    data: RichTextData,
-    meta: MetaData,
-    className?: string,
-    tag?: string,
-    renderMacroInEditMode?: boolean,
-    customReplacer?: Replacer,
-};
 
 
 export function createReplacer(allData: RichTextData, meta: MetaData, renderMacroInEditMode = true, customReplacer?: Replacer): (domNode: DOMNode) => ReplacerResult {
@@ -80,7 +71,7 @@ export function createReplacer(allData: RichTextData, meta: MetaData, renderMacr
     };
 }
 
-const RichTextView = ({className, tag, data, meta, renderMacroInEditMode, customReplacer}: Props) => {
+const RichTextView = ({className, tag, data, meta, renderMacroInEditMode, customReplacer}: RichTextViewProps) => {
     const CustomTag = tag as keyof JSX.IntrinsicElements || 'section';
     return <CustomTag className={className}>
         {data.processedHtml ? HTMLReactParser(data.processedHtml, {replace: createReplacer(data, meta, renderMacroInEditMode, customReplacer)}) : ''}

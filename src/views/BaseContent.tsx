@@ -1,9 +1,9 @@
-import type {FetchContentResult} from '../types';
+import type {BasePageProps, FetchContentResult} from '../types';
 
 
 import React from 'react';
 import {ComponentRegistry} from '../ComponentRegistry';
-import BasePage, {BasePageProps} from './BasePage';
+import BasePage from './BasePage';
 
 
 const BaseContent = (props: FetchContentResult) => {

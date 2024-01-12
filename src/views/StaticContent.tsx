@@ -1,4 +1,8 @@
-import {createElement, createRef, ReactNode, useEffect, useState} from 'react';
+import {StaticContentProps} from '../types';
+
+
+import {createElement, createRef} from 'react';
+
 
 function useStaticContent(ref, isServer) {
     if (isServer) {
@@ -12,11 +16,6 @@ function useStaticContent(ref, isServer) {
     return true;
 }
 
-export interface StaticContentProps extends Record<string, any> {
-    children?: ReactNode | ReactNode[];
-    element?: string;
-    condition: boolean;
-}
 
 export default function StaticContent({children, element = 'div', condition = true, ...props}: StaticContentProps) {
     const isServer = typeof window === 'undefined';

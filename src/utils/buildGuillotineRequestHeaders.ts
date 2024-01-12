@@ -1,10 +1,10 @@
 import type {Context, GuillotineRequestHeaders} from '../types';
 
 
-import {GUILLOTINE_REQUEST_HEADERS} from '../constants';
-
-
-const JSESSIONID_HEADER = 'jsessionid';
+import {
+    GUILLOTINE_REQUEST_HEADERS,
+    JSESSIONID_HEADER,
+} from '../constants';
 
 
 export function buildGuillotineRequestHeaders({

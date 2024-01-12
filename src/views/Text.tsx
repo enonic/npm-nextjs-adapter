@@ -1,8 +1,7 @@
-import type {MetaData} from '../types';
+import type {MetaData, TextData} from '../types';
 
 
 import React from 'react';
-import {TextData} from '../guillotine/getMetaData';
 import RichTextView from './RichTextView';
 
 

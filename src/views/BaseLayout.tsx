@@ -1,27 +1,10 @@
-import type {MetaData, RegionTree} from '../types';
+import type {BaseLayoutProps} from '../types';
 
 
 import React from 'react';
 import {XP_COMPONENT_TYPE} from '../constants';
-import {LayoutData} from '../guillotine/getMetaData';
 import {ComponentRegistry} from '../ComponentRegistry';
 import {MissingComponent, shouldShowMissingView} from './BaseComponent';
-
-
-export interface LayoutProps {
-    layout: LayoutData;
-    path: string;
-    common: any;
-    meta: MetaData;
-}
-
-interface BaseLayoutProps {
-    component?: LayoutData;
-    path: string;
-    regions?: RegionTree;
-    common?: any;
-    meta: MetaData;
-}
 
 
 const BaseLayout = (props: BaseLayoutProps) => {
