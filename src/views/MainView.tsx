@@ -2,10 +2,9 @@ import type {FetchContentResult} from '../types';
 
 
 import React from 'react';
-
+import {XP_REQUEST_TYPE} from '../constants';
 import SingleComponent from './SingleComponent';
 import BaseContent from './BaseContent';
-import {XP_REQUEST_TYPE} from '../utils';
 
 
 const _MainView = (props: FetchContentResult) => {

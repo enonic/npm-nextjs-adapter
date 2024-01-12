@@ -8,14 +8,15 @@ import {
     jest,
     test as it
 } from '@jest/globals';
-// import {ComponentRegistry} from '../src/ComponentRegistry';
 import DefaultMacro from '../src/views/macros/DefaultMacro';
 import {
+    ENONIC_API,
     ENONIC_APP_NAME,
-    ENONIC_APP_NAME_UNDERSCORED
+    ENONIC_APP_NAME_UNDERSCORED,
+    ENONIC_PROJECTS,
 } from './constants'
 
-const OLD_ENV = process.env;
+// const OLD_ENV = process.env;
 
 const COMPONENT_NAME_TEXT = 'text';
 const CONTENT_TYPE_NAME_PERSON = `${ENONIC_APP_NAME}:person`;
@@ -70,6 +71,7 @@ const PART_COMPONENT: PageComponent = {
     type: 'part',
     path: 'test',
     part: {
+        config: {},
         descriptor: PART_NAME_HEADING,
     },
 }
@@ -104,12 +106,12 @@ describe('ComponentRegistry', () => {
 
     beforeAll((done) => {
         jest.replaceProperty(process, 'env', {
-            ...OLD_ENV,
-            ENONIC_API: 'http://localhost:8080/site',
+            // ...OLD_ENV,
+            ENONIC_API,
             ENONIC_APP_NAME,
-            // ENONIC_PROJECTS: 'en:enonic-homepage/enonic-homepage'
+            ENONIC_PROJECTS,
         });
-        import('../src/ComponentRegistry').then((moduleName) => {
+        import('../src').then((moduleName) => {
             ComponentRegistry = moduleName.ComponentRegistry;
             done();
         });

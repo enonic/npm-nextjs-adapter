@@ -1,9 +1,10 @@
 import type {MetaData, PageComponent, PageData} from '../types';
 
+
 import React from 'react';
-import BaseComponent, {MissingComponent, shouldShowMissingView} from './BaseComponent';
+import {FRAGMENT_DEFAULT_REGION_NAME, XP_COMPONENT_TYPE} from '../constants';
 import {FragmentData} from '../guillotine/getMetaData';
-import {FRAGMENT_DEFAULT_REGION_NAME, XP_COMPONENT_TYPE} from '../utils';
+import BaseComponent, {MissingComponent, shouldShowMissingView} from './BaseComponent';
 
 
 interface FragmentProps {

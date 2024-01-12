@@ -6,11 +6,11 @@ import type {
 
 
 import {ComponentRegistry} from '../ComponentRegistry';
+import {XP_COMPONENT_TYPE} from '../constants';
 import {
     APP_NAME,
     APP_NAME_DASHED,
-    XP_COMPONENT_TYPE,
-} from '../utils';
+} from '../env';
 import {processComponentConfig} from './processComponentConfig';
 import {getComponentConfig} from './getComponentConfig';
 import {getQueryAndVariables} from './getQueryAndVariables';

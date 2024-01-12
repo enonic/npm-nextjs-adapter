@@ -7,7 +7,7 @@ import type {
 } from './types';
 
 
-import {XP_COMPONENT_TYPE} from './utils';
+import {XP_COMPONENT_TYPE} from './constants';
 
 
 type SelectorName = 'contentType' | 'page' | 'component' | 'part' | 'layout' | 'macro';
@@ -25,12 +25,6 @@ function toSelectorName(type: XP_COMPONENT_TYPE): SelectorName | undefined {
 
 // NB! Always return null or empty object from processor for next is unable to serialize undefined
 export type DataProcessor = (data: any, context?: Context, config?: any) => Promise<Record<string, any>>;
-
-export type VariablesGetterResult = {
-    [variables: string]: any,
-    path: string,
-};
-
 
 export const CATCH_ALL = '*';
 

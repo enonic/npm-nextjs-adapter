@@ -4,10 +4,7 @@ import type {
 } from '../types';
 
 
-import {
-    RENDER_MODE,
-    XP_REQUEST_TYPE,
-} from '../utils';
+import {RENDER_MODE, XP_REQUEST_TYPE} from '../constants';
 import {ComponentRegistry} from '../ComponentRegistry';
 
 

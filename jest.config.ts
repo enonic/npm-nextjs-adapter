@@ -11,7 +11,7 @@ export default {
         '<rootDir>/test/**/*.(spec|test).{ts,tsx}'
     ],
     transform: {
-        '^.+\\.(js|jsx|ts|tsx)$': [
+        "^.+\\.(ts|js)x?$": [
             'ts-jest',
             {
                 tsconfig: 'test/tsconfig.json'
