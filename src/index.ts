@@ -10,26 +10,7 @@ import {
 } from './env';
 
 
-export type {
-    ComponentDefinition,
-    ContentFetcher,
-    ContentPathItem,
-    Context,
-    FetchContentResult,
-    GuillotineResult,
-    MacroProps,
-    MetaData,
-    PageComponent,
-    PageData,
-    PageRegion,
-    PartData,
-    PartProps,
-    QueryGetter,
-    RegionTree,
-    SelectedQueryMaybeVariablesFunc,
-    VariablesGetter,
-    VariablesGetterResult,
-} from './types'; // tsc doesn't copy d.ts files to dist
+export type * from './types'; // NOTE: tsc doesn't copy d.ts files to dist
 
 
 export {ComponentRegistry} from './ComponentRegistry';
