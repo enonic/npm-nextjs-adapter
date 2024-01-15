@@ -2,9 +2,12 @@
   "compilerOptions": {
     "target": "ES6",
     "lib": [
+      // Compilation and tests could be split into server and client parts, but
+      // since fetch and Headers exist both in Node 18+ and dom env, lets keep
+      // dom and dom.iterable for now.
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
     ],
     "allowJs": true,
     "skipLibCheck": true,

@@ -1,6 +1,3 @@
-/* eslint spaced-comment: ["error", "always", { "markers": ["/"] }] */
-/// <reference lib="dom" />
-
 import type {
     ComponentDescriptor,
     ContentFetcher,
