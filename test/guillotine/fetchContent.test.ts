@@ -7,7 +7,6 @@ import {
     jest,
     test as it
 } from '@jest/globals';
-import 'node-fetch-native/polyfill';
 import { afterEach } from 'node:test';
 import { XP_BASE_URL_HEADER } from '../../src/constants';
 
