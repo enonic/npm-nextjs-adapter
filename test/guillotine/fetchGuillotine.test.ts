@@ -11,7 +11,6 @@ import {
     jest,
     test as it
 } from '@jest/globals';
-import 'node-fetch-native/polyfill';
 import { afterEach } from 'node:test';
 
 
