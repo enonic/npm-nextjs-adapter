@@ -1,7 +1,7 @@
 export enum ENV_VARS {
     PROJECTS = 'ENONIC_PROJECTS',
-    API = 'ENONIC_API',
-    API_TOKEN = 'ENONIC_API_TOKEN',
+    API_URL = 'ENONIC_API',
+    APP_NAME = 'ENONIC_APP_NAME',
 }
 
 export const FRAGMENT_CONTENTTYPE_NAME = 'portal:fragment';
