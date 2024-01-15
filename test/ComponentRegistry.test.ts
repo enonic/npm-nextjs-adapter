@@ -1,20 +1,10 @@
-import type { PageComponent } from '../src/types';
+import type {PageComponent} from '../src/types';
 
 
-import {
-    beforeAll,
-    describe,
-    expect,
-    jest,
-    test as it
-} from '@jest/globals';
+import {beforeAll, describe, expect, jest, test as it} from '@jest/globals';
 import DefaultMacro from '../src/views/macros/DefaultMacro';
-import {
-    ENONIC_API,
-    ENONIC_APP_NAME,
-    ENONIC_APP_NAME_UNDERSCORED,
-    ENONIC_PROJECTS,
-} from './constants'
+import {ENONIC_API, ENONIC_APP_NAME, ENONIC_APP_NAME_UNDERSCORED, ENONIC_PROJECTS,} from './constants'
+import {XP_COMPONENT_TYPE} from '../src/constants';
 
 // const OLD_ENV = process.env;
 
@@ -52,7 +42,7 @@ query($path:ID!){
 }`;
 
 const LAYOUT_COMPONENT: PageComponent = {
-    type: 'layout',
+    type: XP_COMPONENT_TYPE.LAYOUT,
     path: 'test',
     layout: {
         descriptor: LAYOUT_NAME_2_COLUMN,
@@ -60,7 +50,7 @@ const LAYOUT_COMPONENT: PageComponent = {
 };
 
 const PAGE_COMPONENT: PageComponent = {
-    type: 'page',
+    type: XP_COMPONENT_TYPE.PAGE,
     path: 'test',
     page: {
         descriptor: PAGE_NAME_MAIN,
@@ -68,7 +58,7 @@ const PAGE_COMPONENT: PageComponent = {
 };
 
 const PART_COMPONENT: PageComponent = {
-    type: 'part',
+    type: XP_COMPONENT_TYPE.PART,
     path: 'test',
     part: {
         config: {},

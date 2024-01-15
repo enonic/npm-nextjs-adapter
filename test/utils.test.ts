@@ -1,14 +1,6 @@
 import type {Context} from '../src/types';
 
-import {
-    // afterAll,
-    beforeAll,
-    // beforeEach,
-    describe,
-    expect,
-    jest,
-    test as it
-} from '@jest/globals';
+import {beforeAll, describe, expect, jest, test as it} from '@jest/globals';
 import {ENONIC_APP_NAME} from './constants';
 
 
@@ -33,6 +25,7 @@ describe('utils', () => {
             process.env = {
                 ...OLD_ENV,
                 ENONIC_API: 'http://localhost:8080/site',
+                ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/omraade',
                 ENONIC_APP_NAME
             };
             import('../src/utils/fixDoubleSlashes').then((moduleName) => {
@@ -204,18 +197,17 @@ describe('utils', () => {
 
     describe('getProjectLocaleConfigs', () => {
         it('throws when ENONIC_PROJECTS is missing', () => {
-            jest.resetModules();
-            process.env = {
-                ...OLD_ENV,
-                ENONIC_API: 'http://localhost:8080/site',
-                ENONIC_APP_NAME,
-            };
-            import('../src/utils/getProjectLocaleConfigs').then((moduleName) => {
-                expect(() => moduleName.getProjectLocaleConfigs()).toThrow(Error(
-                    `Did you forget to define "ENONIC_PROJECTS" environmental variable?\n        Format: <default-language>:<default-repository-name>/<default-site-path>,<language>:<repository-name>/<site-path>,...`
-                ));
-            });
-        });
+                jest.resetModules();
+                process.env = {
+                    ...OLD_ENV,
+                    ENONIC_API: 'http://localhost:8080/site',
+                    ENONIC_APP_NAME,
+                };
+                expect(import('../src/utils/getProjectLocaleConfigs')
+                    .then(moduleName => moduleName.getProjectLocaleConfigs()))
+                    .rejects.toThrow(Error("Environment variable 'ENONIC_PROJECTS' is missing (from .env?)"));
+            }
+        );
         it('throws when default-language is missing from any project', () => {
             jest.resetModules();
             process.env = {
@@ -267,7 +259,7 @@ describe('utils', () => {
                 ENONIC_PROJECTS: 'en:project/site,no:prosjekt/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
             };
             import('../src/utils/getProjectLocales').then((moduleName) => {
-                expect(moduleName.getProjectLocales()).toEqual(['en','no']);
+                expect(moduleName.getProjectLocales()).toEqual(['en', 'no']);
             });
         });
     });
@@ -296,7 +288,7 @@ describe('utils', () => {
                 expect(moduleName.getRenderMode(context)).toEqual('next');
             });
         });
-        const RENDER_MODES = ['edit','inline','preview','live','admin','next'];
+        const RENDER_MODES = ['edit', 'inline', 'preview', 'live', 'admin', 'next'];
         RENDER_MODES.forEach((mode) => {
             it(`return ${mode} when context header content-studio-mode is ${mode}`, () => {
                 jest.resetModules();
@@ -320,7 +312,7 @@ describe('utils', () => {
                 });
             });
         });
-        
+
     }); // getRenderMode
 
     describe('getRequestLocaleInfo', () => {
@@ -351,7 +343,7 @@ describe('utils', () => {
                 } as Context;
                 expect(moduleName.getRequestLocaleInfo(context)).toEqual({
                     locale: 'no',
-                    locales: ['en','no'],
+                    locales: ['en', 'no'],
                     defaultLocale: 'en'
                 });
             });
@@ -384,7 +376,7 @@ describe('utils', () => {
                 } as Context;
                 expect(moduleName.getRequestLocaleInfo(context)).toEqual({
                     locale: 'da',
-                    locales: ['en','no'],
+                    locales: ['en', 'no'],
                     defaultLocale: 'en'
                 });
             });
@@ -417,7 +409,7 @@ describe('utils', () => {
                 } as Context;
                 expect(moduleName.getRequestLocaleInfo(context)).toEqual({
                     locale: 'no',
-                    locales: ['en','no'],
+                    locales: ['en', 'no'],
                     defaultLocale: 'en'
                 });
             });
@@ -448,7 +440,7 @@ describe('utils', () => {
                 } as Context;
                 expect(moduleName.getRequestLocaleInfo(context)).toEqual({
                     locale: 'en',
-                    locales: ['en','no'],
+                    locales: ['en', 'no'],
                     defaultLocale: 'en'
                 });
             });
