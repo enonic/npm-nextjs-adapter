@@ -1,6 +1,8 @@
 import type {ReadonlyHeaders} from 'next/dist/server/web/spec-extension/adapters/headers';
 import type {ParsedUrlQuery} from 'node:querystring';
 import type {ReactNode} from 'react';
+import {DOMNode} from 'html-react-parser';
+import {RENDER_MODE, XP_COMPONENT_TYPE, XP_REQUEST_TYPE} from '../constants';
 // import type {NestedRecord} from '@enonic-types/core';
 
 
@@ -210,7 +212,7 @@ export interface MetaData {
     defaultLocale: string,
 }
 
-type MetaResult = Result & {
+export type MetaResult = Result & {
     meta?: {
         _path: string;
         type: string,
