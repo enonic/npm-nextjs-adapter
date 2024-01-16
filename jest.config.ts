@@ -27,5 +27,6 @@ export default {
         testMatch: [
             '<rootDir>/test/**/*.(spec|test).client.{ts,tsx}'
         ]
-    }]
+    }],
+    silent: false,
 };
