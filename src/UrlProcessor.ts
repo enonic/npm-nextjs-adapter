@@ -6,6 +6,7 @@ import {fixDoubleSlashes} from './utils/fixDoubleSlashes';
 import {getProjectLocaleConfigById} from './utils/getProjectLocaleConfigById';
 import {commonChars} from './utils/commonChars';
 import {addBasePath} from 'next/dist/client/add-base-path';
+import { link } from 'node:fs';
 
 
 export class UrlProcessor {
@@ -35,16 +36,22 @@ export class UrlProcessor {
         }
 
         let normalUrl: string;
-        let result: string;
         if (this.isRelative(url)) {
+            // console.debug('UrlProcessor.process relative url: ' + url);
             normalUrl = url;
         } else {
+            // console.debug('UrlProcessor.process NOT relative url: ' + url);
             // url is absolute, try to make it relative by striping apiUrl
             // NB: will fail if content api is not on the same domain as enonic xp
             const apiUrl = this.getApiUrl(meta);
             normalUrl = this.stripApiUrl(url, apiUrl);
         }
+        // console.debug('UrlProcessor.process normalUrl: ' + normalUrl);
+        
         const baseUrl = meta?.baseUrl && meta?.baseUrl !== '/' ? meta.baseUrl : '';
+        // console.debug('UrlProcessor.process baseUrl: ' + baseUrl);
+        
+        let result: string;
         if (meta.renderMode === RENDER_MODE.NEXT) {
             // only add basePath and locale in next mode
             result = `/${normalUrl}`;
@@ -70,21 +77,40 @@ export class UrlProcessor {
     }
 
     public static isMediaLink(ref: string, linkData: LinkData[]): boolean {
-        return linkData.find(data => data.ref === ref)?.media !== null;
+        if (!linkData || !Array.isArray(linkData) || !linkData.length) {
+            return false;
+        }
+        // Assuming linkData can't contain more than one entry with the same ref
+        const found = linkData.find(data => data?.ref === ref);
+        if (!found) {
+            return false;
+        }
+        return (found?.media || null) !== null;
     }
 
-    public static isContentImage(ref: string, linkData: ImageData[]): boolean {
-        return linkData.find(data => data.ref === ref)?.image !== null;
+    public static isContentImage(ref: string, imageData: ImageData[]): boolean {
+        if (!imageData || !Array.isArray(imageData) || !imageData.length) {
+            return false;
+        }
+        // Assuming imageData can't contain more than one entry with the same ref
+        const found = imageData.find(data => data.ref === ref);
+        if (!found) {
+            return false;
+        }
+        return (found?.image || null) !== null;
     }
 
     public static processSrcSet(srcset: string, meta: MetaData): string {
         return srcset.split(/, */g).map(src => {
             const srcParts = src.trim().split(' ');
+            // console.debug('UrlProcessor.processSrcSet srcParts: ', srcParts);
             switch (srcParts.length) {
-                case 1:
+                case 1: // src only
                     return this.process(src, meta);
-                case 2:
-                    return this.process(srcParts[0], meta) + ' ' + srcParts[1];
+                case 2: // width descriptor
+                    return `${this.process(srcParts[0], meta)} ${srcParts[1]}`;
+                case 3: // pixel density descriptor
+                    return `${this.process(srcParts[0], meta)} ${srcParts[1]} ${srcParts[2]}`;
                 default:
                     console.warn('Can not process image srcset: ' + src);
                     return src;
