@@ -27,7 +27,7 @@ export function validateShortcut(props: FetchContentResult): void {
     // but we can show 404 instead to be handled in CS
     const canNotRender = meta && !meta.canRender && meta.renderMode !== RENDER_MODE.EDIT;
 
-    const catchAllInNextProdMode = meta?.renderMode === RENDER_MODE.NEXT && !IS_DEV_MODE && meta?.catchAll;
+    const catchAllInNextProdMode = meta.renderMode === RENDER_MODE.NEXT && !IS_DEV_MODE && meta.catchAll;
 
     const isNotFound = (error && error.code === '404') || canNotRender || catchAllInNextProdMode;
 

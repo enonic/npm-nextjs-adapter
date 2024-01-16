@@ -32,6 +32,8 @@
   "devDependencies": {
     "@enonic-types/core": "^7.14.0-B2",
     "@enonic/eslint-config": "^1.1.0",
+    "@testing-library/jest-dom": "^6.2.0",
+    "@testing-library/react": "^14.1.2",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^20.11.10",
     "@types/react": "18.2.48",
@@ -44,6 +46,7 @@
     "eslint": "^8.56.0",
     "eslint-plugin-react": "^7.33.2",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "madge": "^6.1.0",
     "mkdirp": "^3.0.1",
     "ts-jest": "^29.1.1",
