@@ -10,14 +10,14 @@ const LocaleContext = createContext<LocaleContextType>({
     dictionary: {},
     locale: '',
     localize: (key: string, ...args: any[]) => key,
-    setLocale: (locale: string) => {/* no return, so type is void */}
+    setLocale: (locale: string) => Promise.resolve({}),
 });
 
 export const useLocaleContext = () => useContext(LocaleContext);
 
 export const LocaleContextProvider = ({
     children,
-    locale: localeProps = ''
+    locale: localeProps = '',
 }: {
     children: any
     locale?: string
@@ -36,7 +36,8 @@ export const LocaleContextProvider = ({
 
     useEffect(() => {
         if (localeProps) {
-            setLocale(localeProps);
+            setLocale(localeProps)
+                .then(() => {}, () => {}); // avoid @typescript-eslint/no-floating-promises
         }
     }, []);
 
@@ -47,7 +48,7 @@ export const LocaleContextProvider = ({
             setLocale,
             locale: currentLocale,
             dictionary,
-            localize
+            localize,
         }}>
             {children}
         </LocaleContext.Provider>

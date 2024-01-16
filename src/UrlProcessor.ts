@@ -6,7 +6,6 @@ import {fixDoubleSlashes} from './utils/fixDoubleSlashes';
 import {getProjectLocaleConfigById} from './utils/getProjectLocaleConfigById';
 import {commonChars} from './utils/commonChars';
 import {addBasePath} from 'next/dist/client/add-base-path';
-import { link } from 'node:fs';
 
 
 export class UrlProcessor {
