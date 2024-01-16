@@ -1,12 +1,12 @@
 import type {ReadonlyHeaders} from 'next/dist/server/web/spec-extension/adapters/headers';
 import type {ParsedUrlQuery} from 'node:querystring';
-import type {ReactNode/*, Context as ReactContext*/} from 'react';
+import type {ReactNode} from 'react';
 import {DOMNode} from 'html-react-parser';
 // import type {NestedRecord} from '@enonic-types/core';
 import type {
     RENDER_MODE,
     XP_COMPONENT_TYPE,
-    XP_REQUEST_TYPE
+    XP_REQUEST_TYPE,
 } from '../constants';
 
 
@@ -180,7 +180,7 @@ export type LocaleContextType = {
     dictionary: Dict,
     locale: string,
     localize: (key: string, ...args: any[]) => string,
-    setLocale: (locale: string) => void // Promise<Dict>
+    setLocale: (locale: string) => Promise<Dict>
 };
 
 export interface MacroConfig {
