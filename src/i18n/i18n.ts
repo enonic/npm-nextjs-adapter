@@ -42,7 +42,7 @@ export const getPhrase = (locale: string, dict: Dict, key: string, ...args: any[
         console.warn(`Missing localization phrase for locale "${locale}": <${key}>`);
         return `<${key}>`;
     }
-    if (args?.length) {
+    if (args.length) {
         let index = -1;
         return template.replace(/{(\d+)?}/g, (match, digit) => {
             index++;
