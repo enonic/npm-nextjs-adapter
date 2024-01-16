@@ -4,6 +4,16 @@ import {beforeAll, describe, expect, jest, test as it} from '@jest/globals';
 import {ENONIC_APP_NAME} from './constants';
 
 
+globalThis.console = {
+    error: console.error,
+    // error: jest.fn(),
+    warn: jest.fn(),
+    log: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+} as unknown as Console;
+
+
 const OLD_ENV = process.env;
 
 
@@ -284,7 +294,7 @@ describe('utils', () => {
                     },
                     // locale: 'en',
                     // contentPath: '/content/path',
-                } as Context;
+                } as unknown as Context;
                 expect(moduleName.getRenderMode(context)).toEqual('next');
             });
         });

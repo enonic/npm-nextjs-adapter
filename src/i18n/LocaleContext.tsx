@@ -2,22 +2,27 @@
 import type {Dict, LocaleContextType} from '../types';
 
 
-import React, {createContext, useContext, useState} from 'react';
+import React, {createContext, useContext, useEffect, useState} from 'react';
 import {getPhrase, loadPhrases} from './i18n';
 
 
 const LocaleContext = createContext<LocaleContextType>({
-    setLocale: (locale: string) => {
-    },
-    locale: '',
     dictionary: {},
+    locale: '',
     localize: (key: string, ...args: any[]) => key,
+    setLocale: (locale: string) => {/* no return, so type is void */}
 });
 
 export const useLocaleContext = () => useContext(LocaleContext);
 
-export const LocaleContextProvider = ({children, locale}: { children: any, locale?: string }) => {
-    const [currentLocale, setLocaleState] = useState(locale);
+export const LocaleContextProvider = ({
+    children,
+    locale: localeProps = ''
+}: {
+    children: any
+    locale?: string
+}) => {
+    const [currentLocale, setLocaleState] = useState(localeProps);
     const [dictionary, setPhrasesState] = useState<Dict>({});
 
     const setLocale = async (locale: string): Promise<Dict> => {
@@ -29,16 +34,21 @@ export const LocaleContextProvider = ({children, locale}: { children: any, local
         });
     };
 
-    if (locale && currentLocale !== locale) {
-        // async/await is not supported in client components yet
-        void setLocale(locale);
-    }
+    useEffect(() => {
+        if (localeProps) {
+            setLocale(localeProps);
+        }
+    }, []);
 
     const localize = (key: string, ...args: any[]) => getPhrase(currentLocale, dictionary, key, ...args);
 
     return (
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        <LocaleContext.Provider value={{setLocale, locale: currentLocale, dictionary, localize}}>
+        <LocaleContext.Provider value={{
+            setLocale,
+            locale: currentLocale,
+            dictionary,
+            localize
+        }}>
             {children}
         </LocaleContext.Provider>
     );
