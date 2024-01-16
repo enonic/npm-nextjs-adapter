@@ -3,8 +3,24 @@ import type {PageComponent} from '../src/types';
 
 import {beforeAll, describe, expect, jest, test as it} from '@jest/globals';
 import DefaultMacro from '../src/views/macros/DefaultMacro';
-import {ENONIC_API, ENONIC_APP_NAME, ENONIC_APP_NAME_UNDERSCORED, ENONIC_PROJECTS,} from './constants'
+import {
+    ENONIC_API,
+    ENONIC_APP_NAME,
+    ENONIC_APP_NAME_UNDERSCORED,
+    ENONIC_PROJECTS,
+} from './constants'
 import {XP_COMPONENT_TYPE} from '../src/constants';
+
+
+globalThis.console = {
+    error: console.error,
+    // error: jest.fn(),
+    warn: jest.fn(),
+    log: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+} as unknown as Console;
+
 
 // const OLD_ENV = process.env;
 
