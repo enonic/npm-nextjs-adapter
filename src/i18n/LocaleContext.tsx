@@ -36,8 +36,7 @@ export const LocaleContextProvider = ({
 
     useEffect(() => {
         if (localeProps) {
-            setLocale(localeProps)
-                .then(() => {}, () => {}); // avoid @typescript-eslint/no-floating-promises
+            void setLocale(localeProps); // void to avoid @typescript-eslint/no-floating-promises
         }
     }, []);
 
