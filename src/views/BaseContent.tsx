@@ -20,10 +20,8 @@ const BaseContent = (props: FetchContentResult) => {
     const ContentTypeView = typeDef?.view;
 
     if (ContentTypeView && !typeDef?.catchAll) {
-        // console.info(`BaseContent: rendering '${meta.type}' with content type: ${ContentTypeView.name}`);
         return <ContentTypeView {...props}/>;
     } else if (pageDesc) {
-        // console.info(`BaseContent: rendering '${meta.type}' with page: ${BasePage.name}`);
         const pageAttrs: BasePageProps = {
             component: pageData,
             path: page?.path,
@@ -39,7 +37,6 @@ const BaseContent = (props: FetchContentResult) => {
 
         return <BasePage {...pageAttrs}/>;
     } else if (ContentTypeView) {
-        // console.info(`BaseContent: rendering '${meta.type}' with content type catch-all: ${ContentTypeView.name}`);
         return <ContentTypeView {...props}/>;
     }
 

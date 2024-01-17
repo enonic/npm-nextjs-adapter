@@ -36,19 +36,15 @@ export class UrlProcessor {
 
         let normalUrl: string;
         if (this.isRelative(url)) {
-            // console.debug('UrlProcessor.process relative url: ' + url);
             normalUrl = url;
         } else {
-            // console.debug('UrlProcessor.process NOT relative url: ' + url);
             // url is absolute, try to make it relative by striping apiUrl
             // NB: will fail if content api is not on the same domain as enonic xp
             const apiUrl = this.getApiUrl(meta);
             normalUrl = this.stripApiUrl(url, apiUrl);
         }
-        // console.debug('UrlProcessor.process normalUrl: ' + normalUrl);
         
         const baseUrl = meta?.baseUrl && meta?.baseUrl !== '/' ? meta.baseUrl : '';
-        // console.debug('UrlProcessor.process baseUrl: ' + baseUrl);
         
         let result: string;
         if (meta.renderMode === RENDER_MODE.NEXT) {
@@ -102,7 +98,6 @@ export class UrlProcessor {
     public static processSrcSet(srcset: string, meta: MetaData): string {
         return srcset.split(/, */g).map(src => {
             const srcParts = src.trim().split(' ');
-            // console.debug('UrlProcessor.processSrcSet srcParts: ', srcParts);
             switch (srcParts.length) {
                 case 1: // src only
                     return this.process(src, meta);
