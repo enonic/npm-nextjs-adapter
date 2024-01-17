@@ -28,7 +28,6 @@ export const fetchFromApi = async (
 
     let res: Response;
     try {
-        // console.debug(apiUrl, options);
         res = await fetch(apiUrl, options);
     } catch (e: any) {
         console.warn(apiUrl, e);
