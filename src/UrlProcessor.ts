@@ -72,27 +72,19 @@ export class UrlProcessor {
     }
 
     public static isMediaLink(ref: string, linkData: LinkData[]): boolean {
-        if (!linkData || !Array.isArray(linkData) || !linkData.length) {
+        if (!Array.isArray(linkData)) {
             return false;
         }
         // Assuming linkData can't contain more than one entry with the same ref
-        const found = linkData.find(data => data?.ref === ref);
-        if (!found) {
-            return false;
-        }
-        return (found?.media || null) !== null;
+        return !!linkData.find(data => data?.ref === ref)?.media;
     }
 
     public static isContentImage(ref: string, imageData: ImageData[]): boolean {
-        if (!imageData || !Array.isArray(imageData) || !imageData.length) {
+        if (!Array.isArray(imageData)) {
             return false;
         }
         // Assuming imageData can't contain more than one entry with the same ref
-        const found = imageData.find(data => data.ref === ref);
-        if (!found) {
-            return false;
-        }
-        return (found?.image || null) !== null;
+        return !!imageData.find(data => data.ref === ref)?.image;
     }
 
     public static processSrcSet(srcset: string, meta: MetaData): string {
