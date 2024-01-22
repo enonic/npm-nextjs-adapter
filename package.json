@@ -13,7 +13,7 @@
     "lint:fix": "eslint --fix src"
   },
   "dependencies": {
-    "@formatjs/intl-localematcher": "^0.5.2",
+    "@formatjs/intl-localematcher": "^0.5.4",
     "html-react-parser": "^5.1.1",
     "lru-cache": "^10.0.1",
     "negotiator": "^0.6.3",
