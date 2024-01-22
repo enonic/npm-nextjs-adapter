@@ -14,7 +14,7 @@ const GUILLOTINE_QUERY_REGEXP = /^\s*query\s*(?:\((.*)*\))?\s*{\s*guillotine\s*{
 export function combineMultipleQueries(queriesWithVars: ComponentDescriptor[]): QueryAndVariables {
     const queries: string[] = [];
     const fragments: string[] = [];
-    const superVars: { [key: string]: any } = {};
+    const superVars: Record<string,any> = {};
     const superParams: string[] = [];
 
     queriesWithVars.forEach((componentDescriptor: ComponentDescriptor, index: number) => {

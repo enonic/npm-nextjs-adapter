@@ -8,7 +8,7 @@ import type {
 import {fetchGuillotine} from './fetchGuillotine';
 
 
-export const fetchContentData = async <T>(
+export const fetchContentData = async <Content = Record<string, unknown>>(
     contentApiUrl: string,
     xpContentPath: string,
     projectConfig: ProjectLocaleConfig,
@@ -16,12 +16,11 @@ export const fetchContentData = async <T>(
     variables?: {},
     headers?: {},
 ): Promise<ContentResult> => {
-
     const body: ContentApiBaseBody = {query};
     if (variables && Object.keys(variables).length > 0) {
         body.variables = variables;
     }
-    const contentResults = await fetchGuillotine(contentApiUrl, body, projectConfig, headers);
+    const contentResults = await fetchGuillotine<ContentResult<Content>>(contentApiUrl, body, projectConfig, headers, 'ContentResult');
 
     if (contentResults.error) {
         return contentResults;

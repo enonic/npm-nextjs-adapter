@@ -46,4 +46,10 @@
   // It is not a mechanism that prevents a file from being included in the
   // codebase - it simply changes what the include setting finds.
   "exclude": [],
+
+  "ts-node": {
+    "moduleTypes": {
+      "jest.config.ts": "cjs"
+    }
+  },
 }

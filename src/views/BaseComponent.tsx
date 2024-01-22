@@ -107,15 +107,15 @@ export function shouldShowErrorView(meta: MetaData): boolean {
     return meta.renderMode === RENDER_MODE.EDIT;
 }
 
-function createEditorAttrs(type: XP_COMPONENT_TYPE): { [key: string]: string } {
+function createEditorAttrs(type: XP_COMPONENT_TYPE): Record<string,string> {
     return {
         [PORTAL_COMPONENT_ATTRIBUTE]: type,
     };
 }
 
-function createComponentAttrs(component: PageComponent, meta: MetaData, common?: any): { [key: string]: any } {
+function createComponentAttrs(component: PageComponent, meta: MetaData, common?: any): Record<string,any> {
     const {type, data, error} = component;
-    const cmpAttrs: { [key: string]: any } = {
+    const cmpAttrs: Record<string,any> = {
         component: component[type],
         path: component.path,
         meta,

@@ -5,15 +5,19 @@ import type {
 } from '../types';
 
 
+// const {stringify} = require('q-i');
 import {fetchFromApi} from './fetchFromApi';
 
 
 /** Guillotine-specialized fetch, using the generic fetch above */
-export const fetchGuillotine = async (
+export const fetchGuillotine = async <Data = Record<string,unknown>>(
     contentApiUrl: string,
     body: ContentApiBaseBody,
     projectConfig: ProjectLocaleConfig,
-    headers?: {}): Promise<GuillotineResult> => {
+    headers?: {},
+    returnType?: 'MetaResult' | 'ContentResult' | 'ContentPathItem[]',
+): Promise<GuillotineResult> => {
+    // console.debug('fetchGuillotine', stringify({contentApiUrl, body, projectConfig, headers}, { maxItems: Infinity }));
     if (typeof body.query !== 'string' || !body.query.trim()) {
         return {
             error: {
@@ -24,13 +28,18 @@ export const fetchGuillotine = async (
     }
     const path = body.variables?.path;
     const pathMessage = path ? JSON.stringify(path) : '';
-    const result: GuillotineResult = await fetchFromApi(
+    const result: GuillotineResult = await fetchFromApi<Data>(
         contentApiUrl,
         body,
         projectConfig,
         headers,
     )
         .then(json => {
+            // console.debug(`fetchGuillotine─<${returnType}>────────────────────────────────────────────────────────────────`);
+            // console.debug(body.query);
+            // console.debug(stringify({contentApiUrl, body: {...body, query: undefined}, projectConfig, headers, json}, {maxItems: Infinity}));
+            // console.debug(`─────────────────────────────────────────────────────────────────fetchGuillotine─<${returnType}>`);
+            // print(json, { maxItems: Infinity })
             let errors: any[] = json.errors; // fetchFromApi ensures json is an object
 
             if (errors) {
@@ -54,7 +63,9 @@ export const fetchGuillotine = async (
             return json.data;
         })
         .catch((err) => {
+            // console.debug(`fetchGuillotine─<${returnType}>────────────────────────────────────────────────────────────────`);
             console.warn(`Client-side error when trying to fetch data ${pathMessage}`, err);
+            // console.debug(`─────────────────────────────────────────────────────────────────fetchGuillotine─<${returnType}>`);
             try {
                 return {error: JSON.parse(err.message)};
             } catch (e2) {

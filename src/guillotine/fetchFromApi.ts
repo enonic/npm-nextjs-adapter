@@ -1,11 +1,13 @@
 import type {
     ContentApiBaseBody,
+    GuillotineResponse,
+    GuillotineResponseJson,
     ProjectLocaleConfig,
 } from '../types';
 
 
 /** Generic fetch */
-export const fetchFromApi = async (
+export const fetchFromApi = async <Data = Record<string,unknown>>(
     apiUrl: string,
     body: ContentApiBaseBody,
     projectConfig: ProjectLocaleConfig,
@@ -26,7 +28,7 @@ export const fetchFromApi = async (
         Object.assign(options.headers, headers);
     }
 
-    let res: Response;
+    let res: GuillotineResponse<Data>;
     try {
         res = await fetch(apiUrl, options);
     } catch (e: any) {
@@ -44,7 +46,7 @@ export const fetchFromApi = async (
         }));
     }
 
-    let json;
+    let json: GuillotineResponseJson<Data>;
     try {
         json = await res.json();
     } catch (e) {

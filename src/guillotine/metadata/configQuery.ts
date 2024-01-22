@@ -10,7 +10,7 @@ export const configQuery = (list: [string, ComponentDefinition][], includeAppNam
         return canUseConfigAsJson ? 'configAsJson' : '';
     }
 
-    const configsByApp: { [app: string]: string[] } = {};
+    const configsByApp: Record<string,string[]> = {};
     hasQueryList
         .forEach((entry) => {
             const nameParts = entry[0].split(':');

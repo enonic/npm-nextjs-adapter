@@ -12,7 +12,11 @@ import {parseComponentPath} from './parseComponentPath';
 import {getParentRegion} from './getParentRegion';
 
 
-export function buildComponentTree(comps: PageComponent[], rootComp: PageComponent, contentType?: string): PageComponent {
+export function buildComponentTree(
+    comps: PageComponent[],
+    rootComp: PageComponent,
+    contentType?: string
+): PageComponent {
     const rootTree: RegionTree = {};
     const isFragmentType = contentType === FRAGMENT_CONTENTTYPE_NAME;
 

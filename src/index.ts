@@ -10,13 +10,14 @@ export * from './types';
 export {ComponentRegistry} from './ComponentRegistry';
 
 export {
+    CATCH_ALL,
+    JSESSIONID_HEADER,
     PORTAL_COMPONENT_ATTRIBUTE,
     PORTAL_REGION_ATTRIBUTE,
-    JSESSIONID_HEADER,
     PROJECT_ID_HEADER,
+    RENDER_MODE,
     RENDER_MODE_HEADER,
     XP_BASE_URL_HEADER,
-    RENDER_MODE,
     XP_COMPONENT_TYPE,
     XP_REQUEST_TYPE,
 } from './constants';

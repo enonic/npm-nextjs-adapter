@@ -7,7 +7,10 @@ import type {
 } from './types';
 
 
-import {XP_COMPONENT_TYPE} from './constants';
+import {
+    CATCH_ALL,
+    XP_COMPONENT_TYPE,
+} from './constants';
 
 
 function toSelectorName(type: XP_COMPONENT_TYPE): SelectorName | undefined {
@@ -21,7 +24,6 @@ function toSelectorName(type: XP_COMPONENT_TYPE): SelectorName | undefined {
     }
 }
 
-export const CATCH_ALL = '*';
 
 export class ComponentRegistry {
 

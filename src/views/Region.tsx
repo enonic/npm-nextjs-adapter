@@ -12,7 +12,7 @@ import BaseComponent from './BaseComponent';
 /** Single region */
 export const RegionView = (props: RegionProps) => {
     const {name, components, common, meta, className} = props;
-    const regionAttrs: { [key: string]: string } = {};
+    const regionAttrs: Record<string,string> = {};
 
     if (className) {
         regionAttrs.className = className;

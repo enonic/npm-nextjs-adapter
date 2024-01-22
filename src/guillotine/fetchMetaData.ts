@@ -21,7 +21,7 @@ export const fetchMetaData = async (
             path: xpContentPath,
         },
     };
-    const metaResult = await fetchGuillotine(contentApiUrl, body, projectConfig, headers);
+    const metaResult = await fetchGuillotine<MetaResult>(contentApiUrl, body, projectConfig, headers, 'MetaResult');
     if (metaResult.error) {
         return metaResult;
     } else {
