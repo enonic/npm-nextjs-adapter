@@ -4,7 +4,11 @@ import type {ComponentDefinition} from '../../types';
 import {sanitizeGraphqlName} from '../../utils/sanitizeGraphqlName';
 
 
-export const configQuery = (list: [string, ComponentDefinition][], includeAppName = true, canUseConfigAsJson = true): string => {
+export const configQuery = (
+    list: [string, ComponentDefinition][],
+    includeAppName = true,
+    canUseConfigAsJson = true,
+): string => {
     const hasQueryList = list?.filter(([key, def]) => def.configQuery) || [];
     if (hasQueryList.length === 0) {
         return canUseConfigAsJson ? 'configAsJson' : '';

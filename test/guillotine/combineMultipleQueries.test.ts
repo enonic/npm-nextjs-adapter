@@ -19,8 +19,7 @@ globalThis.console = {
 import {combineMultipleQueries} from '../../src/guillotine/combineMultipleQueries';
 import {XP_COMPONENT_TYPE} from '../../src/constants';
 import {ENONIC_APP_NAME} from '../constants';
-
-const ws = (str: string): string => str.replace(/\s+/g, ' ').trim();
+import {ws} from '../testUtils';
 
 
 const PART_DESCRIPTOR = `${ENONIC_APP_NAME}:heading`;
