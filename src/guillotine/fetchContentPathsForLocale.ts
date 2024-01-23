@@ -30,7 +30,7 @@ export async function fetchContentPathsForLocale(
             prev: ContentPathItem[],
             child: any,
         ) => {
-            const regexp = new RegExp(`^/${child.site ? child.site._name + '/?' : ''}`);
+            const regexp = new RegExp(`^/${child.site?._name ? `${child.site._name}/?` : ''}`);
             const contentPath = child._path.replace(regexp, '');
             prev.push({
                 contentPath: contentPath.split('/'),
