@@ -34,30 +34,24 @@ export function combineMultipleQueries(queriesWithVars: ComponentDescriptor[]): 
         }
 
         // Extract graphql query and its params and add prefixes to exclude collisions with other queries
-        match = q.match(GUILLOTINE_QUERY_REGEXP);
-        let query = '';
-        if (match && match.length === 2) {
-            // no params, just query
-            query = match[1];
-        } else if (match && match.length === 3) {
-            // both query and params are present
-            query = match[2];
-            // process args
-            const args = match[1];
-            if (args) {
-                args.split(',').forEach(originalParamString => {
-                    const [originalKey, originalVal] = originalParamString.trim().split(':');
-                    const [prefixedKey, prefixedVal] = [`$${ALIAS_PREFIX}${index}_${originalKey.substr(1)}`, originalVal];
-                    superParams.push(`${prefixedKey}:${prefixedVal}`);
-                    // also update param references in query itself !
-                    // query = query.replaceAll(originalKey, prefixedKey);
-                    // replaceAll is not supported in older nodejs versions
-                    const origKeyPattern = new RegExp(originalKey.replace(/\$/g, '\\$'), 'g');
-                    query = query.replace(origKeyPattern, prefixedKey);
-                });
-            }
+        match = q.match(GUILLOTINE_QUERY_REGEXP) || ['']; // Fall back to empty string if no match
+        const args = match[1];
+        let query = match[2];
+
+        if (args) {
+            args.split(',').forEach(originalParamString => {
+                const [originalKey, originalVal] = originalParamString.trim().split(':');
+                const [prefixedKey, prefixedVal] = [`$${ALIAS_PREFIX}${index}_${originalKey.substr(1)}`, originalVal];
+                superParams.push(`${prefixedKey}:${prefixedVal}`);
+                // also update param references in query itself !
+                // query = query.replaceAll(originalKey, prefixedKey);
+                // replaceAll is not supported in older nodejs versions
+                const origKeyPattern = new RegExp(originalKey.replace(/\$/g, '\\$'), 'g');
+                query = query.replace(origKeyPattern, prefixedKey);
+            });
         }
-        if (query.length) {
+
+        if (query?.length) {
             queries.push(`${ALIAS_PREFIX}${index}:guillotine {${query}}`);
         }
 
