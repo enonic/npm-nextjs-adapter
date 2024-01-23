@@ -17,6 +17,13 @@ export function getParentRegion(
     components: PageComponent[] = [],
     createMissing ? : boolean,
 ): PageRegion | undefined {
+    // console.debug('getParentRegion', {
+    //     source,
+    //     contentType,
+    //     cmpPath,
+    //     components,
+    //     createMissing,
+    // });
 
     let currentTree: RegionTree = source;
     let currentRegion: PageRegion | undefined;
@@ -54,7 +61,7 @@ export function getParentRegion(
             }
             currentTree = layout.regions;
         }
-    }
+    } // for
 
     return currentRegion;
 }

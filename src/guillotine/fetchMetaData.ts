@@ -22,6 +22,7 @@ export const fetchMetaData = async (
         },
     };
     const metaResult = await fetchGuillotine<MetaResult>(contentApiUrl, body, projectConfig, headers, 'MetaResult');
+    // console.debug('fetchMetaData: metaResult = ', metaResult);
     if (metaResult.error) {
         return metaResult;
     } else {

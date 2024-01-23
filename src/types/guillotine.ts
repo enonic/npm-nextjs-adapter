@@ -30,8 +30,10 @@ export interface GuillotineOkResponseJson<Data = Record<string,unknown>> {
 
 // export type GuillotineResponseJson<Data> = GuillotineOkResponseJson<Data> | GuillotineErrorResponseJson;
 
-export interface GuillotineResponseJson<Data = Record<string,unknown>> {
-    data?: Data
+export interface GuillotineResponseJson<Guillotine = HeadlessCms> {
+    data?: {
+        guillotine: Guillotine
+    }
     errors?: GuillotineError[]
 }
 

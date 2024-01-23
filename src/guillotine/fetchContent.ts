@@ -95,6 +95,7 @@ export const fetchContent: ContentFetcher = async (context: Context): Promise<Fe
 
         // /////////////  FIRST GUILLOTINE CALL FOR METADATA     /////////////////
         const metaResult = await fetchMetaData(contentApiUrl, '${site}/' + siteRelativeContentPath, projectConfig, outHeaders);
+        // console.debug('fetchContent metaResult', metaResult);
         // ///////////////////////////////////////////////////////////////////////
 
         const {_path, type} = metaResult.meta || {};
@@ -110,10 +111,14 @@ export const fetchContent: ContentFetcher = async (context: Context): Promise<Fe
         } else if (!type) {
             return errorResponse('500', "Server responded with incomplete meta data: missing content 'type' attribute.");
 
-        } else if (renderMode === RENDER_MODE.NEXT && !IS_DEV_MODE &&
-            (type === FRAGMENT_CONTENTTYPE_NAME ||
+        } else if (
+            renderMode === RENDER_MODE.NEXT
+            && !IS_DEV_MODE
+            && (
+                type === FRAGMENT_CONTENTTYPE_NAME ||
                 type === PAGE_TEMPLATE_CONTENTTYPE_NAME ||
-                type === PAGE_TEMPLATE_FOLDER)) {
+                type === PAGE_TEMPLATE_FOLDER
+        )) {
             return errorResponse('404', `Content type [${type}] is not accessible in ${renderMode} mode`);
         }
 

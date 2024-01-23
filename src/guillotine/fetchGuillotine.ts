@@ -37,9 +37,11 @@ export const fetchGuillotine = async <Data = Record<string,unknown>>(
         .then(json => {
             // console.debug(`fetchGuillotine─<${returnType}>────────────────────────────────────────────────────────────────`);
             // console.debug(body.query);
-            // console.debug(stringify({contentApiUrl, body: {...body, query: '<SEE ABOVE>'}, projectConfig, headers, json}, {maxItems: Infinity}));
-            // console.debug(`─────────────────────────────────────────────────────────────────fetchGuillotine─<${returnType}>`);
+            // console.debug(stringify({contentApiUrl, body: {...body, query: '<SEE ABOVE>'}, projectConfig, headers}, {maxItems: Infinity}));
+            // console.debug('json: ', stringify(json, {maxItems: Infinity}));
             let errors: any[] = json.errors; // fetchFromApi ensures json is an object
+            // console.debug('errors: ', stringify(errors, {maxItems: Infinity}));
+            // console.debug(`─────────────────────────────────────────────────────────────────fetchGuillotine─<${returnType}>`);
 
             if (errors) {
                 if (!Array.isArray(errors)) {
