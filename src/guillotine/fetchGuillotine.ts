@@ -28,7 +28,7 @@ export const fetchGuillotine = async <Data = Record<string,unknown>>(
     }
     const path = body.variables?.path;
     const pathMessage = path ? JSON.stringify(path) : '';
-    const result: GuillotineResult = await fetchFromApi<Data>(
+    return await fetchFromApi<Data>(
         contentApiUrl,
         body,
         projectConfig,
@@ -37,9 +37,8 @@ export const fetchGuillotine = async <Data = Record<string,unknown>>(
         .then(json => {
             // console.debug(`fetchGuillotine─<${returnType}>────────────────────────────────────────────────────────────────`);
             // console.debug(body.query);
-            // console.debug(stringify({contentApiUrl, body: {...body, query: undefined}, projectConfig, headers, json}, {maxItems: Infinity}));
+            // console.debug(stringify({contentApiUrl, body: {...body, query: '<SEE ABOVE>'}, projectConfig, headers, json}, {maxItems: Infinity}));
             // console.debug(`─────────────────────────────────────────────────────────────────fetchGuillotine─<${returnType}>`);
-            // print(json, { maxItems: Infinity })
             let errors: any[] = json.errors; // fetchFromApi ensures json is an object
 
             if (errors) {
@@ -72,6 +71,4 @@ export const fetchGuillotine = async <Data = Record<string,unknown>>(
                 return {error: {code: 'Client-side error', message: err.message}};
             }
         });
-
-    return result;
 };
