@@ -1,6 +1,15 @@
 import type {XP_COMPONENT_TYPE} from '../constants';
 import type {Context} from './next';
 
+// Differs from ComponentDefinition to avoid storing catchAll on all components
+// catchAll is calculated in getType instead
+export interface ComponentDefinitionParams {
+    query?: SelectedQueryMaybeVariablesFunc
+    configQuery?: string
+    processor?: DataProcessor
+    view?: React.FunctionComponent<any>
+}
+
 /**
  *  Object that configures the handling of a particular content type. All attributes are optional (see examples below), and missing values will fall back to default behavior:
  *          - 'query' (used in fetchContent.ts) Guillotine query for fetching content data, may also have a function that supplies guillotine variables. So, 'query' can EITHER be only a query string, OR also add a get-guillotine-variables function. In the latter case, 'query' can be an object with 'query' and 'variables' attributes, or an array where the query string is first and the get-variables function is second. Either way, the get-variables function takes two arguments: path (content path, mandatory) and context (next.js-supplied Context from getServerSideProps etc. Optional, and requires that fetchContent is called with the context, of course).
@@ -21,7 +30,7 @@ export interface ComponentDescriptor {
     queryAndVariables?: QueryAndVariables;
 }
 
-export type ComponentDictionary = Record<string,ComponentDefinition>;
+export type ComponentDictionary = Record<string,ComponentDefinitionParams>;
 
 // NB! Always return null or empty object from processor for next is unable to serialize undefined
 export type DataProcessor = (data: any, context?: Context, config?: any) => Promise<Record<string, any>>;

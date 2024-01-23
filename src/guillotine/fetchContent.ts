@@ -39,8 +39,8 @@ import {collectComponentDescriptors} from './collectComponentDescriptors';
 import {combineMultipleQueries} from './combineMultipleQueries';
 import {fetchContentData} from './fetchContentData';
 import {applyProcessors} from './applyProcessors';
-import {createPageData} from './createPageData';
 import {createMetaData} from './createMetaData';
+import {createPageData} from './createPageData';
 
 
 /**
@@ -220,7 +220,19 @@ export const fetchContent: ContentFetcher = async (context: Context): Promise<Fe
         }
 
         const page = createPageData(type, components);
-        const meta = createMetaData(type, siteRelativeContentPath, requestType, renderMode, contentApiUrl, xpBaseUrl, locale, defaultLocale, componentPath, page, components);
+        const meta = createMetaData({
+            apiUrl: contentApiUrl,
+            baseUrl: xpBaseUrl,
+            components,
+            contentPath: siteRelativeContentPath,
+            contentType: type,
+            defaultLocale,
+            locale,
+            pageCmp: page,
+            renderMode,
+            requestedComponentPath: componentPath,
+            requestType,
+        });
 
         return {
             data: contentData,

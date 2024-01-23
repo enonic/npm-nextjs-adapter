@@ -1,5 +1,6 @@
 import type {
     ComponentDefinition,
+    ComponentDefinitionParams,
     ComponentDictionary,
     PageComponent,
     SelectedQueryMaybeVariablesFunc,
@@ -35,6 +36,36 @@ export class ComponentRegistry {
     private static macros: ComponentDictionary = {};
     private static commonQuery: SelectedQueryMaybeVariablesFunc;
 
+    public static addComponent(name: string, obj: ComponentDefinitionParams): void {
+        return ComponentRegistry.addType('component', name, obj);
+    }
+
+    public static addContentType(name: string, obj: ComponentDefinitionParams): void {
+        return ComponentRegistry.addType('contentType', name, obj);
+    }
+
+    public static addMacro(name: string, obj: ComponentDefinitionParams): void {
+        return ComponentRegistry.addType('macro', name, obj);
+    }
+
+    public static addLayout(name: string, obj: ComponentDefinitionParams): void {
+        return ComponentRegistry.addType('layout', name, obj);
+    }
+
+    public static addPage(name: string, obj: ComponentDefinitionParams): void {
+        return ComponentRegistry.addType('page', name, obj);
+    }
+
+    public static addPart(name: string, obj: ComponentDefinitionParams): void {
+        return ComponentRegistry.addType('part', name, obj);
+    }
+
+    private static addType(selectorName: SelectorName, name: string, obj: ComponentDefinitionParams): void {
+        const selector = ComponentRegistry.getSelector(selectorName);
+        const curr = selector[name];
+        selector[name] = curr ? Object.assign(curr, obj) : obj;
+    }
+
     private static getSelector(name: SelectorName): ComponentDictionary {
         switch (name) {
         case 'contentType':
@@ -54,9 +85,9 @@ export class ComponentRegistry {
 
     private static getType(selectorName: SelectorName, typeName: string, useCatchAll = true): ComponentDefinition | undefined {
         const selector = ComponentRegistry.getSelector(selectorName);
-        let type = selector[typeName];
+        let type: ComponentDefinition|undefined = selector[typeName];
         if (type) {
-            type.catchAll = false;
+            type.catchAll = typeName === CATCH_ALL;
         } else if (!type && useCatchAll) {
             type = selector[CATCH_ALL];
             if (type) {
@@ -64,12 +95,6 @@ export class ComponentRegistry {
             }
         }
         return type;
-    }
-
-    private static addType(selectorName: SelectorName, name: string, obj: ComponentDefinition): void {
-        const selector = ComponentRegistry.getSelector(selectorName);
-        const curr = selector[name];
-        selector[name] = curr ? Object.assign(curr, obj) : obj;
     }
 
     public static getByComponent(component: PageComponent): ComponentDefinition | undefined {
@@ -85,10 +110,6 @@ export class ComponentRegistry {
 
     public static getCommonQuery(): SelectedQueryMaybeVariablesFunc {
         return this.commonQuery;
-    }
-
-    public static addMacro(name: string, obj: ComponentDefinition): void {
-        return ComponentRegistry.addType('macro', name, obj);
     }
 
     public static getMacro(name: string): ComponentDefinition | undefined {
@@ -119,40 +140,20 @@ export class ComponentRegistry {
         return Object.entries(this.components);
     }
 
-    public static addContentType(name: string, obj: ComponentDefinition): void {
-        return ComponentRegistry.addType('contentType', name, obj);
-    }
-
     public static getContentType(name: string): ComponentDefinition | undefined {
         return ComponentRegistry.getType('contentType', name);
-    }
-
-    public static addPage(name: string, obj: ComponentDefinition): void {
-        return ComponentRegistry.addType('page', name, obj);
     }
 
     public static getPage(name: string): ComponentDefinition | undefined {
         return ComponentRegistry.getType('page', name);
     }
 
-    public static addPart(name: string, obj: ComponentDefinition): void {
-        return ComponentRegistry.addType('part', name, obj);
-    }
-
     public static getPart(name: string): ComponentDefinition | undefined {
         return ComponentRegistry.getType('part', name);
     }
 
-    public static addLayout(name: string, obj: ComponentDefinition): void {
-        return ComponentRegistry.addType('layout', name, obj);
-    }
-
     public static getLayout(name: string): ComponentDefinition | undefined {
         return ComponentRegistry.getType('layout', name);
-    }
-
-    public static addComponent(name: string, obj: ComponentDefinition): void {
-        return ComponentRegistry.addType('component', name, obj);
     }
 
     public static getComponent(name: string): ComponentDefinition | undefined {

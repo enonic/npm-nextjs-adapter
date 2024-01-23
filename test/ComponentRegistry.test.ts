@@ -1,4 +1,4 @@
-import type {PageComponent} from '../src/types';
+import type {ComponentDefinitionParams, PageComponent} from '../src/types';
 
 
 import {beforeAll, describe, expect, jest, test as it} from '@jest/globals';
@@ -102,42 +102,34 @@ const PART_COMPONENT: PageComponent = {
     },
 }
 
-const REGISTERED_LAYOUT_COMPONENT = {
-    catchAll: false,
+const REGISTERED_LAYOUT_COMPONENT: ComponentDefinitionParams = {
     // view: TwoColumnLayout,
-
 };
 
-const REGISTERED_MACRO_COMPONENT = {
-    catchAll: false,
+const REGISTERED_MACRO_COMPONENT: ComponentDefinitionParams = {
     view: DefaultMacro,
     configQuery: '{body}'
 }
 
-const REGISTERED_PAGE_COMPONENT = {
-    catchAll: false,
+const REGISTERED_PAGE_COMPONENT: ComponentDefinitionParams = {
     // view: MainPage,
 };
 
-const REGISTERED_PART_COMPONENT = {
-    catchAll: false,
+const REGISTERED_PART_COMPONENT: ComponentDefinitionParams = {
     configQuery: '{heading}'
     // query: ,
     // view: Heading,
 }
 
-const REGISTERED_TEXT_COMPONENT = {
-    catchAll: false,
+const REGISTERED_TEXT_COMPONENT: ComponentDefinitionParams = {
     // view: CustomTextView,
 };
 
-const REGISTERED_CONTENT_TYPE_PERSON = {
-    catchAll: false,
+const REGISTERED_CONTENT_TYPE_PERSON: ComponentDefinitionParams = {
     query: QUERY_GET_PERSON,
 };
 
-const REGISTERED_CONTENT_TYPE_CATCH_ALL = {
-    catchAll: false,
+const REGISTERED_CONTENT_TYPE_CATCH_ALL: ComponentDefinitionParams = {
     view: PropsView,
 };
 
@@ -164,9 +156,15 @@ describe('ComponentRegistry', () => {
                 // view: CustomTextView,
             })).toBeUndefined();
             expect(ComponentRegistry.getComponent(COMPONENT_NAME_TEXT))
-                .toStrictEqual(REGISTERED_TEXT_COMPONENT);
+                .toStrictEqual({
+                    ...REGISTERED_TEXT_COMPONENT,
+                    catchAll: false
+                });
             expect(ComponentRegistry.getComponents()).toStrictEqual([
-                [COMPONENT_NAME_TEXT, REGISTERED_TEXT_COMPONENT],
+                [COMPONENT_NAME_TEXT, {
+                    ...REGISTERED_TEXT_COMPONENT,
+                    catchAll: false
+                }],
             ]);
         });
     });
@@ -178,16 +176,27 @@ describe('ComponentRegistry', () => {
                 // view: Person,
             })).toBeUndefined();
             expect(ComponentRegistry.getContentType(CONTENT_TYPE_NAME_PERSON))
-                .toStrictEqual(REGISTERED_CONTENT_TYPE_PERSON);
+                .toStrictEqual({
+                    ...REGISTERED_CONTENT_TYPE_PERSON,
+                    catchAll: false
+                });
             expect(ComponentRegistry.addContentType(CATCH_ALL, {
-                // catchAll: true,
                 view: PropsView,
             })).toBeUndefined();
             expect(ComponentRegistry.getContentType(CATCH_ALL))
-                .toStrictEqual(REGISTERED_CONTENT_TYPE_CATCH_ALL);
+                .toStrictEqual({
+                    ...REGISTERED_CONTENT_TYPE_CATCH_ALL,
+                    catchAll: true
+                });
             expect(ComponentRegistry.getContentTypes()).toStrictEqual([
-                [CONTENT_TYPE_NAME_PERSON, REGISTERED_CONTENT_TYPE_PERSON],
-                [CATCH_ALL, REGISTERED_CONTENT_TYPE_CATCH_ALL],
+                [CONTENT_TYPE_NAME_PERSON, {
+                    ...REGISTERED_CONTENT_TYPE_PERSON,
+                    catchAll: false
+                }],
+                [CATCH_ALL, {
+                    ...REGISTERED_CONTENT_TYPE_CATCH_ALL,
+                    catchAll: true
+                }],
             ]);
         });
     });
@@ -198,9 +207,15 @@ describe('ComponentRegistry', () => {
                 // view: TwoColumnLayout,
             })).toBeUndefined();
             expect(ComponentRegistry.getLayout(LAYOUT_NAME_2_COLUMN))
-                .toStrictEqual(REGISTERED_LAYOUT_COMPONENT);
+                .toStrictEqual({
+                    ...REGISTERED_LAYOUT_COMPONENT,
+                    catchAll: false
+                });
             expect(ComponentRegistry.getLayouts()).toStrictEqual([
-                [LAYOUT_NAME_2_COLUMN, REGISTERED_LAYOUT_COMPONENT]
+                [LAYOUT_NAME_2_COLUMN, {
+                    ...REGISTERED_LAYOUT_COMPONENT,
+                    catchAll: false
+                }]
             ]);
         });
     });
@@ -211,10 +226,20 @@ describe('ComponentRegistry', () => {
                 view: DefaultMacro,
                 configQuery: '{body}'
             })).toBeUndefined();
+        });
+        it('gets a macro', () => {
             expect(ComponentRegistry.getMacro(MACRO_NAME_SYSTEM_EMBED))
-                .toStrictEqual(REGISTERED_MACRO_COMPONENT);
+                .toStrictEqual({
+                    ...REGISTERED_MACRO_COMPONENT,
+                    catchAll: false
+                });
+        });
+        it('gets all macros', () => {
             expect(ComponentRegistry.getMacros()).toStrictEqual([
-                [MACRO_NAME_SYSTEM_EMBED, REGISTERED_MACRO_COMPONENT],
+                [MACRO_NAME_SYSTEM_EMBED, {
+                    ...REGISTERED_MACRO_COMPONENT,
+                    catchAll: false
+                }],
             ]);
         });
     });
@@ -225,9 +250,15 @@ describe('ComponentRegistry', () => {
                 // view: MainPage,
             })).toBeUndefined();
             expect(ComponentRegistry.getPage(PAGE_NAME_MAIN))
-                .toStrictEqual(REGISTERED_PAGE_COMPONENT);
+                .toStrictEqual({
+                    ...REGISTERED_PAGE_COMPONENT,
+                    catchAll: false
+                });
             expect(ComponentRegistry.getPages()).toStrictEqual([
-                [PAGE_NAME_MAIN, REGISTERED_PAGE_COMPONENT]
+                [PAGE_NAME_MAIN, {
+                    ...REGISTERED_PAGE_COMPONENT,
+                    catchAll: false
+                }]
             ]);
         });
     });
@@ -239,9 +270,15 @@ describe('ComponentRegistry', () => {
                 configQuery: '{heading}'
             })).toBeUndefined();
             expect(ComponentRegistry.getPart(PART_NAME_HEADING))
-                .toStrictEqual(REGISTERED_PART_COMPONENT);
+                .toStrictEqual({
+                    ...REGISTERED_PART_COMPONENT,
+                    catchAll: false
+                });
             expect(ComponentRegistry.getParts()).toStrictEqual([
-                [PART_NAME_HEADING, REGISTERED_PART_COMPONENT]
+                [PART_NAME_HEADING, {
+                    ...REGISTERED_PART_COMPONENT,
+                    catchAll: false
+                }]
             ]);
         });
     });
@@ -249,26 +286,38 @@ describe('ComponentRegistry', () => {
     describe('getByComponent', () => {
         it('gets registered page component from component.type', () => {
             expect(ComponentRegistry.getByComponent(PAGE_COMPONENT))
-                .toStrictEqual(REGISTERED_PAGE_COMPONENT);
+                .toStrictEqual({
+                    ...REGISTERED_PAGE_COMPONENT,
+                    catchAll: false
+                });
         });
 
         it('gets registered part component from component.type', () => {
            
             expect(ComponentRegistry.getByComponent(PART_COMPONENT))
-                .toStrictEqual(REGISTERED_PART_COMPONENT);
+                .toStrictEqual({
+                    ...REGISTERED_PART_COMPONENT,
+                    catchAll: false
+                });
             
         });
 
         it('gets registered layout component from component.type', () => {
             expect(ComponentRegistry.getByComponent(LAYOUT_COMPONENT))
-                .toStrictEqual(REGISTERED_LAYOUT_COMPONENT);
+                .toStrictEqual({
+                    ...REGISTERED_LAYOUT_COMPONENT,
+                    catchAll: false
+                });
         });
     });
 
     describe('getType', () => {
         it('gets registered page component from type and name', () => {
             expect(ComponentRegistry.getType('page', PAGE_NAME_MAIN))
-                .toStrictEqual(REGISTERED_PAGE_COMPONENT);
+                .toStrictEqual({
+                    ...REGISTERED_PAGE_COMPONENT,
+                    catchAll: false
+                });
         });
         it('catchAll', () => {
             expect(ComponentRegistry.getType('contentType', 'non-existent'))

@@ -1,4 +1,5 @@
 import type {
+    ComponentDefinition,
     MetaData,
     PageComponent,
 } from '../types';
@@ -8,26 +9,45 @@ import {RENDER_MODE, XP_REQUEST_TYPE} from '../constants';
 import {ComponentRegistry} from '../ComponentRegistry';
 
 
-export function createMetaData(contentType: string, contentPath: string,
-    requestType: XP_REQUEST_TYPE, renderMode: RENDER_MODE,
-    apiUrl: string, baseUrl: string,
-    locale: string, defaultLocale: string,
-    requestedComponentPath: string | undefined,
-    pageCmp ? : PageComponent, components: PageComponent[] = []): MetaData {
+export function createMetaData({
+    apiUrl,
+    baseUrl,
+    components = [], // Optional NOTE: Doesn't handle null
+    contentPath,
+    contentType,
+    defaultLocale,
+    locale,
+    pageCmp, // Optional
+    renderMode,
+    requestedComponentPath,
+    requestType,
+}: {
+    apiUrl: string
+    baseUrl: string
+    components?: PageComponent[]
+    contentPath: string
+    contentType: string
+    defaultLocale: string
+    locale: string
+    pageCmp?: PageComponent
+    renderMode: RENDER_MODE
+    requestedComponentPath: string | undefined
+    requestType: XP_REQUEST_TYPE
+}): MetaData {
     // .meta will be visible in final rendered inline props.
     // Only adding some .meta attributes here on certain conditions
     // (instead of always adding them and letting them be visible as false/undefined etc)
     const meta: MetaData = {
-        type: contentType,
-        path: contentPath,
-        requestType: requestType,
-        renderMode: renderMode,
-        canRender: false,
-        catchAll: false, // catchAll only refers to content type catch-all
         apiUrl,
         baseUrl,
-        locale,
+        canRender: false,
+        catchAll: false, // catchAll only refers to content type catch-all
         defaultLocale,
+        locale,
+        path: contentPath,
+        renderMode: renderMode,
+        requestType: requestType,
+        type: contentType,
     };
 
     if (requestedComponentPath) {
