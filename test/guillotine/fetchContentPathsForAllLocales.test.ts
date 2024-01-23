@@ -1,16 +1,5 @@
-import {
-    afterEach,
-    beforeEach,
-    describe,
-    expect,
-    jest,
-    test as it
-} from '@jest/globals';
-import {
-    ENONIC_API,
-    ENONIC_APP_NAME,
-    ENONIC_PROJECTS
-} from '../constants';
+import {afterEach, beforeEach, describe, expect, jest, test as it} from '@jest/globals';
+import {ENONIC_API, ENONIC_APP_NAME, ENONIC_PROJECTS} from '../constants';
 
 
 globalThis.console = {
@@ -45,7 +34,13 @@ describe('guillotine', () => {
             // console.error('fetch init body parsedBody query', query);
             // console.error('fetch init body parsedBody variables', variables);
             const {count} = variables;
-            const queryDsl = [{
+            const queryDsl: {
+                _name: string,
+                _path: string,
+                site?: {
+                    _name: string
+                }
+            }[] = [{
                 _name: 'site',
                 _path: '/site',
                 site: {
@@ -57,8 +52,16 @@ describe('guillotine', () => {
                     _name: '2-column-test',
                     _path: '/site/playground/2-column-test',
                     site: {
-                      _name: 'site'
+                        _name: 'site'
                     }
+                });
+                queryDsl.push({
+                    _name: 'no-site-leading-slash-test',
+                    _path: '/no-site/leading-slash-test'
+                });
+                queryDsl.push({
+                    _name: 'no-leading-slash-test',
+                    _path: 'no-site/no-leading-slash-test'
                 });
             }
             const guillotine = {
@@ -90,18 +93,30 @@ describe('guillotine', () => {
             import('../../src').then((moduleName) => {
                 expect(moduleName.fetchContentPathsForAllLocales(path))
                     .resolves.toEqual([{
-                        "contentPath": [""],
-                        "locale": "en"
-                    }, {
-                        "contentPath": ["playground", "2-column-test"],
-                        "locale": "en"
-                    }, {
-                        "contentPath": [""],
-                        "locale": "no"
-                    }, {
-                        "contentPath": ["playground", "2-column-test"],
-                        "locale": "no"
-                    }]);
+                    "contentPath": [""],
+                    "locale": "en"
+                }, {
+                    "contentPath": ["playground", "2-column-test"],
+                    "locale": "en"
+                }, {
+                    "contentPath": ["no-site", "leading-slash-test"],
+                    "locale": "en"
+                }, {
+                    "contentPath": ["no-site", "no-leading-slash-test"],
+                    "locale": "en"
+                }, {
+                    "contentPath": [""],
+                    "locale": "no"
+                }, {
+                    "contentPath": ["playground", "2-column-test"],
+                    "locale": "no"
+                }, {
+                    "contentPath": ["no-site", "leading-slash-test"],
+                    "locale": "no"
+                }, {
+                    "contentPath": ["no-site", "no-leading-slash-test"],
+                    "locale": "no"
+                }]);
             });
         });
         it('works with query and countPerLocale', () => {
