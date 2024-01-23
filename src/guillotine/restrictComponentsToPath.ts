@@ -8,7 +8,7 @@ import {parseComponentPath} from './parseComponentPath';
 export function restrictComponentsToPath(
     contentType: string,
     components?: PageComponent[],
-    componentPath?: string
+    componentPath?: string,
 ): PageComponent[] {
     if (!componentPath || !components?.length) {
         return components || [];
