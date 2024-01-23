@@ -159,7 +159,11 @@ export const fetchContent: ContentFetcher = async (context: Context): Promise<Fe
                 processComponentConfig(APP_NAME, APP_NAME_DASHED, cmp);
             }
             // Collect component queries if defined
-            const componentDescriptors = collectComponentDescriptors(components, ComponentRegistry, contentPath, context);
+            const componentDescriptors = collectComponentDescriptors({
+                components,
+                xpContentPath: contentPath,
+                context,
+            });
             if (componentDescriptors.length) {
                 allDescriptors.push(...componentDescriptors);
             }
