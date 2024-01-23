@@ -28,6 +28,8 @@ import {getRenderMode} from '../utils/getRenderMode';
 import {getXpBaseUrl} from '../utils/getXpBaseUrl';
 import {getRequestLocaleInfo} from '../utils/getRequestLocaleInfo';
 import {buildGuillotineRequestHeaders} from '../utils/buildGuillotineRequestHeaders';
+
+import {buildPage} from './buildPage';
 import {fetchMetaData} from './fetchMetaData';
 import {getCleanContentPathArrayOrThrow400} from './getCleanContentPathArrayOrThrow400';
 import {buildErrorResponse} from './buildErrorResponse';
@@ -40,7 +42,6 @@ import {combineMultipleQueries} from './combineMultipleQueries';
 import {fetchContentData} from './fetchContentData';
 import {applyProcessors} from './applyProcessors';
 import {createMetaData} from './createMetaData';
-import {createPageData} from './createPageData';
 
 
 /**
@@ -219,7 +220,7 @@ export const fetchContent: ContentFetcher = async (context: Context): Promise<Fe
             }
         }
 
-        const page = createPageData(type, components);
+        const page = buildPage(type, components);
         const meta = createMetaData({
             apiUrl: contentApiUrl,
             baseUrl: xpBaseUrl,
