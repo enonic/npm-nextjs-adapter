@@ -5,7 +5,8 @@ import type {
 } from '../types';
 
 
-// const {stringify} = require('q-i');
+// import {stringify} from 'q-i';
+// import {addLineNumbers} from '../utils/addLineNumbers'
 import {fetchFromApi} from './fetchFromApi';
 
 
@@ -37,6 +38,7 @@ export const fetchGuillotine = async <Data = Record<string,unknown>>(
         .then(json => {
             // console.debug(`fetchGuillotine─<${returnType}>────────────────────────────────────────────────────────────────`);
             // console.debug(body.query);
+            // console.debug(addLineNumbers(body.query));
             // console.debug(stringify({contentApiUrl, body: {...body, query: '<SEE ABOVE>'}, projectConfig, headers}, {maxItems: Infinity}));
             // console.debug('json: ', stringify(json, {maxItems: Infinity}));
             let errors: any[] = json.errors; // fetchFromApi ensures json is an object

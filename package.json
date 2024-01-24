@@ -7,8 +7,17 @@
     "Christian Westgaard <cwe@enonic.com>"
   ],
   "exports": {
-    ".": "./dist",
-    "./": "./dist/"
+    "./guillotine/metadata/*": "./dist/guillotine/metadata/*.js",
+    "./guillotine/*": "./dist/guillotine/*.js",
+    "./i18n/i18n": "./dist/i18n/i18n.js",
+    "./i18n/LocaleContext": "./dist/i18n/LocaleContext.jsx",
+    "./query/*": "./dist/query/*.js",
+    "./types": "./dist/types/index.d.ts",
+    "./utils/*": "./dist/views/*.js",
+    "./views/macros/*": "./dist/views/macros/*.jsx",
+    "./views/*": "./dist/views/*.jsx",
+    "./*": "./dist/*.js",
+    ".": "./dist/index.js"
   },
   "files": [
     "dist",

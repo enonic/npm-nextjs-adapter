@@ -2,6 +2,7 @@ import type {PublishInfo} from '@enonic-types/core';
 import type {PageComponent, PageData} from './component';
 import type {MetaData} from './componentProps';
 import type {Context} from './next';
+import type {RecursivePartial} from './util';
 
 
 export interface GuillotineError {
@@ -30,10 +31,9 @@ export interface GuillotineOkResponseJson<Data = Record<string,unknown>> {
 
 // export type GuillotineResponseJson<Data> = GuillotineOkResponseJson<Data> | GuillotineErrorResponseJson;
 
-export interface GuillotineResponseJson<Guillotine = HeadlessCms> {
-    data?: {
-        guillotine: Guillotine
-    }
+export interface GuillotineResponseJson<Guillotine = RecursivePartial<HeadlessCms>> {
+    // NOTE: guillotine is the actual field on the top Query, but can be used multiple times via aliases
+    data?: Record<string, Guillotine>
     errors?: GuillotineError[]
 }
 
@@ -107,15 +107,15 @@ interface Attachment {
 
 type DateTime = string;
 
-interface Component {
+export interface Component {
     type: ComponentType
     path: string
-    page?: PageComponentData
-    layout?: LayoutComponentData
-    image?: ImageComponentData
-    part?: PartComponentData
-    text?: TextComponentData
-    fragment?: FragmentComponentData
+    page?: PageComponentData | null
+    layout?: LayoutComponentData | null
+    image?: ImageComponentData | null
+    part?: PartComponentData | null
+    text?: TextComponentData | null
+    fragment?: FragmentComponentData | null
 }
 
 type ComponentType = 'page' | 'layout' | 'image' | 'part' | 'text' | 'fragment';
@@ -207,7 +207,17 @@ interface GeoPoint {
 }
 
 export interface HeadlessCms {
-    get: Content
+    get?: Content
+    getChildren?: Content[]
+    getChildrenConnection?: ContentConnection
+    getPermissions?: Permissions
+    getSite?: portal_Site
+    getType?: ContentType
+    getTypes?: ContentType[]
+    query?: Content[]
+    queryConnection?: QueryContentConnection
+    queryDsl?: Content[]
+    queryDslConnection?: QueryDSLContentConnection
 }
 
 interface Icon {
@@ -235,11 +245,11 @@ interface ImageStyle {
 
 type Int = number;
 
-type JSON = string;
+type JSON = Record<string, unknown>;
 
 interface LayoutComponentData {
     descriptor: string
-    configAsJson: JSON
+    configAsJson: JSON | null
 }
 
 interface Link {
@@ -304,10 +314,10 @@ interface MediaUploader {
 }
 
 interface PageComponentData {
-    descriptor: string
-    customized: boolean
-    configAsJson: JSON
-    template: Content
+    descriptor?: string
+    customized?: boolean
+    configAsJson?: JSON
+    template?: Content | null
 }
 
 interface PageInfo {
@@ -344,6 +354,14 @@ interface PrincipalKey {
     type: PrincipalType
     idProvider: string
     principalId: string
+}
+
+interface QueryContentConnection extends ContentConnection {
+    aggregationsAsJson: JSON
+}
+
+interface QueryDSLContentConnection extends QueryContentConnection {
+    highlightAsJson: JSON
 }
 
 interface RichText {

@@ -1,6 +1,7 @@
 import {ComponentRegistry} from '../ComponentRegistry';
 import {configQuery} from './metadata/configQuery';
 import {richTextQuery} from './metadata/richTextQuery';
+import {indent} from '../utils/indent';
 
 
 const partConfigQuery = (): string => {
@@ -19,57 +20,54 @@ const pageConfigQuery = (): string => {
 /*
     IMPORTANT: make sure to transform your queries into functions too when using this function inside them !!!
  */
-const componentsQuery = () => `
-        type
-        path
-        page {
-          descriptor
-          ${pageConfigQuery()}
-          template {
-            _path
-          }
-        }
-        layout {
-          descriptor
-          ${layoutConfigQuery()}
-        }
-        text {
-            ${richTextQuery('value')}
-        }
-        part {
-          descriptor
-          ${partConfigQuery()}
-        }
-        image {
-          caption
-          image {
-            imageUrl (type:absolute, scale: "width-768")
-          }
-        }
-`;
+const componentsQuery = () => `type
+path
+page {
+    descriptor
+${indent(pageConfigQuery(), 4)}
+    template {
+      _path
+    }
+}
+layout {
+    descriptor
+${indent(layoutConfigQuery(), 4)}
+}
+text {
+${indent(richTextQuery('value'), 4)}
+}
+part {
+    descriptor
+${indent(partConfigQuery(), 4)}
+}
+image {
+    caption
+    image {
+      imageUrl (type:absolute, scale: "width-768")
+    }
+}`;
 
 // THIS QUERY DOES NOT SUPPORT NESTED FRAGMENTS
-export const pageFragmentQuery = () => `
-      components(resolveFragment: false, resolveTemplate: true) {
+export const pageFragmentQuery = () => `components(resolveFragment: false, resolveTemplate: true) {
+    fragment {
+        id
         fragment {
-          id
-          fragment {
             components {
-              ${componentsQuery()}
+${indent(componentsQuery(),16)}
             }
-          }
         }
-        ${componentsQuery()}
-      }`;
+    }
+${indent(componentsQuery(),4)}
+}`;
 
 export function getMetaQuery(pageFragment?: string): string {
-    return `query($path:ID!){
-              guillotine {
-                get(key:$path) {
-                  _path
-                  type
-                  ${pageFragment || ''}
-                }
-              }
-            }`;
+    return `query($path:ID!) {
+    guillotine {
+        get(key:$path) {
+            _path
+            type
+${indent(pageFragment || '', 12)}
+        }
+    }
+}`;
 }

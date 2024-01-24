@@ -7,6 +7,7 @@ export type * from './component';
 export type * from './componentProps';
 export type * from './guillotine';
 export type * from './next';
+export type * from './util';
 
 
 // Shape of content base-data API body
