@@ -2,11 +2,7 @@ import type {BaseComponentProps, MetaData, PageComponent} from '../types';
 
 
 import React from 'react';
-import {
-    PORTAL_COMPONENT_ATTRIBUTE,
-    RENDER_MODE,
-    XP_COMPONENT_TYPE,
-} from '../constants';
+import {PORTAL_COMPONENT_ATTRIBUTE, RENDER_MODE, XP_COMPONENT_TYPE} from '../constants';
 import {IS_DEV_MODE} from '../env';
 import {ComponentRegistry} from '../ComponentRegistry';
 import Empty from './Empty';
@@ -75,11 +71,17 @@ export const MissingComponent = ({descriptor, type}: { descriptor?: string, type
     );
 };
 
-// Have to import it dynamically because of this issue:
-// https://github.com/vercel/next.js/issues/43810
 const renderComponent = async (component: React.ReactElement) => {
-    const ReactDOMServer = (await import('react-dom/server')).default;
-    return ReactDOMServer.renderToStaticMarkup(component);
+    if (typeof document !== 'undefined') {
+        // render component on the client to see if it's empty
+        const root = document.createElement('div');
+        const ReactDOM = await import('react-dom/client');
+        ReactDOM.hydrateRoot(root, component);
+        return root.innerHTML;
+    } else {
+        // report non-empty output for server-side rendering
+        return 'non-empty';
+    }
 };
 
 export function shouldShowMissingView(meta: MetaData): boolean {
