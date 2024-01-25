@@ -80,7 +80,7 @@ const renderComponent = async (component: React.ReactElement) => {
         return root.innerHTML;
     } else {
         // report non-empty output for server-side rendering
-        return 'non-empty';
+        return '<div>Server-side rendered component</div>';
     }
 };
 
