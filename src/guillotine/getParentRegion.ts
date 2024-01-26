@@ -6,7 +6,7 @@ import type {
 } from '../types';
 
 
-import {XP_COMPONENT_TYPE} from '../constants';
+import {XP_COMPONENT_TYPE} from '../common/constants';
 import {prefixLayoutPath} from './prefixLayoutPath';
 
 

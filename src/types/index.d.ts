@@ -1,11 +1,10 @@
-import type {ParsedUrlQuery} from 'node:querystring';
 import type {ReactNode} from 'react';
-// import type {NestedRecord} from '@enonic-types/core';
 
 
 export type * from './component';
 export type * from './componentProps';
 export type * from './guillotine';
+export type * from './i18n';
 export type * from './next';
 export type * from './util';
 
@@ -22,15 +21,6 @@ export interface ContentApiBaseBody {
 export interface ContentPathItem {
     contentPath: string[]
     locale: string,
-}
-
-export type Dict = Record<string, string>;
-
-export interface LocaleContextType {
-    dictionary: Dict
-    locale: string
-    localize: (key: string, ...args: any[]) => string
-    setLocale: (locale: string) => Promise<Dict>
 }
 
 export interface PathFragment {
@@ -56,7 +46,7 @@ export type ProjectLocalesConfig = Record<string, ProjectLocaleConfig>;
 export type SelectorName = 'contentType' | 'page' | 'component' | 'part' | 'layout' | 'macro';
 
 export interface ServerSideParams
-    extends ParsedUrlQuery {
+    extends NodeJS.Dict<string | string[]> {
     // String array catching a sub-path assumed to match the site-relative path of an XP content.
     contentPath?: string[];
     mode?: string;

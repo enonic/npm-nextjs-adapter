@@ -4,7 +4,7 @@ import {
     test as it
 } from '@jest/globals';
 import {buildPage} from '../../src/guillotine/buildPage';
-import {XP_COMPONENT_TYPE} from '../../src/constants';
+import {XP_COMPONENT_TYPE} from '../../src/common/constants';
 
 
 describe('guillotine', () => {

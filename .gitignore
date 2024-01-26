@@ -1,3 +1,15 @@
+# Files and folders created when building
+/*.d.ts
+/baseMappings.js
+/chunk-*.js
+/index.js
+/i18n/
+/types/
+/views/
+
+# File created when packing
+enonic-nextjs-adapter-*.tgz
+
 ### Enonic CLI ###
 .enonic
 

@@ -3,11 +3,11 @@ export {
     APP_NAME_DASHED,
     APP_NAME_UNDERSCORED,
     IS_DEV_MODE,
-} from './env';
+} from './common/env';
 
-export * from './types';
+export type * from './types';
 
-export {ComponentRegistry} from './ComponentRegistry';
+export {ComponentRegistry} from './common/ComponentRegistry';
 
 export {
     CATCH_ALL,
@@ -20,7 +20,7 @@ export {
     XP_BASE_URL_HEADER,
     XP_COMPONENT_TYPE,
     XP_REQUEST_TYPE,
-} from './constants';
+} from './common/constants';
 
 export {fetchContent} from './guillotine/fetchContent';
 export {fetchContentPathsForAllLocales} from './guillotine/fetchContentPathsForAllLocales';
@@ -31,7 +31,10 @@ export {richTextQuery} from './guillotine/metadata/richTextQuery';
 export {validateData} from './guillotine/validateData';
 
 export {I18n} from './i18n/i18n';
-export {LocaleContextProvider, useLocaleContext} from './i18n/LocaleContext';
+
+// NOTE: Avoid Server Error
+// TypeError: (0 , react__WEBPACK_IMPORTED_MODULE_1__.createContext) is not a function
+// export {LocaleContextProvider, useLocaleContext} from './i18n/LocaleContext';
 
 export {getContentApiUrl} from './utils/getContentApiUrl';
 export {getProjectLocaleConfig} from './utils/getProjectLocaleConfig';
@@ -43,4 +46,4 @@ export {
     UrlProcessor,
     getAsset,
     getUrl,
-} from './UrlProcessor';
+} from './common/UrlProcessor';

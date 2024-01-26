@@ -21,7 +21,7 @@ import {
 } from '@jest/globals';
 import {ComponentRegistry} from '../../src';
 import {collectComponentDescriptors} from '../../src/guillotine/collectComponentDescriptors';
-import {XP_COMPONENT_TYPE} from '../../src/constants';
+import {XP_COMPONENT_TYPE} from '../../src/common/constants';
 import {ENONIC_APP_NAME} from '../constants';
 
 

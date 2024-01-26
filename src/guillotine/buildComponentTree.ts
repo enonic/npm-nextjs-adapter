@@ -7,7 +7,7 @@ import type {
 import {
     FRAGMENT_CONTENTTYPE_NAME,
     XP_COMPONENT_TYPE,
-} from '../constants';
+} from '../common/constants';
 import {parseComponentPath} from './parseComponentPath';
 import {getParentRegion} from './getParentRegion';
 

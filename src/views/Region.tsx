@@ -5,7 +5,7 @@ import React from 'react';
 import {
     PORTAL_REGION_ATTRIBUTE,
     RENDER_MODE,
-} from '../constants';
+} from '../common/constants';
 import BaseComponent from './BaseComponent';
 
 

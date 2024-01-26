@@ -9,7 +9,7 @@ import {
     test as it
 } from '@jest/globals';
 import {fetchContentData} from '../../src/guillotine/fetchContentData';
-import {RENDER_MODE, XP_REQUEST_TYPE} from '../../src/constants';
+import {RENDER_MODE, XP_REQUEST_TYPE} from '../../src/common/constants';
 
 
 const FETCH_CONTENT_RESULT: FetchContentResult = {

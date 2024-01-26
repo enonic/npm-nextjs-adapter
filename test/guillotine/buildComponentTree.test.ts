@@ -10,7 +10,7 @@ import {buildComponentTree} from '../../src/guillotine/buildComponentTree';
 import {
     FRAGMENT_CONTENTTYPE_NAME,
     XP_COMPONENT_TYPE
-} from '../../src/constants';
+} from '../../src/common/constants';
 
 
 describe('guillotine', () => {

@@ -2,13 +2,14 @@ import type {BaseComponentProps, MetaData, PageComponent} from '../types';
 
 
 import React from 'react';
-import {PORTAL_COMPONENT_ATTRIBUTE, RENDER_MODE, XP_COMPONENT_TYPE} from '../constants';
-import {IS_DEV_MODE} from '../env';
-import {ComponentRegistry} from '../ComponentRegistry';
+import {PORTAL_COMPONENT_ATTRIBUTE, RENDER_MODE, XP_COMPONENT_TYPE} from '../common/constants';
+import {IS_DEV_MODE} from '../common/env';
+import {ComponentRegistry} from '../common/ComponentRegistry';
 import Empty from './Empty';
+import getClientHydratedHtml from './getClientHydratedHtml';
 
 
-const BaseComponent = async ({component, meta, common}: BaseComponentProps) => {
+const BaseComponent = ({component, meta, common}: BaseComponentProps) => {
     const {type, error} = component;
     const cmpData = component[type];
     const descriptor = cmpData && 'descriptor' in cmpData ? cmpData.descriptor : undefined;
@@ -36,7 +37,7 @@ const BaseComponent = async ({component, meta, common}: BaseComponentProps) => {
 
     // need to display a placeholder if descriptor is empty as component is not initialized yet
     if (descriptor && shouldShowPlaceholderView(meta)) {
-        const outputHTML = await renderComponent(ComponentView);
+        const outputHTML = renderComponent(ComponentView);
         if (!outputHTML?.trim().length) {
             // render some placeholder in case of empty output
             ComponentView = <PlaceholderComponent type={type} descriptor={descriptor}/>;
@@ -71,13 +72,10 @@ export const MissingComponent = ({descriptor, type}: { descriptor?: string, type
     );
 };
 
-const renderComponent = async (component: React.ReactElement) => {
+const renderComponent = (component: React.ReactElement) => {
     if (typeof document !== 'undefined') {
         // render component on the client to see if it's empty
-        const root = document.createElement('div');
-        const ReactDOM = await import('react-dom/client');
-        ReactDOM.hydrateRoot(root, component);
-        return root.innerHTML;
+        return getClientHydratedHtml(component);
     } else {
         // report non-empty output for server-side rendering
         return '<div>Server-side rendered component</div>';

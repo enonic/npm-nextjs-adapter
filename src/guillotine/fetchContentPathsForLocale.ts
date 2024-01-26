@@ -1,7 +1,7 @@
 import type {ContentApiBaseBody, ContentPathItem, GuillotineResult, ProjectLocaleConfig} from '../types';
 
 
-import {GET_STATIC_PATHS_QUERY} from '../constants';
+import {GET_STATIC_PATHS_QUERY} from '../common/constants';
 import {getContentApiUrl} from '../utils/getContentApiUrl';
 import {fetchGuillotine} from './fetchGuillotine';
 

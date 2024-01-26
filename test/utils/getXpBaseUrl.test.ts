@@ -8,7 +8,7 @@ import {
     jest,
     test as it
 } from '@jest/globals';
-import {XP_BASE_URL_HEADER} from '../../src/constants';
+import {XP_BASE_URL_HEADER} from '../../src/common/constants';
 import {ENONIC_APP_NAME} from '../constants';
 
 

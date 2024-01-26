@@ -4,7 +4,7 @@ import {
     test as it
 } from '@jest/globals';
 import {parseComponentPath} from '../../src/guillotine/parseComponentPath';
-import {FRAGMENT_CONTENTTYPE_NAME} from '../../src/constants';
+import {FRAGMENT_CONTENTTYPE_NAME} from '../../src/common/constants';
 
 
 describe('guillotine', () => {

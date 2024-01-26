@@ -5,12 +5,12 @@ import type {
 } from '../types';
 
 
-import {ComponentRegistry} from '../ComponentRegistry';
-import {XP_COMPONENT_TYPE} from '../constants';
+import {ComponentRegistry} from '../common/ComponentRegistry';
+import {XP_COMPONENT_TYPE} from '../common/constants';
 import {
     APP_NAME,
     APP_NAME_DASHED,
-} from '../env';
+} from '../common/env';
 import {processComponentConfig} from './processComponentConfig';
 import {getComponentConfig} from './getComponentConfig';
 import {getQueryAndVariables} from './getQueryAndVariables';

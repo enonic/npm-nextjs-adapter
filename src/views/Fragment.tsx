@@ -2,7 +2,7 @@ import type {FragmentProps, PageComponent} from '../types';
 
 
 import React from 'react';
-import {FRAGMENT_DEFAULT_REGION_NAME, XP_COMPONENT_TYPE} from '../constants';
+import {FRAGMENT_DEFAULT_REGION_NAME, XP_COMPONENT_TYPE} from '../common/constants';
 import BaseComponent, {MissingComponent, shouldShowMissingView} from './BaseComponent';
 
 

@@ -1,4 +1,4 @@
-import {ComponentRegistry} from '../ComponentRegistry';
+import {ComponentRegistry} from '../common/ComponentRegistry';
 import {configQuery} from './metadata/configQuery';
 import {richTextQuery} from './metadata/richTextQuery';
 import {indent} from '../utils/indent';

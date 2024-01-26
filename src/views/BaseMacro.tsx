@@ -2,8 +2,8 @@ import type {BaseMacroProps, MacroConfig} from '../types';
 
 
 import React from 'react';
-import {ComponentRegistry} from '../ComponentRegistry';
-import {RENDER_MODE} from '../constants';
+import {ComponentRegistry} from '../common/ComponentRegistry';
+import {RENDER_MODE} from '../common/constants';
 import {sanitizeGraphqlName} from '../utils/sanitizeGraphqlName';
 import HTMLReactParser from 'html-react-parser';
 

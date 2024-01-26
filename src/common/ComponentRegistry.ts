@@ -5,7 +5,7 @@ import type {
     PageComponent,
     SelectedQueryMaybeVariablesFunc,
     SelectorName,
-} from './types';
+} from '../types';
 
 
 import {

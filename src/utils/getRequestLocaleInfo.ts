@@ -3,7 +3,7 @@ import type {Context} from '../types';
 
 import Negotiator from 'negotiator';
 import {match as localeMatcher} from '@formatjs/intl-localematcher';
-import {PROJECT_ID_HEADER} from '../constants';
+import {PROJECT_ID_HEADER} from '../common/constants';
 import {getProjectLocaleConfigs} from './getProjectLocaleConfigs';
 import {getProjectLocaleConfigById} from './getProjectLocaleConfigById';
 

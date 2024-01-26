@@ -1,7 +1,7 @@
 import type {Context} from '../types';
 
 
-import {XP_BASE_URL_HEADER} from '../constants';
+import {XP_BASE_URL_HEADER} from '../common/constants';
 
 
 export const getXpBaseUrl = (context: Context): string => {

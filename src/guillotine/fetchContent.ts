@@ -8,8 +8,8 @@ import type {
 
 import {headers} from 'next/headers';
 // import {stringify} from 'q-i';
-import {ComponentRegistry} from '../ComponentRegistry';
-import {UrlProcessor} from '../UrlProcessor';
+import {ComponentRegistry} from '../common/ComponentRegistry';
+import {UrlProcessor} from '../common/UrlProcessor';
 import {
     FRAGMENT_CONTENTTYPE_NAME,
     PAGE_TEMPLATE_CONTENTTYPE_NAME,
@@ -17,12 +17,12 @@ import {
     RENDER_MODE,
     XP_COMPONENT_TYPE,
     XP_REQUEST_TYPE,
-} from '../constants';
+} from '../common/constants';
 import {
     APP_NAME,
     APP_NAME_DASHED,
     IS_DEV_MODE,
-} from '../env';
+} from '../common/env';
 import {getContentApiUrl} from '../utils/getContentApiUrl';
 import {getProjectLocaleConfig} from '../utils/getProjectLocaleConfig';
 import {getRenderMode} from '../utils/getRenderMode';

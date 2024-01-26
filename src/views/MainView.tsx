@@ -2,7 +2,7 @@ import type {FetchContentResult} from '../types';
 
 
 import React from 'react';
-import {XP_REQUEST_TYPE} from '../constants';
+import {XP_REQUEST_TYPE} from '../common/constants';
 import SingleComponent from './SingleComponent';
 import BaseContent from './BaseContent';
 

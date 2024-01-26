@@ -8,7 +8,7 @@ import type {
 
 
 import React from 'react';
-import {getUrl, UrlProcessor} from '../UrlProcessor';
+import {getUrl, UrlProcessor} from '../common/UrlProcessor';
 import HTMLReactParser, {DOMNode} from 'html-react-parser';
 import {ElementType} from 'domelementtype';
 import BaseMacro from './BaseMacro';

@@ -23,7 +23,7 @@ import {
     RENDER_MODE_HEADER,
     XP_BASE_URL_HEADER,
     XP_REQUEST_TYPE,
-} from '../../src/constants';
+} from '../../src/common/constants';
 import {ENONIC_APP_NAME} from '../constants';
 // import {ws} from '../testUtils';
 

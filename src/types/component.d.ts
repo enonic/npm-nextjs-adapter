@@ -1,4 +1,4 @@
-import type {XP_COMPONENT_TYPE} from '../constants';
+import type {XP_COMPONENT_TYPE} from '../common/constants';
 import type {Context} from './next';
 
 // Differs from ComponentDefinition to avoid storing catchAll on all components

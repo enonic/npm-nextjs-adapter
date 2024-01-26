@@ -7,7 +7,7 @@ import {
     test as it
 } from '@jest/globals';
 import {applyProcessors} from '../../src/guillotine/applyProcessors';
-import {XP_COMPONENT_TYPE} from '../../src/constants';
+import {XP_COMPONENT_TYPE} from '../../src/common/constants';
 
 
 describe('guillotine', () => {

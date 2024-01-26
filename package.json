@@ -2,26 +2,19 @@
   "name": "@enonic/nextjs-adapter",
   "version": "2.0.0",
   "license": "Apache-2.0",
-  "main": "dist/index.js",
+  "main": "index.js",
   "contributors": [
     "Christian Westgaard <cwe@enonic.com>"
   ],
-  "exports": {
-    "./guillotine/metadata/*": "./dist/guillotine/metadata/*.js",
-    "./guillotine/*": "./dist/guillotine/*.js",
-    "./i18n/i18n": "./dist/i18n/i18n.js",
-    "./i18n/LocaleContext": "./dist/i18n/LocaleContext.jsx",
-    "./query/*": "./dist/query/*.js",
-    "./types": "./dist/types/index.d.ts",
-    "./utils/*": "./dist/views/*.js",
-    "./views/macros/*": "./dist/views/macros/*.jsx",
-    "./views/*": "./dist/views/*.jsx",
-    "./*": "./dist/*.js",
-    ".": "./dist/index.js"
-  },
   "files": [
-    "dist",
-    "src"
+    "*.d.ts",
+    "baseMappings*",
+    "chunk-*",
+    "index*",
+    "i18n",
+    "src",
+    "types",
+    "views"
   ],
   "keywords": [
     "enonic",
@@ -34,16 +27,16 @@
     "access": "public"
   },
   "scripts": {
-    "clean": "del-cli coverage dist",
-    "build": "tsc",
-    "build:prod": "concurrently -c auto -g --timings npm:test npm:lint npm:build",
+    "clean": "del-cli *.d.ts baseMappings.*js chunk-*.*js coverage index.* enonic-nextjs-adapter-*.tgz i18n types views",
+    "build": "npx tsup -d . --dts-resolve --keep-names --shims --tsconfig tsconfig.json src/index.ts src/baseMappings.ts src/i18n/LocaleContext.tsx src/views/*.tsx src/views/**/*.tsx",
+    "build:minify": "npm run build -- --minify",
     "madge": "madge -i docs/madge.png -x '(constants|env)\\.ts' src/index.ts",
     "lint": "npx eslint --quiet src",
     "lint:fix": "npx eslint --fix src",
-    "prebuild": "del-cli dist",
+    "prebuild": "npm run clean",
     "premadge": "npx mkdirp docs",
     "pretest": "del-cli coverage",
-    "prepack": "npm run build:prod",
+    "prepack": "concurrently -c auto -g --timings npm:test npm:lint npm:build:minify",
     "test": "jest --no-cache --coverage"
   },
   "dependencies": {
@@ -80,7 +73,8 @@
     "mkdirp": "^3.0.1",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.2",
+    "tsup": "^8.0.1",
     "typescript": "^5.2.2"
   },
-  "types": "dist/index.d.ts"
+  "types": "index.d.ts"
 }

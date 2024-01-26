@@ -10,7 +10,7 @@ import {
     test as it
 } from '@jest/globals';
 import {getParentRegion} from '../../src/guillotine/getParentRegion';
-import {XP_COMPONENT_TYPE} from '../../src/constants';
+import {XP_COMPONENT_TYPE} from '../../src/common/constants';
 
 
 describe('guillotine', () => {

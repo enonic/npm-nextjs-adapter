@@ -1,5 +1,5 @@
-import {ComponentRegistry} from './ComponentRegistry';
-import {FRAGMENT_CONTENTTYPE_NAME, XP_COMPONENT_TYPE} from './constants';
+import {ComponentRegistry} from './common/ComponentRegistry';
+import {FRAGMENT_CONTENTTYPE_NAME, XP_COMPONENT_TYPE} from './common/constants';
 import FragmentView from './views/Fragment';
 import BasePage from './views/BasePage';
 import BasePart from './views/BasePart';

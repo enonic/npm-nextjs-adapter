@@ -13,7 +13,7 @@ import {
 import {
     CATCH_ALL,
     XP_COMPONENT_TYPE,
-} from '../src/constants';
+} from '../src/common/constants';
 
 
 globalThis.console = {

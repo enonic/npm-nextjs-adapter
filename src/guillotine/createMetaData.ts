@@ -5,8 +5,8 @@ import type {
 } from '../types';
 
 
-import {RENDER_MODE, XP_REQUEST_TYPE} from '../constants';
-import {ComponentRegistry} from '../ComponentRegistry';
+import {RENDER_MODE, XP_REQUEST_TYPE} from '../common/constants';
+import {ComponentRegistry} from '../common/ComponentRegistry';
 
 
 export function createMetaData({

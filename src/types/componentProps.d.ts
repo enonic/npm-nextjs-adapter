@@ -2,7 +2,7 @@ import {DOMNode} from 'html-react-parser';
 import type {
     RENDER_MODE,
     XP_REQUEST_TYPE,
-} from '../constants';
+} from '../common/constants';
 import type {
     FragmentData,
     LayoutData,

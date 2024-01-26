@@ -17,7 +17,7 @@ globalThis.console = {
     // debug: jest.fn(),
 } as Console;
 import {combineMultipleQueries} from '../../src/guillotine/combineMultipleQueries';
-import {XP_COMPONENT_TYPE} from '../../src/constants';
+import {XP_COMPONENT_TYPE} from '../../src/common/constants';
 import {ENONIC_APP_NAME} from '../constants';
 import {ws} from '../testUtils';
 

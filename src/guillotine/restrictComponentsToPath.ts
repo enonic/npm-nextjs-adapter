@@ -1,7 +1,7 @@
 import type {PageComponent} from '../types';
 
 
-import {XP_COMPONENT_TYPE} from '../constants';
+import {XP_COMPONENT_TYPE} from '../common/constants';
 import {parseComponentPath} from './parseComponentPath';
 
 

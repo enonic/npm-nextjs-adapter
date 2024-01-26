@@ -1,6 +1,6 @@
 import type {ContentPathItem} from '../types';
 
-import {GET_STATIC_PATHS_QUERY} from '../constants';
+import {GET_STATIC_PATHS_QUERY} from '../common/constants';
 import {getProjectLocaleConfigs} from '../utils/getProjectLocaleConfigs';
 import {fetchContentPathsForLocale} from './fetchContentPathsForLocale';
 
