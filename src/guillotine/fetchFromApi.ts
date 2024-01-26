@@ -6,9 +6,6 @@ import type {
 } from '../types';
 
 
-// import {stringify} from 'q-i';
-
-
 /** Generic fetch */
 export const fetchFromApi = async <Data = Record<string,unknown>>(
     apiUrl: string,
@@ -31,8 +28,6 @@ export const fetchFromApi = async <Data = Record<string,unknown>>(
         Object.assign(options.headers, headers);
     }
 
-    // console.debug('fetchFromApi: apiUrl = ', apiUrl, ', options = ', stringify(options, {maxItems: Infinity}));
-
     let res: GuillotineResponse<Data>;
     try {
         res = await fetch(apiUrl, options);
@@ -43,7 +38,6 @@ export const fetchFromApi = async <Data = Record<string,unknown>>(
             message: e.message,
         }));
     }
-    // console.debug('fetchFromApi: res = ', stringify(res, {maxItems: Infinity}));
 
     if (!res.ok) {
         throw new Error(JSON.stringify({
@@ -55,7 +49,6 @@ export const fetchFromApi = async <Data = Record<string,unknown>>(
     let json: GuillotineResponseJson<Data>;
     try {
         json = await res.json();
-        // console.debug('fetchFromApi: ', stringify({apiUrl, options, json}, {maxItems: Infinity}));
     } catch (e) {
         throw new Error(JSON.stringify({
             code: 500,

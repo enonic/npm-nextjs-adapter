@@ -20,7 +20,7 @@ export const fetchContentData = async <Content = Record<string, unknown>>(
     if (variables && Object.keys(variables).length > 0) {
         body.variables = variables;
     }
-    const contentResults = await fetchGuillotine<ContentResult<Content>>(contentApiUrl, body, projectConfig, headers, 'ContentResult');
+    const contentResults = await fetchGuillotine<ContentResult<Content>>(contentApiUrl, body, projectConfig, headers);
 
     if (contentResults.error) {
         return contentResults;

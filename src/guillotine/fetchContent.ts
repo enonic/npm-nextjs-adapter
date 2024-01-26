@@ -7,7 +7,6 @@ import type {
 
 
 import {headers} from 'next/headers';
-// import {stringify} from 'q-i';
 import {ComponentRegistry} from '../common/ComponentRegistry';
 import {UrlProcessor} from '../common/UrlProcessor';
 import {
@@ -89,7 +88,6 @@ export const fetchContent: ContentFetcher = async (context: Context): Promise<Fe
 
     try {
         const [siteRelativeContentPath, componentPath] = getContentAndComponentPaths(requestContentPath);
-        // console.debug('fetchContent: siteRelativeContentPath', siteRelativeContentPath, 'componentPath', componentPath);
         if (componentPath) {
             // set component request type because url contains component path
             requestType = XP_REQUEST_TYPE.COMPONENT;
@@ -97,7 +95,6 @@ export const fetchContent: ContentFetcher = async (context: Context): Promise<Fe
 
         // /////////////  FIRST GUILLOTINE CALL FOR METADATA     /////////////////
         const metaResult = await fetchMetaData(contentApiUrl, '${site}/' + siteRelativeContentPath, projectConfig, outHeaders);
-        // console.debug('fetchContent metaResult', metaResult);
         // ///////////////////////////////////////////////////////////////////////
 
         const {_path, type} = metaResult.meta || {};
@@ -140,14 +137,12 @@ export const fetchContent: ContentFetcher = async (context: Context): Promise<Fe
 
         // Add the content type query at all cases
         const contentTypeDef = ComponentRegistry?.getContentType(type);
-        // console.debug('fetchContent: contentTypeDef', stringify(contentTypeDef,{maxItems: Infinity}));
         const pageCmp = (components || []).find(cmp => cmp.type === XP_COMPONENT_TYPE.PAGE);
         if (pageCmp) {
             processComponentConfig(APP_NAME, APP_NAME_DASHED, pageCmp);
         }
 
         const contentQueryAndVars = getQueryAndVariables(type, contentPath, context, contentTypeDef?.query, pageCmp?.page?.config);
-        // console.debug('fetchContent: contentQueryAndVars', stringify(contentQueryAndVars,{maxItems: Infinity}));
         if (contentQueryAndVars) {
             allDescriptors.push({
                 type: contentTypeDef,
@@ -157,7 +152,6 @@ export const fetchContent: ContentFetcher = async (context: Context): Promise<Fe
 
         const commonQueryAndVars = getQueryAndVariables(type, contentPath, context, ComponentRegistry.getCommonQuery(),
             pageCmp?.page?.config);
-        // console.debug('fetchContent: commonQueryAndVars', stringify(commonQueryAndVars,{maxItems: Infinity}));
         if (commonQueryAndVars) {
             allDescriptors.push({
                 type: contentTypeDef,
@@ -166,27 +160,21 @@ export const fetchContent: ContentFetcher = async (context: Context): Promise<Fe
         }
 
         if (components?.length && ComponentRegistry) {
-            // console.debug('fetchContent: componentDescriptors', stringify(components,{maxItems: Infinity}));
             for (const cmp of (components || [])) {
                 processComponentConfig(APP_NAME, APP_NAME_DASHED, cmp);
             }
-            // console.debug('fetchContent: componentDescriptors', stringify(components,{maxItems: Infinity}));
             // Collect component queries if defined
             const componentDescriptors = collectComponentDescriptors({
                 components,
                 xpContentPath: contentPath,
                 context,
             });
-            // console.debug('fetchContent: componentDescriptors', stringify(componentDescriptors,{maxItems: Infinity}));
             if (componentDescriptors.length) {
                 allDescriptors.push(...componentDescriptors);
             }
         }
 
-        // console.debug('fetchContent: allDescriptors', stringify(allDescriptors,{maxItems: Infinity}));
         const {query, variables} = combineMultipleQueries(allDescriptors);
-        
-        // console.debug('fetchContent: query', stringify(query,{maxItems: Infinity}));
         if (!query.trim()) {
             return errorResponse('400', `Missing or empty query override for content type ${type}`);
         }
