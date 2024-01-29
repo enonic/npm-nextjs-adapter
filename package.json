@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "license": "Apache-2.0",
   "main": "index.js",
+  "author": "Pavel Milkevich <pmi@enonic.com>",
   "contributors": [
     "Christian Westgaard <cwe@enonic.com>"
   ],
@@ -28,7 +29,7 @@
   },
   "scripts": {
     "clean": "del-cli *.d.ts baseMappings.*js chunk-*.*js coverage index.* enonic-nextjs-adapter-*.tgz i18n types views",
-    "build": "npx tsup -d . --dts-resolve --keep-names --shims --tsconfig tsconfig.json src/index.ts src/baseMappings.ts src/i18n/LocaleContext.tsx src/views/*.tsx src/views/**/*.tsx",
+    "build": "npx tsup -d . --dts-resolve --keep-names --shims --tsconfig tsconfig.json src/index.ts src/baseMappings.ts src/i18n/LocaleContext.tsx src/views/**/*.tsx",
     "build:minify": "npm run build -- --minify",
     "madge": "madge -i docs/madge.png -x '(constants|env)\\.ts' src/index.ts",
     "lint": "npx eslint --quiet src",
@@ -41,7 +42,6 @@
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.2",
-    "gql-query-builder-ts": "^3.9.0",
     "html-react-parser": "^5.0.1",
     "negotiator": "^0.6.3",
     "next": "^14.0.2",

@@ -1,4 +1,4 @@
-import type {ReactNode} from 'react';
+import type {React} from 'react';
 
 
 export type * from './component';
@@ -53,7 +53,7 @@ export interface ServerSideParams
 }
 
 export interface StaticContentProps extends Record<string, any> {
-    children?: ReactNode | ReactNode[];
+    children?: React.ReactNode;
     element?: string;
     condition: boolean;
 }
