@@ -353,6 +353,11 @@ describe('guillotine', () => {
                 // RUNTIME_ENV: 'client'
                 RUNTIME_ENV: 'server'
             });
+            // To avoid: Error: Invariant: headers() expects to have requestAsyncStorage, none available.
+            // See: https://github.com/vercel/next.js/discussions/44270
+            jest.mock('next/headers', () => ({
+                headers: jest.fn(() => new Headers()),
+            }));
         });
 
         afterAllTestsInThisDescribe(() => {

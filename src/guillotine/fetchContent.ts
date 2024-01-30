@@ -60,9 +60,7 @@ export const fetchContent: ContentFetcher = async (context: Context): Promise<Fe
     if (!context.headers) {
         // TODO does this break routing or dynamic server-side rendering?
         // I guess hydration will fix it anyway?
-        const allHeaders = process.env.RUNTIME_ENV === 'client'
-            ? headers()
-            : new Headers({jest: 'to cover the forEach below'});
+        const allHeaders = headers();
 
         context.headers = new Headers();
         allHeaders.forEach((value, key) => {
