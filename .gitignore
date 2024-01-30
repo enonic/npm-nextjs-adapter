@@ -2,6 +2,7 @@
 /*.d.ts
 /baseMappings.js
 /chunk-*.js
+/client.js
 /index.js
 /i18n/
 /types/

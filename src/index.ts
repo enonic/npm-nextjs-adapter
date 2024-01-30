@@ -32,10 +32,6 @@ export {validateData} from './guillotine/validateData';
 
 export {I18n} from './i18n/i18n';
 
-// NOTE: Avoid Server Error
-// TypeError: (0 , react__WEBPACK_IMPORTED_MODULE_1__.createContext) is not a function
-// export {LocaleContextProvider, useLocaleContext} from './i18n/LocaleContext';
-
 export {getContentApiUrl} from './utils/getContentApiUrl';
 export {getProjectLocaleConfig} from './utils/getProjectLocaleConfig';
 export {getProjectLocaleConfigById} from './utils/getProjectLocaleConfigById';

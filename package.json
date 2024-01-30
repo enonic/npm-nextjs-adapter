@@ -29,7 +29,7 @@
   },
   "scripts": {
     "clean": "del-cli *.d.ts baseMappings.*js chunk-*.*js coverage index.* enonic-nextjs-adapter-*.tgz i18n types views",
-    "build": "npx tsup -d . --dts-resolve --keep-names --shims --tsconfig tsconfig.json src/index.ts src/baseMappings.ts src/i18n/LocaleContext.tsx src/views/**/*.tsx",
+    "build": "npx tsup --dts-resolve",
     "build:minify": "npm run build -- --minify",
     "madge": "madge -i docs/madge.png -x '(constants|env)\\.ts' src/index.ts",
     "lint": "npx eslint --quiet src",

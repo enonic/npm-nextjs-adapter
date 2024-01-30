@@ -63,7 +63,7 @@ describe('i18n', () => {
 
     describe('LocaleContextProvider', () => {
         it("renders correctly without locale", () => {
-            import('../../src/i18n/LocaleContext').then(async ({LocaleContextProvider, useLocaleContext}) => {
+            import('../../src/client').then(async ({LocaleContextProvider, useLocaleContext}) => {
                 const LocaleConsumer = buildLocaleConsumer(useLocaleContext);
 
                 render(<LocaleContextProvider><h1 data-testid="a"><LocaleConsumer/></h1></LocaleContextProvider>);
@@ -78,7 +78,7 @@ describe('i18n', () => {
         });
 
         it("renders correctly with locale='en'", () => {
-            import('../../src/i18n/LocaleContext').then(async ({LocaleContextProvider, useLocaleContext}) => {
+            import('../../src/client').then(async ({LocaleContextProvider, useLocaleContext}) => {
                 const LocaleConsumer = buildLocaleConsumer(useLocaleContext);
                 const locale = 'en';
 
@@ -94,7 +94,7 @@ describe('i18n', () => {
         });
 
         it("renders correctly with locale='no'", () => {
-            import('../../src/i18n/LocaleContext').then(async ({LocaleContextProvider, useLocaleContext}) => {
+            import('../../src/client').then(async ({LocaleContextProvider, useLocaleContext}) => {
                 const LocaleConsumer = buildLocaleConsumer(useLocaleContext);
                 const locale = 'no';
 
