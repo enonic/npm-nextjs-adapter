@@ -9,12 +9,17 @@
   ],
   "files": [
     "*.d.ts",
+    "*.map",
     "baseMappings*",
-    "chunk-*",
+    "client.js",
+    "common",
+    "guillotine",
     "index*",
     "i18n",
+    "query",
     "src",
     "types",
+    "utils",
     "views"
   ],
   "keywords": [
@@ -28,9 +33,12 @@
     "access": "public"
   },
   "scripts": {
-    "clean": "del-cli *.d.ts baseMappings.*js chunk-*.*js coverage index.* enonic-nextjs-adapter-*.tgz i18n types views",
-    "build": "npx tsup --dts-resolve",
+    "clean": "del-cli *.d.ts *.js.map baseMappings.* client.* coverage index.* enonic-nextjs-adapter-*.tgz i18n types views",
+    "clean:tsup": "del-cli *.d.ts *.js.map baseMappings.* _chunks_client _chunks_server client.* coverage index.* enonic-nextjs-adapter-*.tgz i18n types views",
+    "build": "tsc",
+    "build:tsup": "npx tsup --dts-resolve",
     "build:minify": "npm run build -- --minify",
+    "check:types": "npx tsc --noEmit",
     "madge": "madge -i docs/madge.png -x '(constants|env)\\.ts' src/index.ts",
     "lint": "npx eslint --quiet src",
     "lint:fix": "npx eslint --fix src",
@@ -64,6 +72,7 @@
     "concurrently": "^8.2.2",
     "cpy-cli": "^5.0.0",
     "del-cli": "^5.1.0",
+    "esbuild-plugin-globals": "^0.2.0",
     "eslint": "^8.52.0",
     "eslint-plugin-react": "^7.33.2",
     "jest": "^29.7.0",

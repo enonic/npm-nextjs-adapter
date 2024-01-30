@@ -23,7 +23,13 @@
     // "jsx": "react-jsx",
 
     "outDir": ".",
-    "declaration": true
+    "declaration": true,
+    "sourceMap": true,
+    // "types": [
+    //   "node",
+    //   "react",
+    //   "react-dom"
+    // ],
   },
 
   // Specifies an allowlist of files to include in the program. An error occurs

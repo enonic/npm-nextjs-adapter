@@ -21,13 +21,13 @@ export interface GuillotineValidationError extends GuillotineError {
     validationErrorType: string // 'FieldUndefined'
 }
 
-export interface GuillotineErrorResponseJson {
-    errors: GuillotineError[]
-}
+// export interface GuillotineErrorResponseJson {
+//     errors: GuillotineError[]
+// }
 
-export interface GuillotineOkResponseJson<Data = Record<string,unknown>> {
-    data: Data
-}
+// export interface GuillotineOkResponseJson<Data = Record<string,unknown>> {
+//     data: Data
+// }
 
 // export type GuillotineResponseJson<Data> = GuillotineOkResponseJson<Data> | GuillotineErrorResponseJson;
 
