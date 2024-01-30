@@ -16,10 +16,10 @@ export interface GuillotineError {
 }
 
 // A specific observed error
-export interface GuillotineValidationError extends GuillotineError {
-    errorType: 'ValidationError'
-    validationErrorType: string // 'FieldUndefined'
-}
+// export interface GuillotineValidationError extends GuillotineError {
+//     errorType: 'ValidationError'
+//     validationErrorType: string // 'FieldUndefined'
+// }
 
 // export interface GuillotineErrorResponseJson {
 //     errors: GuillotineError[]
