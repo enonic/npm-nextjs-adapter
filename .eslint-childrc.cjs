@@ -2,6 +2,7 @@ module.exports = {
     rules: {
         'no-plusplus': ['off'],
         'no-case-declarations': ['off'],
+        'spaced-comment': ['error', 'always', { markers: ['/'] }],
         '@typescript-eslint/no-var-requires': ['off'],
         '@typescript-eslint/no-use-before-define': ['off'],
         '@typescript-eslint/no-explicit-any': ['off'],

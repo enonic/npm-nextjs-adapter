@@ -1,5 +1,4 @@
-import type React from 'react';
-
+/// <reference types="react" />
 
 export type * from './component';
 export type * from './componentProps';

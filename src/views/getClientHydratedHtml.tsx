@@ -1,8 +1,8 @@
 'use client';
+/// <reference types="react" />
 
 
 import {hydrateRoot} from 'react-dom/client';
-import React from 'react';
 
 
 export default function getClientHydratedHtml(component: React.ReactNode) {
