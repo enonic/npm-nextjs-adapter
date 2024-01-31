@@ -19,12 +19,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
 
-    "jsx": "preserve", // preserve is not supported by bun
-    // "jsx": "react-jsx",
+    "jsx": "preserve",
 
     "outDir": ".",
     "declaration": true,
     "sourceMap": true,
+
+    // We have done Triple-Slash Directives where needed instead:
     // "types": [
     //   "node",
     //   "react",
