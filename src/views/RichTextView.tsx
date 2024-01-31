@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import type {MetaData, Replacer, ReplacerResult, RichTextData, RichTextViewProps,} from '../types';
+import type {MetaData, Replacer, ReplacerResult, RichTextData, RichTextViewProps} from '../types';
 
 
 import {getUrl, UrlProcessor} from '../common/UrlProcessor';

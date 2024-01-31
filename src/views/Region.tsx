@@ -2,7 +2,7 @@
 import type {PageComponent, RegionProps, RegionsProps} from '../types';
 
 
-import {PORTAL_REGION_ATTRIBUTE, RENDER_MODE,} from '../common/constants';
+import {PORTAL_REGION_ATTRIBUTE, RENDER_MODE} from '../common/constants';
 import BaseComponent from './BaseComponent';
 
 
