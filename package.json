@@ -1,6 +1,6 @@
 {
   "name": "@enonic/nextjs-adapter",
-  "version": "3.0.0-B2",
+  "version": "3.0.0-B1",
   "license": "Apache-2.0",
   "main": "index.js",
   "author": "Pavel Milkevich <pmi@enonic.com>",
@@ -35,16 +35,16 @@
   "scripts": {
     "clean": "del-cli *.d.ts *.js.map baseMappings.* client.* common coverage index.* enonic-nextjs-adapter-*.tgz guillotine i18n query types utils views dist",
     "build": "tsc",
-    "release": "tsc --outDir ./dist && npx --yes cpy-cli package.json README.md ./dist",
+    "build:prod": "tsc --outDir ./dist && npx --yes cpy-cli package.json README.md ./dist",
+    "release": "concurrently -c auto -g --timings npm:test npm:lint npm:build:prod",
     "check:types": "tsc --noEmit",
     "madge": "madge -i docs/madge.png -x '(constants|env)\\.ts' src/index.ts",
     "lint": "eslint --quiet src",
     "lint:fix": "eslint --fix src",
-    "prerelease": "npm run clean",
+    "prebuild:prod": "npm run clean",
     "prebuild": "npm run clean",
     "premadge": "mkdirp docs",
     "pretest": "del-cli coverage",
-    "prepack": "concurrently -c auto -g --timings npm:test npm:lint npm:build",
     "test": "jest --no-cache --coverage"
   },
   "dependencies": {
