@@ -1,11 +1,8 @@
+/// <reference types="react" />
 import type {PageComponent, RegionProps, RegionsProps} from '../types';
 
 
-import React from 'react';
-import {
-    PORTAL_REGION_ATTRIBUTE,
-    RENDER_MODE,
-} from '../common/constants';
+import {PORTAL_REGION_ATTRIBUTE, RENDER_MODE,} from '../common/constants';
 import BaseComponent from './BaseComponent';
 
 

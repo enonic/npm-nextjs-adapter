@@ -1,7 +1,7 @@
+/// <reference types="react" />
 import type {MetaData, TextData} from '../types';
 
 
-import React from 'react';
 import RichTextView from './RichTextView';
 
 

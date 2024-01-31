@@ -1,9 +1,4 @@
-import type {
-    ComponentDescriptor,
-    ContentFetcher,
-    Context,
-    FetchContentResult,
-} from '../types';
+import type {ComponentDescriptor, ContentFetcher, Context, FetchContentResult,} from '../types';
 
 
 import {headers} from 'next/headers';
@@ -17,11 +12,7 @@ import {
     XP_COMPONENT_TYPE,
     XP_REQUEST_TYPE,
 } from '../common/constants';
-import {
-    APP_NAME,
-    APP_NAME_DASHED,
-    IS_DEV_MODE,
-} from '../common/env';
+import {APP_NAME, APP_NAME_DASHED, IS_DEV_MODE,} from '../common/env';
 import {getContentApiUrl} from '../utils/getContentApiUrl';
 import {getProjectLocaleConfig} from '../utils/getProjectLocaleConfig';
 import {getRenderMode} from '../utils/getRenderMode';
@@ -134,7 +125,7 @@ export const fetchContent: ContentFetcher = async (context: Context): Promise<Fe
         const allDescriptors: ComponentDescriptor[] = [];
 
         // Add the content type query at all cases
-        const contentTypeDef = ComponentRegistry?.getContentType(type);
+        const contentTypeDef = ComponentRegistry.getContentType(type);
         const pageCmp = (components || []).find(cmp => cmp.type === XP_COMPONENT_TYPE.PAGE);
         if (pageCmp) {
             processComponentConfig(APP_NAME, APP_NAME_DASHED, pageCmp);

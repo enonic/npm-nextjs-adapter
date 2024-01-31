@@ -14,5 +14,6 @@ module.exports = {
         '@typescript-eslint/member-ordering': ['off'],
         '@typescript-eslint/restrict-template-expressions': ['off'],
         '@typescript-eslint/ban-types': ['off'],
+        'react/react-in-jsx-scope': ['off'],    // We have <reference types="react" /> in all files to not import react in the lib
     },
 }

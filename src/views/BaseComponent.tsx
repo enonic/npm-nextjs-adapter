@@ -1,7 +1,7 @@
+/// <reference types="react" />
 import type {BaseComponentProps, MetaData, PageComponent} from '../types';
 
 
-import React from 'react';
 import {PORTAL_COMPONENT_ATTRIBUTE, RENDER_MODE, XP_COMPONENT_TYPE} from '../common/constants';
 import {IS_DEV_MODE} from '../common/env';
 import {ComponentRegistry} from '../common/ComponentRegistry';

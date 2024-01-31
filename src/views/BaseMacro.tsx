@@ -1,7 +1,7 @@
+/// <reference types="react" />
 import type {BaseMacroProps, MacroConfig} from '../types';
 
 
-import React from 'react';
 import {ComponentRegistry} from '../common/ComponentRegistry';
 import {RENDER_MODE} from '../common/constants';
 import {sanitizeGraphqlName} from '../utils/sanitizeGraphqlName';

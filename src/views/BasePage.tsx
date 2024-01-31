@@ -1,7 +1,7 @@
+/// <reference types="react" />
 import type {BasePageProps} from '../types';
 
 
-import React from 'react';
 import {ComponentRegistry} from '../common/ComponentRegistry';
 import {XP_COMPONENT_TYPE} from '../common/constants';
 import {ErrorComponent, MissingComponent, shouldShowErrorView, shouldShowMissingView} from './BaseComponent';

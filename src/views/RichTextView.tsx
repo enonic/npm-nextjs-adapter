@@ -1,13 +1,7 @@
-import type {
-    MetaData,
-    Replacer,
-    ReplacerResult,
-    RichTextData,
-    RichTextViewProps,
-} from '../types';
+/// <reference types="react" />
+import type {MetaData, Replacer, ReplacerResult, RichTextData, RichTextViewProps,} from '../types';
 
 
-import React from 'react';
 import {getUrl, UrlProcessor} from '../common/UrlProcessor';
 import HTMLReactParser, {DOMNode} from 'html-react-parser';
 import {ElementType} from 'domelementtype';
