@@ -53,23 +53,3 @@ v1.0.0
 
 Check that the build was successful and a new version of the package has appeared
 on [npm](https://www.npmjs.com/package/@enonic/nextjs-adapter).
-
-## How it works
-
-This is a description of necessary steps before the `npm publish` can be performed.
-All of these are performed automatically.
-Follow them in case of need to create a manual release (**highly not recommended**).
-
-1. Run build task to create necessary `*.js` and `*.d.ts` files in the `./dist` folder:
-    ```
-    npm run build
-    ```
-2. Run copy task to copy `package.json` and `README.md` into `./dist`
-    ```
-    npm run copy
-   ```
-3. Perform the publish from the `./dist` folder:
-    ```
-    cd ./dist
-   npm publish
-   ```

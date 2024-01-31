@@ -9,11 +9,12 @@ import {fetchFromApi} from './fetchFromApi';
 
 
 /** Guillotine-specialized fetch, using the generic fetch above */
-export const fetchGuillotine = async (
+export const fetchGuillotine = async <Data = Record<string,unknown>>(
     contentApiUrl: string,
     body: ContentApiBaseBody,
     projectConfig: ProjectLocaleConfig,
-    headers?: {}): Promise<GuillotineResult> => {
+    headers?: {},
+): Promise<GuillotineResult> => {
     if (typeof body.query !== 'string' || !body.query.trim()) {
         return {
             error: {
@@ -24,7 +25,7 @@ export const fetchGuillotine = async (
     }
     const path = body.variables?.path;
     const pathMessage = path ? JSON.stringify(path) : '';
-    const result: GuillotineResult = await fetchFromApi(
+    return await fetchFromApi<Data>(
         contentApiUrl,
         body,
         projectConfig,
@@ -61,6 +62,4 @@ export const fetchGuillotine = async (
                 return {error: {code: 'Client-side error', message: err.message}};
             }
         });
-
-    return result;
 };

@@ -5,16 +5,19 @@ import type {
 } from '../types';
 
 
-export function getQueryAndVariables(type: string,
+export function getQueryAndVariables(
+    type: string,
     path: string,
     context: Context,
-    selectedQuery ? : SelectedQueryMaybeVariablesFunc,
-    config ? : any,
+    selectedQuery?: SelectedQueryMaybeVariablesFunc,
+    config?: any,
 ): QueryAndVariables | undefined {
 
     let query, getVariables;
 
-    if (typeof selectedQuery === 'string' || typeof selectedQuery === 'function') {
+    if (
+        typeof selectedQuery === 'string' || typeof selectedQuery === 'function'
+    ) {
         query = selectedQuery;
 
     } else if (Array.isArray(selectedQuery)) {

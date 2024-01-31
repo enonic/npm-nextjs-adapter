@@ -18,9 +18,19 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
+
     "jsx": "preserve",
-    "outDir": "./dist",
-    "declaration": true
+
+    "outDir": ".",
+    "declaration": true,
+    "sourceMap": true,
+
+    // We have done Triple-Slash Directives where needed instead:
+    // "types": [
+    //   "node",
+    //   "react",
+    //   "react-dom"
+    // ],
   },
 
   // Specifies an allowlist of files to include in the program. An error occurs
@@ -46,4 +56,10 @@
   // It is not a mechanism that prevents a file from being included in the
   // codebase - it simply changes what the include setting finds.
   "exclude": [],
+
+  "ts-node": {
+    "moduleTypes": {
+      "jest.config.ts": "cjs"
+    }
+  },
 }

@@ -5,22 +5,26 @@ import type {
 } from '../types';
 
 
-import {ComponentRegistry} from '../ComponentRegistry';
-import {XP_COMPONENT_TYPE} from '../constants';
+import {ComponentRegistry} from '../common/ComponentRegistry';
+import {XP_COMPONENT_TYPE} from '../common/constants';
 import {
     APP_NAME,
     APP_NAME_DASHED,
-} from '../env';
+} from '../common/env';
 import {processComponentConfig} from './processComponentConfig';
 import {getComponentConfig} from './getComponentConfig';
 import {getQueryAndVariables} from './getQueryAndVariables';
 
 
-export function collectComponentDescriptors(components: PageComponent[],
-    componentRegistry: typeof ComponentRegistry,
-    xpContentPath: string,
-    context: Context,
-): ComponentDescriptor[] {
+export function collectComponentDescriptors({
+    components,
+    xpContentPath,
+    context,
+}: {
+    components: PageComponent[]
+    xpContentPath: string
+    context: Context
+}): ComponentDescriptor[] {
 
     const descriptors: ComponentDescriptor[] = [];
 
@@ -44,12 +48,11 @@ export function collectComponentDescriptors(components: PageComponent[],
             }
         } else {
             // look for parts inside fragments
-            const fragPartDescs = collectComponentDescriptors(
-                cmp.fragment?.fragment?.components,
-                componentRegistry,
+            const fragPartDescs = collectComponentDescriptors({
+                components: cmp.fragment?.fragment?.components,
                 xpContentPath,
                 context,
-            );
+            });
             if (fragPartDescs.length) {
                 descriptors.push(...fragPartDescs);
             }

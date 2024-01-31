@@ -18,7 +18,7 @@ import {
     RENDER_MODE,
     XP_COMPONENT_TYPE,
     XP_REQUEST_TYPE,
-} from '../../src/constants';
+} from '../../src/common/constants';
 
 
 globalThis.console = {

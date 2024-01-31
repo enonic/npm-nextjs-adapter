@@ -1,7 +1,7 @@
 import type {Context, ProjectLocaleConfig} from '../types';
 
 
-import {PROJECT_ID_HEADER} from '../constants';
+import {PROJECT_ID_HEADER} from '../common/constants';
 import {getProjectLocaleConfigById} from './getProjectLocaleConfigById';
 import {getProjectLocaleConfigByLocale} from './getProjectLocaleConfigByLocale';
 

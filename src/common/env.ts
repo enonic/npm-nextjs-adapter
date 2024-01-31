@@ -29,9 +29,9 @@ if (typeof window === 'undefined') {
     // Verify required values on server-side only
     Object.keys(requiredConstants).forEach((key: string) => {
         const val = requiredConstants[key];
-        console.info(`Checking required constant "${key}"`, val);
         if (!val) {
             throw new Error(`Environment variable '${key}' is missing (from .env?)`);
         }
     });
 }
+

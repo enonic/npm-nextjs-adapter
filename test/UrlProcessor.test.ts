@@ -10,7 +10,7 @@ import {
     RENDER_MODE,
     XP_COMPONENT_TYPE,
     XP_REQUEST_TYPE,
-} from '../src/constants';
+} from '../src/common/constants';
 import {
     ENONIC_API,
     ENONIC_APP_NAME,
@@ -62,7 +62,7 @@ describe('UrlProcessor', () => {
 
     describe('isContentImage', () => {
         it('return true when ref matches and has image', () => {
-            import('../src/UrlProcessor').then(({UrlProcessor}) => {
+            import('../src').then(({UrlProcessor}) => {
                 const ref = 'ref';
                 const imageData = [{
                     ref: 'ref',
@@ -74,7 +74,7 @@ describe('UrlProcessor', () => {
             });
         });
         it("handles imageData entry without ref", () => {
-            import('../src/UrlProcessor').then(({UrlProcessor}) => {
+            import('../src').then(({UrlProcessor}) => {
                 const ref = 'ref';
                 const imageData: ImageData[] = [{} as ImageData, {
                     ref: 'ref',
@@ -86,7 +86,7 @@ describe('UrlProcessor', () => {
             });
         });
         it('return false when ref matches, but image is not even present', () => {
-            import('../src/UrlProcessor').then(({UrlProcessor}) => {
+            import('../src').then(({UrlProcessor}) => {
                 const ref = 'ref';
                 const imageData = [{
                     ref: 'ref'
@@ -95,7 +95,7 @@ describe('UrlProcessor', () => {
             });
         });
         it('return false when ref matches, but image is null', () => {
-            import('../src/UrlProcessor').then(({UrlProcessor}) => {
+            import('../src').then(({UrlProcessor}) => {
                 const ref = 'ref';
                 const imageData = [{
                     ref: 'ref',
@@ -105,14 +105,14 @@ describe('UrlProcessor', () => {
             });
         });
         it("return false when imageData is empty", () => {
-            import('../src/UrlProcessor').then(({UrlProcessor}) => {
+            import('../src').then(({UrlProcessor}) => {
                 const ref = 'ref';
                 const imageData = [];
                 expect(UrlProcessor.isContentImage(ref, imageData)).toEqual(false);
             });
         });
         it("return false when ref isn't found", () => {
-            import('../src/UrlProcessor').then(({UrlProcessor}) => {
+            import('../src').then(({UrlProcessor}) => {
                 const ref = 'ref';
                 const imageData = [{
                     ref: 'notref',
@@ -127,7 +127,7 @@ describe('UrlProcessor', () => {
 
     describe('isMediaLink', () => {
         it('return true when ref matches and has media', () => {
-            import('../src/UrlProcessor').then(({UrlProcessor}) => {
+            import('../src').then(({UrlProcessor}) => {
                 const ref = 'ref';
                 const linkData = [{
                     ref: 'ref',
@@ -141,7 +141,7 @@ describe('UrlProcessor', () => {
             });
         });
         it("handles linkData entry without ref", () => {
-            import('../src/UrlProcessor').then(({UrlProcessor}) => {
+            import('../src').then(({UrlProcessor}) => {
                 const ref = 'ref';
                 const linkData: LinkData[] = [{} as LinkData, {
                     ref: 'ref',
@@ -155,7 +155,7 @@ describe('UrlProcessor', () => {
             });
         });
         it('return false when ref matches, but media is not even present', () => {
-            import('../src/UrlProcessor').then(({UrlProcessor}) => {
+            import('../src').then(({UrlProcessor}) => {
                 const ref = 'ref';
                 const linkData = [{
                     ref: 'ref'
@@ -164,7 +164,7 @@ describe('UrlProcessor', () => {
             });
         });
         it('return false when ref matches, but media is null', () => {
-            import('../src/UrlProcessor').then(({UrlProcessor}) => {
+            import('../src').then(({UrlProcessor}) => {
                 const ref = 'ref';
                 const linkData = [{
                     ref: 'ref',
@@ -174,14 +174,14 @@ describe('UrlProcessor', () => {
             });
         });
         it("return false when linkData is empty", () => {
-            import('../src/UrlProcessor').then(({UrlProcessor}) => {
+            import('../src').then(({UrlProcessor}) => {
                 const ref = 'ref';
                 const linkData = [];
                 expect(UrlProcessor.isMediaLink(ref, linkData)).toEqual(false);
             });
         });
         it("return false when ref isn't found", () => {
-            import('../src/UrlProcessor').then(({UrlProcessor}) => {
+            import('../src').then(({UrlProcessor}) => {
                 const ref = 'ref';
                 const linkData = [{
                     ref: 'notref',
@@ -199,7 +199,7 @@ describe('UrlProcessor', () => {
 
     describe('getAsset', () => {
         it("returns baseurl when url is empty", () => {
-            import('../src/UrlProcessor').then(({getAsset}) => {
+            import('../src').then(({getAsset}) => {
                 const url = '';
                 expect(getAsset(url, META)).toEqual('/site/inline/enonic-homepage/draft/');
             });
@@ -208,7 +208,7 @@ describe('UrlProcessor', () => {
 
     describe('getUrl', () => {
         it("returns baseurl when url is empty", () => {
-            import('../src/UrlProcessor').then(({getUrl}) => {
+            import('../src').then(({getUrl}) => {
                 const url = '';
                 expect(getUrl(url, META)).toEqual('/site/inline/enonic-homepage/draft/');
             });
@@ -259,7 +259,7 @@ describe('UrlProcessor', () => {
             meta: META
         }].forEach(({url, expected, meta}) => {
             it(`should return ${expected} when url is ${url}`, () => {
-                import('../src/UrlProcessor').then(({UrlProcessor}) => {
+                import('../src').then(({UrlProcessor}) => {
                     expect(UrlProcessor.process(url, meta)).toEqual(expected);
                 });
             });
@@ -268,25 +268,25 @@ describe('UrlProcessor', () => {
 
     describe('processSrcSet', () => {
         it("works for srcset without width descriptor", () => {
-            import('../src/UrlProcessor').then(({UrlProcessor}) => {
+            import('../src').then(({UrlProcessor}) => {
                 const srcset = 'elva-fairy-480w.jpg';
                 expect(UrlProcessor.processSrcSet(srcset, META)).toEqual('/site/inline/enonic-homepage/draft/elva-fairy-480w.jpg');
             });
         });
         it("works for srcset with a single src", () => {
-            import('../src/UrlProcessor').then(({UrlProcessor}) => {
+            import('../src').then(({UrlProcessor}) => {
                 const srcset = 'elva-fairy-480w.jpg 480w 1x';
                 expect(UrlProcessor.processSrcSet(srcset, META)).toEqual('/site/inline/enonic-homepage/draft/elva-fairy-480w.jpg 480w 1x');
             });
         });
         it("works for srcset with a two srcs", () => {
-            import('../src/UrlProcessor').then(({UrlProcessor}) => {
+            import('../src').then(({UrlProcessor}) => {
                 const srcset = 'elva-fairy-480w.jpg 480w 1x, elva-fairy-800w.jpg 800w';
                 expect(UrlProcessor.processSrcSet(srcset, META)).toEqual('/site/inline/enonic-homepage/draft/elva-fairy-480w.jpg 480w 1x, /site/inline/enonic-homepage/draft/elva-fairy-800w.jpg 800w');
             });
         });
         it("warns and returns srcset when it can't process the srcset", () => {
-            import('../src/UrlProcessor').then(({UrlProcessor}) => {
+            import('../src').then(({UrlProcessor}) => {
                 const srcset = 'src width pixel notsupported';
                 expect(UrlProcessor.processSrcSet(srcset, META)).toEqual(srcset);
                 expect(warn).toHaveBeenCalledWith(`Can not process image srcset: ${srcset}`);

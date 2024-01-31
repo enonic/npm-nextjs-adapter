@@ -1,3 +1,5 @@
+export const CATCH_ALL = '*';
+
 export enum ENV_VARS {
     PROJECTS = 'ENONIC_PROJECTS',
     API_URL = 'ENONIC_API',

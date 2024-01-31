@@ -4,7 +4,11 @@ import type {PageComponent} from '../types';
 import {sanitizeGraphqlName} from '../utils/sanitizeGraphqlName';
 
 
-export function processComponentConfig(myAppName: string, myAppNameDashed: string, cmp: PageComponent) {
+export function processComponentConfig(
+    myAppName: string,
+    myAppNameDashed: string,
+    cmp: PageComponent,
+): void {
     const cmpData = cmp[cmp.type];
     if (cmpData && 'descriptor' in cmpData && cmpData.descriptor) {
         const [appName, cmpName] = cmpData.descriptor.split(':');

@@ -1,8 +1,8 @@
 import type {ProjectLocalesConfig} from '../types';
 
 
-import {ENV_VARS} from '../constants';
-import {PROJECTS} from '../env';
+import {ENV_VARS} from '../common/constants';
+import {PROJECTS} from '../common/env';
 
 
 // NOTE: Dissallowing slash and any whitespace in 2nd capture group.

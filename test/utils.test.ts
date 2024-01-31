@@ -209,7 +209,6 @@ describe('utils', () => {
         it('throws when ENONIC_PROJECTS is missing', () => {
                 jest.resetModules();
                 process.env = {
-                    ...OLD_ENV,
                     ENONIC_API: 'http://localhost:8080/site',
                     ENONIC_APP_NAME,
                 };

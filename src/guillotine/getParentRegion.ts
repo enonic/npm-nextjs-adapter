@@ -6,7 +6,7 @@ import type {
 } from '../types';
 
 
-import {XP_COMPONENT_TYPE} from '../constants';
+import {XP_COMPONENT_TYPE} from '../common/constants';
 import {prefixLayoutPath} from './prefixLayoutPath';
 
 
@@ -17,7 +17,6 @@ export function getParentRegion(
     components: PageComponent[] = [],
     createMissing ? : boolean,
 ): PageRegion | undefined {
-
     let currentTree: RegionTree = source;
     let currentRegion: PageRegion | undefined;
     let parentPath = '';
@@ -54,7 +53,7 @@ export function getParentRegion(
             }
             currentTree = layout.regions;
         }
-    }
+    } // for
 
     return currentRegion;
 }

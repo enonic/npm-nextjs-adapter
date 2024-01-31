@@ -1,7 +1,7 @@
 module.exports = {
-    extends: ['../.eslintrc.js'],
+    extends: ['../.eslintrc.cjs'],
     overrides: [{
-        extends: '../.eslint-childrc.js',
+        extends: '../.eslint-childrc.cjs',
         files: ['*.ts', '*.tsx'],
         parserOptions: {
             tsconfigRootDir: __dirname,

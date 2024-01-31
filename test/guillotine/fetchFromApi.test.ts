@@ -100,7 +100,7 @@ describe('guillotine', () => {
         it('returns query results', () => {
             import('../../src').then((moduleName) => {
                 moduleName.fetchFromApi(...FETCH_FROM_API_PARAMS_VALID).then((result) => {
-                    console.debug(result);
+                    // console.debug(result);
                     expect(result).toEqual({
                         data: {
                             guillotine: {
