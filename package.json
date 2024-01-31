@@ -33,12 +33,14 @@
     "access": "public"
   },
   "scripts": {
-    "clean": "del-cli *.d.ts *.js.map baseMappings.* client.* common coverage index.* enonic-nextjs-adapter-*.tgz guillotine i18n query types utils views",
+    "clean": "del-cli *.d.ts *.js.map baseMappings.* client.* common coverage index.* enonic-nextjs-adapter-*.tgz guillotine i18n query types utils views dist",
     "build": "tsc",
+    "release": "tsc --outDir ./dist && npx --yes cpy-cli package.json README.md ./dist",
     "check:types": "tsc --noEmit",
     "madge": "madge -i docs/madge.png -x '(constants|env)\\.ts' src/index.ts",
     "lint": "eslint --quiet src",
     "lint:fix": "eslint --fix src",
+    "prerelease": "npm run clean",
     "prebuild": "npm run clean",
     "premadge": "mkdirp docs",
     "pretest": "del-cli coverage",
