@@ -3,13 +3,13 @@ module.exports = {
         '@enonic/eslint-config',
         'plugin:react/recommended',
     ],
+    ignorePatterns: [
+        '/dist',
+        '*.js',
+    ],
     settings: {
         react: {
             version: 'detect',
         },
     },
-    ignorePatterns: [
-        '/dist',
-        '*.js',
-    ],
 };

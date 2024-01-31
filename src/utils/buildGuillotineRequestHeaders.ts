@@ -4,7 +4,7 @@ import type {Context, GuillotineRequestHeaders} from '../types';
 import {
     GUILLOTINE_REQUEST_HEADERS,
     JSESSIONID_HEADER,
-} from '../constants';
+} from '../common/constants';
 
 
 export function buildGuillotineRequestHeaders({

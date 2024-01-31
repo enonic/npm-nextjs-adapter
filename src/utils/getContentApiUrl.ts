@@ -1,8 +1,8 @@
 import type {Context} from '../types';
 
 
-import {RENDER_MODE} from '../constants';
-import {API_URL} from '../env';
+import {RENDER_MODE} from '../common/constants';
+import {API_URL} from '../common/env';
 import {getProjectLocaleConfig} from './getProjectLocaleConfig';
 import {fixDoubleSlashes} from './fixDoubleSlashes';
 import {getRenderMode} from './getRenderMode';

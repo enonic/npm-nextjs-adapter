@@ -1,8 +1,8 @@
+/// <reference types="react" />
 import type {BasePageProps, FetchContentResult} from '../types';
 
 
-import React from 'react';
-import {ComponentRegistry} from '../ComponentRegistry';
+import {ComponentRegistry} from '../common/ComponentRegistry';
 import BasePage from './BasePage';
 
 

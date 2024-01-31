@@ -3,7 +3,7 @@ import type {Context} from '../types';
 
 import Negotiator from 'negotiator';
 import {match as localeMatcher} from '@formatjs/intl-localematcher';
-import {PROJECT_ID_HEADER} from '../constants';
+import {PROJECT_ID_HEADER} from '../common/constants';
 import {getProjectLocaleConfigs} from './getProjectLocaleConfigs';
 import {getProjectLocaleConfigById} from './getProjectLocaleConfigById';
 
@@ -12,7 +12,7 @@ export function getRequestLocaleInfo(context: Context) {
     let locale: string;
     const configs = getProjectLocaleConfigs();
     const locales = Object.keys(configs);
-    const defaultLocale = locales.find((locale) => configs[locale].default)!;
+    const defaultLocale = locales.find((locale) => configs[locale].default);
     const projectId = context.headers?.get(PROJECT_ID_HEADER);
     if (projectId) {
         locale = getProjectLocaleConfigById(projectId, false)?.locale;

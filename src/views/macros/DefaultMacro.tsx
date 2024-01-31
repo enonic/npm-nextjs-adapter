@@ -1,7 +1,4 @@
 import type {MacroProps} from '../../types';
-
-
-import React from 'react';
 import HTMLReactParser from 'html-react-parser';
 
 

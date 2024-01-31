@@ -1,3 +1,15 @@
+import type { Config } from '@jest/types';
+
+import nextJest from 'next/jest'
+
+const createJestConfig = nextJest({
+    // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
+    dir: './test',
+});
+
+// const jestConfig = await createJestConfig({});
+// console.error('jestConfig', jestConfig);
+
 const commonConfig = {
     collectCoverageFrom: [
         'src/**/*.{ts,tsx}',
@@ -13,11 +25,13 @@ const commonConfig = {
     }
 };
 
-export default {
+const customJestConfig = {
     coverageProvider: 'v8', // To get correct line numbers under jsdom
     projects: [{
         ...commonConfig,
-        testEnvironment: 'node',
+        testEnvironment: '@edge-runtime/jest-environment',
+        // testEnvironment: 'jsdom',
+        // testEnvironment: 'node',
         testMatch: [
             '<rootDir>/test/**/*.(spec|test).{ts,tsx}'
         ]
@@ -29,4 +43,8 @@ export default {
         ]
     }],
     silent: false,
-};
+}
+
+const jestConfig = createJestConfig(customJestConfig as Config.InitialProjectOptions);
+
+export default jestConfig;

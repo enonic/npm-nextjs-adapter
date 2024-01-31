@@ -1,9 +1,9 @@
+/// <reference types="react" />
 import type {BaseLayoutProps} from '../types';
 
 
-import React from 'react';
-import {XP_COMPONENT_TYPE} from '../constants';
-import {ComponentRegistry} from '../ComponentRegistry';
+import {XP_COMPONENT_TYPE} from '../common/constants';
+import {ComponentRegistry} from '../common/ComponentRegistry';
 import {MissingComponent, shouldShowMissingView} from './BaseComponent';
 
 

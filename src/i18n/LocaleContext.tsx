@@ -1,7 +1,6 @@
 'use client';
 import type {Dict, LocaleContextType} from '../types';
 
-
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import {getPhrase, loadPhrases} from './i18n';
 
