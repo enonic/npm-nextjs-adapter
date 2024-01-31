@@ -34,18 +34,15 @@
   },
   "scripts": {
     "clean": "del-cli *.d.ts *.js.map baseMappings.* client.* coverage index.* enonic-nextjs-adapter-*.tgz i18n types views",
-    "clean:tsup": "del-cli *.d.ts *.js.map baseMappings.* _chunks_client _chunks_server client.* coverage index.* enonic-nextjs-adapter-*.tgz i18n types views",
     "build": "tsc",
-    "build:tsup": "npx tsup --dts-resolve",
-    "build:minify": "npm run build -- --minify",
-    "check:types": "npx tsc --noEmit",
+    "check:types": "tsc --noEmit",
     "madge": "madge -i docs/madge.png -x '(constants|env)\\.ts' src/index.ts",
-    "lint": "npx eslint --quiet src",
-    "lint:fix": "npx eslint --fix src",
+    "lint": "eslint --quiet src",
+    "lint:fix": "eslint --fix src",
     "prebuild": "npm run clean",
-    "premadge": "npx mkdirp docs",
+    "premadge": "mkdirp docs",
     "pretest": "del-cli coverage",
-    "prepack": "concurrently -c auto -g --timings npm:test npm:lint npm:build:minify",
+    "prepack": "concurrently -c auto -g --timings npm:test npm:lint npm:build",
     "test": "jest --no-cache --coverage"
   },
   "dependencies": {
@@ -81,7 +78,6 @@
     "mkdirp": "^3.0.1",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.2",
-    "tsup": "^8.0.1",
     "typescript": "^5.2.2"
   },
   "types": "index.d.ts"
