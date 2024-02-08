@@ -1,4 +1,4 @@
-import type {ComponentDescriptor, ContentFetcher, Context, FetchContentResult} from '../types';
+import type {ComponentDescriptor, Context, FetchContentResult} from '../types';
 
 
 import {headers} from 'next/headers';
@@ -42,7 +42,7 @@ import {createMetaData} from './createMetaData';
  * @param context object from Next, contains .query info
  * @returns FetchContentResult object: {data?: T, error?: {code, message}}
  */
-export const fetchContent: ContentFetcher = async (context: Context): Promise<FetchContentResult> => {
+export async function fetchContent(context: Context): Promise<FetchContentResult> {
     const {locale, locales, defaultLocale} = getRequestLocaleInfo(context);
 
     // ideally we only want to set headers in draft mode,
@@ -247,4 +247,4 @@ export const fetchContent: ContentFetcher = async (context: Context): Promise<Fe
         }
         return errorResponse(error.code, error.message);
     }
-};
+}

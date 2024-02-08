@@ -3,6 +3,7 @@
 /*.map
 /baseMappings.js
 /client.js
+/server.js
 /common/
 /guillotine/
 /index.js

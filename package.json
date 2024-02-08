@@ -33,7 +33,7 @@
     "access": "public"
   },
   "scripts": {
-    "clean": "del-cli *.d.ts *.js.map baseMappings.* client.* common coverage index.* enonic-nextjs-adapter-*.tgz guillotine i18n query types utils views dist",
+    "clean": "del-cli *.d.ts *.js.map baseMappings.* client.* server.* common coverage index.* enonic-nextjs-adapter-*.tgz guillotine i18n query types utils views dist",
     "build": "tsc",
     "release": "tsc --outDir ./dist && npx --yes cpy-cli package.json README.md ./dist",
     "check:types": "tsc --noEmit",
