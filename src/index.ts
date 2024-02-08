@@ -22,11 +22,7 @@ export {
     XP_REQUEST_TYPE,
 } from './common/constants';
 
-export {fetchContent} from './guillotine/fetchContent';
-export {fetchContentPathsForAllLocales} from './guillotine/fetchContentPathsForAllLocales';
-export {fetchContentPathsForLocale} from './guillotine/fetchContentPathsForLocale';
-export {fetchFromApi} from './guillotine/fetchFromApi';
-export {fetchGuillotine} from './guillotine/fetchGuillotine';
+
 export {richTextQuery} from './guillotine/metadata/richTextQuery';
 export {validateData} from './guillotine/validateData';
 
@@ -35,6 +31,7 @@ export {I18n} from './i18n/i18n';
 export {getContentApiUrl} from './utils/getContentApiUrl';
 export {getProjectLocaleConfig} from './utils/getProjectLocaleConfig';
 export {getProjectLocaleConfigById} from './utils/getProjectLocaleConfigById';
+export {getProjectLocaleConfigByLocale} from './utils/getProjectLocaleConfigByLocale';
 export {getRequestLocaleInfo} from './utils/getRequestLocaleInfo';
 export {sanitizeGraphqlName} from './utils/sanitizeGraphqlName';
 

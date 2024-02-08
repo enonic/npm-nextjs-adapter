@@ -7,7 +7,7 @@
       // dom and dom.iterable for now.
       "dom",
       "dom.iterable",
-      "esnext",
+      "esnext"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -23,7 +23,7 @@
 
     "outDir": ".",
     "declaration": true,
-    "sourceMap": true,
+    "sourceMap": true
 
     // We have done Triple-Slash Directives where needed instead:
     // "types": [
@@ -36,15 +36,18 @@
   // Specifies an allowlist of files to include in the program. An error occurs
   // if any of the files can’t be found.
   "files": [
-    "src/index.ts"
+    "src/index.ts",
+    "src/client.ts",
+    "src/server.ts",
+    "src/baseMappings.ts"
   ],
 
   // Specifies an array of filenames or patterns to include in the program.
   // These filenames are resolved relative to the directory containing the
   // tsconfig.json file.
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
+    "src/views/**/*.ts*",
+    "src/utils/**/*.ts*"
   ],
 
   // Specifies an array of filenames or patterns that should be skipped when
@@ -61,5 +64,5 @@
     "moduleTypes": {
       "jest.config.ts": "cjs"
     }
-  },
+  }
 }

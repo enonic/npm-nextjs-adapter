@@ -1,20 +1,16 @@
-import type {
-    ContentApiBaseBody,
-    GuillotineResult,
-    ProjectLocaleConfig,
-} from '../types';
+import type {ContentApiBaseBody, GuillotineResult, ProjectLocaleConfig} from '../types';
 
 
 import {fetchFromApi} from './fetchFromApi';
 
 
 /** Guillotine-specialized fetch, using the generic fetch above */
-export const fetchGuillotine = async <Data = Record<string,unknown>>(
+export async function fetchGuillotine<Data = Record<string, unknown>>(
     contentApiUrl: string,
     body: ContentApiBaseBody,
     projectConfig: ProjectLocaleConfig,
     headers?: {},
-): Promise<GuillotineResult> => {
+): Promise<GuillotineResult> {
     if (typeof body.query !== 'string' || !body.query.trim()) {
         return {
             error: {
@@ -62,4 +58,4 @@ export const fetchGuillotine = async <Data = Record<string,unknown>>(
                 return {error: {code: 'Client-side error', message: err.message}};
             }
         });
-};
+}
