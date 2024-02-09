@@ -1,17 +1,7 @@
-import type {
-    ContentApiBaseBody,
-    Context,
-    ProjectLocaleConfig
-} from '../../src/types';
+import type {ContentApiBaseBody, ProjectLocaleConfig} from '../../src/types';
 
-import {
-    beforeEach,
-    describe,
-    expect,
-    jest,
-    test as it
-} from '@jest/globals';
-import { afterEach } from 'node:test';
+import {beforeEach, describe, expect, jest, test as it} from '@jest/globals';
+import {afterEach} from 'node:test';
 
 
 globalThis.console = {
@@ -98,7 +88,7 @@ describe('guillotine', () => {
 
     describe('fetchFromApi', () => {
         it('returns query results', () => {
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 moduleName.fetchFromApi(...FETCH_FROM_API_PARAMS_VALID).then((result) => {
                     // console.debug(result);
                     expect(result).toEqual({
@@ -118,7 +108,7 @@ describe('guillotine', () => {
             jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
                 throw new Error('fetch error');
             });
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 expect(() => moduleName.fetchFromApi(...FETCH_FROM_API_PARAMS_VALID)).rejects.toThrow(Error(JSON.stringify({
                     code: 'API',
                     message: 'fetch error'
