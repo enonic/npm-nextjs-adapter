@@ -1,9 +1,4 @@
-import type {
-    Component,
-    Context,
-    GuillotineResponseJson,
-    RecursivePartial,
-} from '../../src/types';
+import type {Component, Context, GuillotineResponseJson, RecursivePartial,} from '../../src/types';
 
 
 import {
@@ -24,7 +19,6 @@ import {
     XP_BASE_URL_HEADER,
     XP_REQUEST_TYPE,
 } from '../../src/common/constants';
-import {ENONIC_APP_NAME} from '../constants';
 // import {ws} from '../testUtils';
 
 
@@ -379,7 +373,7 @@ describe('guillotine', () => {
                     contentJson: GUILLOTINE_RESULT_CONTENT,
                     metaJson: GUILLOTINE_RESULT_META_MINIMAL,
                 });
-                import('../../src').then((moduleName) => {
+                import('../../src/server').then((moduleName) => {
                     const context: Context = {
                         headers: {
                             get(name: string) {
@@ -506,7 +500,7 @@ describe('guillotine', () => {
                     }
                 },
             });
-            import('../../src').then(async ({fetchContent}) => {
+            import('../../src/server').then(async ({fetchContent}) => {
                 const context: Context = {
                     contentPath: '_/component/path',
                 };
@@ -540,7 +534,7 @@ describe('guillotine', () => {
                 contentJson: GUILLOTINE_RESULT_WITH_ERROR, // Throws before this is used
                 metaJson: GUILLOTINE_RESULT_WITH_ERROR,
             });
-            import('../../src').then(async ({fetchContent}) => {
+            import('../../src/server').then(async ({fetchContent}) => {
                 const context: Context = {
                     contentPath: '_/component/path',
                 };
@@ -574,7 +568,7 @@ describe('guillotine', () => {
                 contentJson: GUILLOTINE_RESULT_WITH_ERROR, // Throws before this is used
                 metaJson: GUILLOTINE_RESULT_META_INCOMPLETE,
             });
-            import('../../src').then(async ({fetchContent}) => {
+            import('../../src/server').then(async ({fetchContent}) => {
                 const context: Context = {
                     contentPath: '_/component/path',
                 };
@@ -619,7 +613,7 @@ describe('guillotine', () => {
                 
                 },
             });
-            import('../../src').then(async ({fetchContent}) => {
+            import('../../src/server').then(async ({fetchContent}) => {
                 const context: Context = {
                     contentPath: '_/component/path',
                     headers: {
@@ -679,7 +673,7 @@ describe('guillotine', () => {
                   }
                 }
               }`;
-            import('../../src').then(async ({ComponentRegistry, fetchContent}) => {
+            Promise.all([import('../../src'), import('../../src/server')]).then(async ([{ComponentRegistry}, {fetchContent}]) => {
                 ComponentRegistry.setCommonQuery(QUERY_COMMON);
                 ComponentRegistry.addContentType(CATCH_ALL, {
                     configQuery: '{catchAll contentType configQuery}',
@@ -760,7 +754,7 @@ describe('guillotine', () => {
                 metaJson: GUILLOTINE_RESULT_META,
             });
             const BASE_URL = '/base/url';
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 const context: Context = {
                     headers: {
                         get(name: string) {

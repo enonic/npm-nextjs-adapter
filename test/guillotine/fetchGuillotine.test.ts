@@ -1,17 +1,8 @@
-import type {
-    ContentApiBaseBody,
-    ProjectLocaleConfig
-} from '../../src/types';
+import type {ContentApiBaseBody, ProjectLocaleConfig} from '../../src/types';
 
 
-import {
-    beforeEach,
-    describe,
-    expect,
-    jest,
-    test as it
-} from '@jest/globals';
-import { afterEach } from 'node:test';
+import {beforeEach, describe, expect, jest, test as it} from '@jest/globals';
+import {afterEach} from 'node:test';
 
 
 globalThis.console = {
@@ -103,7 +94,7 @@ describe('guillotine', () => {
 
     describe('fetchGuillotine', () => {
         it('fetches a response from guillotine', () => {
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID).then((result) => {
                     expect(result).toEqual({
                         guillotine: {
@@ -125,7 +116,7 @@ describe('guillotine', () => {
                 FETCH_GUILLOTINE_PARAMS_VALID[2],
                 FETCH_GUILLOTINE_PARAMS_VALID[3],
             ]
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 moduleName.fetchGuillotine(contentApiUrl, body, projectConfig, headers).then((result) => {
                     expect(result).toEqual({
                         guillotine: {
@@ -148,7 +139,7 @@ describe('guillotine', () => {
                     status: 200
                 } as Response);
             });
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID).then((result) => {
                     expect(result).toEqual({
                         error: {
@@ -172,7 +163,7 @@ describe('guillotine', () => {
                 FETCH_GUILLOTINE_PARAMS_VALID[2],
                 FETCH_GUILLOTINE_PARAMS_VALID[3],
             ]
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 moduleName.fetchGuillotine(contentApiUrl, body, projectConfig, headers).then((result) => {
                     expect(result).toEqual({
                         guillotine: {
@@ -195,7 +186,7 @@ describe('guillotine', () => {
                 FETCH_GUILLOTINE_PARAMS_VALID[2],
                 FETCH_GUILLOTINE_PARAMS_VALID[3]
             ]
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 moduleName.fetchGuillotine(contentApiUrl, body, projectConfig, headers).then((result) => {
                     expect(result).toEqual({
                         error: {
@@ -217,7 +208,7 @@ describe('guillotine', () => {
                 FETCH_GUILLOTINE_PARAMS_VALID[2],
                 FETCH_GUILLOTINE_PARAMS_VALID[3],
             ]
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 moduleName.fetchGuillotine(contentApiUrl, body, projectConfig, headers).then((result) => {
                     expect(result).toEqual({
                         error: {
@@ -241,7 +232,7 @@ describe('guillotine', () => {
                     status: 200
                 } as Response);
             });
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID).then((result) => {
                     expect(result).toEqual({
                         error: {
@@ -257,7 +248,7 @@ describe('guillotine', () => {
             jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
                 throw new Error('fetch error');
             });
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 expect(moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID)).resolves.toEqual({
                     error: {
                         code: 'API',
@@ -276,7 +267,7 @@ describe('guillotine', () => {
                     status: 500
                 } as Response);
             });
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 expect(moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID)).resolves.toEqual({
                     error: {
                         code: 500,
@@ -294,7 +285,7 @@ describe('guillotine', () => {
                     status: 200
                 } as Response);
             });
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 expect(moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID)).resolves.toEqual({
                     error: {
                         code: 500,
@@ -313,7 +304,7 @@ describe('guillotine', () => {
                     status: 200
                 } as Response);
             });
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 expect(moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID)).resolves.toEqual({
                     error: {
                         code: 500,
@@ -331,7 +322,7 @@ describe('guillotine', () => {
             jest.doMock<typeof import('../../src/guillotine/fetchFromApi')>(
                 '../../src/guillotine/fetchFromApi', () => ({fetchFromApi})
             );
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 expect(moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID)).resolves.toEqual({
                     error: {
                         code: 'Client-side error',

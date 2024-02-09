@@ -90,7 +90,7 @@ describe('guillotine', () => {
     describe('fetchContentPathsForAllLocales', () => {
         it('works with just path', () => {
             const path = '/HAS_NO_EFFECT_SINCE_RESPONSE_IS_MOCKED';
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 expect(moduleName.fetchContentPathsForAllLocales(path))
                     .resolves.toEqual([{
                     "contentPath": [""],
@@ -142,7 +142,7 @@ describe('guillotine', () => {
 }`;
             const path = '/HAS_NO_EFFECT_SINCE_RESPONSE_IS_MOCKED';
             const countPerLocale = 1;
-            import('../../src').then((moduleName) => {
+            import('../../src/server').then((moduleName) => {
                 expect(moduleName.fetchContentPathsForAllLocales(
                     path, query, countPerLocale
                 )).resolves.toEqual([{
