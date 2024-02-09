@@ -3,7 +3,7 @@ import {ENV_VARS} from './constants';
 const isServer = typeof window === 'undefined';
 
 // IMPORTANT:
-// NEXT_PUBLIC_ vars should be explicitly referenced to be made available on the client side !!!
+// NEXT_PUBLIC_ vars should be explicitly referenced to be made available on the client side (substituted with constants) !!!
 /** URL to the guillotine API */
 export const API_URL = isServer ? process.env[ENV_VARS.API_URL] : process.env['NEXT_PUBLIC_ENONIC_API'];
 
@@ -33,7 +33,7 @@ const requiredConstants = {
 Object.keys(requiredConstants).forEach((key: string) => {
     const val = requiredConstants[key];
     if (!val) {
-        throw new Error(`Environment variable '${key}' is missing (from .env?)`);
+        throw new Error(`Environment variable '${isServer ? '' : 'NEXT_PUBLIC_'}${key}' is missing (from .env?)`);
     }
 });
 
