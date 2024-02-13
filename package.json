@@ -12,6 +12,7 @@
     "*.map",
     "baseMappings*",
     "client.js",
+    "server.js",
     "common",
     "guillotine",
     "index*",
@@ -35,14 +36,12 @@
   "scripts": {
     "clean": "del-cli *.d.ts *.js.map baseMappings.* client.* server.* common coverage index.* enonic-nextjs-adapter-*.tgz guillotine i18n query types utils views dist",
     "build": "tsc",
-    "build:prod": "tsc --outDir ./dist && npx --yes cpy-cli package.json README.md ./dist",
-    "release": "concurrently -c auto -g --timings npm:test npm:lint npm:build:prod",
     "check:types": "tsc --noEmit",
     "madge": "madge -i docs/madge.png -x '(constants|env)\\.ts' src/index.ts",
     "lint": "eslint --quiet src",
     "lint:fix": "eslint --fix src",
-    "prebuild:prod": "npm run clean",
     "prebuild": "npm run clean",
+    "prepack": "concurrently -c auto -g --timings npm:test npm:lint npm:build",
     "premadge": "mkdirp docs",
     "pretest": "del-cli coverage",
     "test": "jest --no-cache --coverage"
