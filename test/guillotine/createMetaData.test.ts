@@ -1,13 +1,11 @@
 import type {PageComponent} from '../../src/types';
 
 
-import {
-    beforeAll as beforeAllTestsInThisDecsribe,
-    describe,
-    expect,
-    jest,
-    test as it
-} from '@jest/globals';
+import {beforeAll as beforeAllTestsInThisDecsribe, describe, expect, jest, test as it} from '@jest/globals';
+import {ComponentRegistry} from '../../src/common/ComponentRegistry';
+import {createMetaData} from '../../src/guillotine/createMetaData';
+import {CATCH_ALL, RENDER_MODE, XP_COMPONENT_TYPE, XP_REQUEST_TYPE} from '../../src/common/constants';
+import {ENONIC_APP_NAME} from '../constants';
 
 
 // This must come before the imports to suppress logging.
@@ -19,17 +17,6 @@ globalThis.console = {
     info: jest.fn(),
     // debug: jest.fn(),
 } as Console;
-
-
-import {ComponentRegistry} from '../../src';
-import {createMetaData} from '../../src/guillotine/createMetaData';
-import {
-    CATCH_ALL,
-    RENDER_MODE,
-    XP_COMPONENT_TYPE,
-    XP_REQUEST_TYPE
-} from '../../src/common/constants';
-import {ENONIC_APP_NAME} from '../constants';
 
 
 const PAGE_COMPONENT: PageComponent = {

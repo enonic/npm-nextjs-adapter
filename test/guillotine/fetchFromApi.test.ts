@@ -2,6 +2,8 @@ import type {ContentApiBaseBody, ProjectLocaleConfig} from '../../src/types';
 
 import {beforeEach, describe, expect, jest, test as it} from '@jest/globals';
 import {afterEach} from 'node:test';
+import {ENV_VARS} from '../../src/common/constants';
+import {setupServerEnv} from '../constants';
 
 
 globalThis.console = {
@@ -46,18 +48,12 @@ const FETCH_FROM_API_PARAMS_VALID: [
     }
 ];
 
-const OLD_ENV = process.env;
-
 
 describe('guillotine', () => {
 
     beforeEach(() => {
-        jest.replaceProperty(process, 'env', {
-            ...OLD_ENV,
-            // ENONIC_API_TOKEN: '1234567890',
-            ENONIC_API: 'http://localhost:8080/site',
-            ENONIC_APP_NAME,
-            ENONIC_PROJECTS: 'en:enonic-homepage/enonic-homepage'
+        setupServerEnv({
+            [ENV_VARS.MAPPINGS]: 'en:enonic-homepage/enonic-homepage'
         });
         jest.spyOn(globalThis, 'fetch').mockImplementation((input, init = {}) => {
             // console.debug('fetch', input, init);

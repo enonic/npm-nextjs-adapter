@@ -1,5 +1,5 @@
-import {afterEach, beforeEach, describe, expect, jest, test as it} from '@jest/globals';
-import {ENONIC_API, ENONIC_APP_NAME, ENONIC_PROJECTS} from './constants';
+import {afterEach, describe, expect, jest, test as it} from '@jest/globals';
+import {ENONIC_APP_NAME, setupClientEnv} from './constants';
 
 
 globalThis.console = {
@@ -14,22 +14,13 @@ globalThis.console = {
 
 describe('index (CLIENT)', () => {
 
-    beforeEach(() => {
-        // nothing here
-        jest.resetModules();
-    });
-
     afterEach(() => {
-        // nothing here
+        jest.resetModules();
     });
 
     it('returns process.env.NEXT_PUBLIC_ENONIC_APP_NAME (CLIENT)', () => {
 
-        jest.replaceProperty(process, 'env', {
-            NEXT_PUBLIC_ENONIC_API: ENONIC_API,
-            NEXT_PUBLIC_ENONIC_PROJECTS: ENONIC_PROJECTS,
-            NEXT_PUBLIC_ENONIC_APP_NAME: ENONIC_APP_NAME,
-        });
+        setupClientEnv();
 
         import('../src').then((moduleName) => {
             expect(moduleName.APP_NAME).toEqual(ENONIC_APP_NAME);
@@ -38,9 +29,8 @@ describe('index (CLIENT)', () => {
 
     it('throws when process.env.NEXT_PUBLIC_ENONIC_APP_NAME is missing (CLIENT)', () => {
 
-            jest.replaceProperty(process, 'env', {
-                NEXT_PUBLIC_ENONIC_API: ENONIC_API,
-                NEXT_PUBLIC_ENONIC_PROJECTS: ENONIC_PROJECTS,
+        setupClientEnv({
+            NEXT_PUBLIC_ENONIC_APP_NAME: undefined,
             });
 
             expect(import('../src'))
@@ -50,10 +40,9 @@ describe('index (CLIENT)', () => {
 
     it('throws when process.env.NEXT_PUBLIC_ENONIC_API is missing (CLIENT)', () => {
 
-            jest.replaceProperty(process, 'env', {
-                NEXT_PUBLIC_ENONIC_PROJECTS: ENONIC_PROJECTS,
-                NEXT_PUBLIC_ENONIC_APP_NAME: ENONIC_APP_NAME,
-            });
+        setupClientEnv({
+            NEXT_PUBLIC_ENONIC_API: undefined,
+        });
 
             expect(import('../src'))
                 .rejects.toThrow(Error("Environment variable 'NEXT_PUBLIC_ENONIC_API' is missing (from .env?)"));

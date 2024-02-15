@@ -2,7 +2,7 @@ import type {ProjectLocalesConfig} from '../types';
 
 
 import {ENV_VARS} from '../common/constants';
-import {PROJECTS} from '../common/env';
+import {MAPPINGS} from '../common/env';
 
 
 // NOTE: Dissallowing slash and any whitespace in 2nd capture group.
@@ -10,9 +10,9 @@ const PROJECT_CONFIG_REGEXP = /^([\w-]+):([^/\s]+)(\/[\w.-]+)?$/i;
 
 
 export function getProjectLocaleConfigs(): ProjectLocalesConfig {
-    const str = PROJECTS;
+    const str = MAPPINGS;
     if (!str?.length) {
-        throw new Error(`Did you forget to define "${ENV_VARS.PROJECTS}" environmental variable?
+        throw new Error(`Did you forget to define "${ENV_VARS.MAPPINGS}" environmental variable?
         Format: <default-language>:<default-repository-name>/<default-site-path>,<language>:<repository-name>/<site-path>,...`);
     }
     return str.split(',').reduce((config, prjStr, index: number) => {

@@ -12,17 +12,10 @@ globalThis.console = {
 import type {Context, PageComponent} from '../../src/types';
 
 
-import {
-    beforeAll,
-    describe,
-    expect,
-    jest,
-    test as it
-} from '@jest/globals';
-import {ComponentRegistry} from '../../src';
-import {collectComponentDescriptors} from '../../src/guillotine/collectComponentDescriptors';
+import {beforeAll, describe, expect, jest, test as it} from '@jest/globals';
+import {ComponentRegistry} from '../../src/common/ComponentRegistry';
+import {ENONIC_APP_NAME, setupServerEnv} from '../constants';
 import {XP_COMPONENT_TYPE} from '../../src/common/constants';
-import {ENONIC_APP_NAME} from '../constants';
 
 
 const PART_NAME_HEADING = `${ENONIC_APP_NAME}:heading`;
@@ -55,6 +48,8 @@ const FRAGMENT_COMPONENT_BROKEN: PageComponent = {
 };
 
 beforeAll(() => {
+    setupServerEnv();
+
     ComponentRegistry.addPart(PART_NAME_HEADING, {
         // catchAll: PART_CATCH_ALL
         configQuery: PART_CONFIG_QUERY,
@@ -65,6 +60,7 @@ beforeAll(() => {
 });
 
 describe('guillotine', () => {
+
     describe('collectComponentDescriptors', () => {
         it('should return an empty array when components is empty', () => {
             const components: PageComponent[] = [];
@@ -72,9 +68,11 @@ describe('guillotine', () => {
             const context: Context = {
                 contentPath: '/contextContentPath',
             }
-            expect(collectComponentDescriptors({
-                components, xpContentPath, context
-            })).toEqual([]);
+            import('../../src/guillotine/collectComponentDescriptors').then((moduleName) => {
+                expect(moduleName.collectComponentDescriptors({
+                    components, xpContentPath, context
+                })).toEqual([]);
+            });
         });
 
         it('should return part descriptor when components contain a registered part', () => {
@@ -83,22 +81,24 @@ describe('guillotine', () => {
             const context: Context = {
                 contentPath: '/contextContentPath',
             }
-            expect(collectComponentDescriptors({
-                components, xpContentPath, context
-            })).toEqual([{
-                component: PART_COMPONENT,
-                queryAndVariables: {
-                    query: PART_QUERY,
-                    variables: {
-                        path: xpContentPath,
+            import('../../src/guillotine/collectComponentDescriptors').then((moduleName) => {
+                expect(moduleName.collectComponentDescriptors({
+                    components, xpContentPath, context
+                })).toEqual([{
+                    component: PART_COMPONENT,
+                    queryAndVariables: {
+                        query: PART_QUERY,
+                        variables: {
+                            path: xpContentPath,
+                        }
+                    },
+                    type: {
+                        catchAll: PART_CATCH_ALL,
+                        configQuery: PART_CONFIG_QUERY,
+                        query: PART_QUERY
                     }
-                },
-                type: {
-                    catchAll: PART_CATCH_ALL,
-                    configQuery: PART_CONFIG_QUERY,
-                    query: PART_QUERY
-                }
-            }]);
+                }]);
+            });
         });
 
         it('should return part descriptor when components contain a fragment with a registered part', () => {
@@ -107,22 +107,25 @@ describe('guillotine', () => {
             const context: Context = {
                 contentPath: '/contextContentPath',
             }
-            expect(collectComponentDescriptors({
-                components, xpContentPath, context
-            })).toEqual([{
-                component: PART_COMPONENT,
-                queryAndVariables: {
-                    query: PART_QUERY,
-                    variables: {
-                        path: xpContentPath,
+
+            import('../../src/guillotine/collectComponentDescriptors').then((moduleName) => {
+                expect(moduleName.collectComponentDescriptors({
+                    components, xpContentPath, context
+                })).toEqual([{
+                    component: PART_COMPONENT,
+                    queryAndVariables: {
+                        query: PART_QUERY,
+                        variables: {
+                            path: xpContentPath,
+                        }
+                    },
+                    type: {
+                        catchAll: PART_CATCH_ALL,
+                        configQuery: PART_CONFIG_QUERY,
+                        query: PART_QUERY
                     }
-                },
-                type: {
-                    catchAll: PART_CATCH_ALL,
-                    configQuery: PART_CONFIG_QUERY,
-                    query: PART_QUERY
-                }
-            }]);
+                }]);
+            });
         });
 
         it('should return an empty array when components contain a fragment without components', () => {
@@ -131,9 +134,11 @@ describe('guillotine', () => {
             const context: Context = {
                 contentPath: '/contextContentPath',
             }
-            expect(collectComponentDescriptors({
-                components, xpContentPath, context
-            })).toEqual([]);
+            import('../../src/guillotine/collectComponentDescriptors').then((moduleName) => {
+                expect(moduleName.collectComponentDescriptors({
+                    components, xpContentPath, context
+                })).toEqual([]);
+            });
         });
     });
 });

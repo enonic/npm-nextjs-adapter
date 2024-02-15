@@ -1,5 +1,5 @@
 import {afterEach, beforeEach, describe, expect, jest, test as it} from '@jest/globals';
-import {ENONIC_API, ENONIC_APP_NAME, ENONIC_PROJECTS} from '../constants';
+import {setupServerEnv} from '../constants';
 
 
 globalThis.console = {
@@ -12,18 +12,12 @@ globalThis.console = {
 } as unknown as Console;
 
 
-const OLD_ENV = process.env;
-
-
 describe('guillotine', () => {
 
     beforeEach(() => {
-        jest.replaceProperty(process, 'env', {
-            ...OLD_ENV,
-            ENONIC_API,
-            ENONIC_APP_NAME,
-            ENONIC_PROJECTS
-        });
+
+        setupServerEnv();
+
         jest.spyOn(globalThis, 'fetch').mockImplementation((input, init = {}) => {
             // console.error('fetch input', input, 'init', init);
             const {body} = init;

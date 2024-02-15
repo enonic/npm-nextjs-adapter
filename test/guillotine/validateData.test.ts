@@ -1,24 +1,9 @@
-import type { FetchContentResult } from '../../src';
+import type {FetchContentResult} from '../../src';
 
 
-import {
-    afterEach,
-    beforeEach,
-    describe,
-    expect,
-    jest,
-    test as it
-} from '@jest/globals';
-import {
-    ENONIC_API,
-    ENONIC_APP_NAME,
-    ENONIC_PROJECTS
-} from '../constants';
-import {
-    RENDER_MODE,
-    XP_COMPONENT_TYPE,
-    XP_REQUEST_TYPE,
-} from '../../src/common/constants';
+import {afterEach, beforeEach, describe, expect, jest, test as it} from '@jest/globals';
+import {setupServerEnv} from '../constants';
+import {RENDER_MODE, XP_COMPONENT_TYPE, XP_REQUEST_TYPE} from '../../src/common/constants';
 
 
 globalThis.console = {
@@ -49,12 +34,9 @@ const data = {
 describe('guillotine', () => {
 
     beforeEach(() => {
-        jest.replaceProperty(process, 'env', {
-            ...OLD_ENV,
-            ENONIC_API,
-            ENONIC_APP_NAME,
-            ENONIC_PROJECTS
-        });
+
+        setupServerEnv();
+
         jest.mock('next/navigation', () => ({
             notFound,
             redirect,

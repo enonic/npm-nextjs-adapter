@@ -1,15 +1,5 @@
-import {
-    beforeEach,
-    describe,
-    expect,
-    jest,
-    test as it
-} from '@jest/globals';
-import {
-    ENONIC_API,
-    ENONIC_APP_NAME,
-    ENONIC_PROJECTS
-} from '../constants';
+import {afterEach, beforeEach, describe, expect, jest, test as it} from '@jest/globals';
+import {setupServerEnv} from '../constants';
 import {PHRASES_EN, PHRASES_NO} from './testData';
 
 
@@ -28,15 +18,8 @@ globalThis.console = {
 
 describe('i18n', () => {
     beforeEach(() => {
-        jest.resetModules();
-        jest.resetAllMocks(); // Resets the state of all mocks. Equivalent to calling .mockReset() on every mocked function.
         // jest.restoreAllMocks(); // Restores all mocks and replaced properties back to their original value.
-        jest.replaceProperty(process, 'env', {
-            ...OLD_ENV,
-            ENONIC_API,
-            ENONIC_APP_NAME,
-            ENONIC_PROJECTS
-        });
+        setupServerEnv();
         jest.mock('@phrases/en.json', () => (PHRASES_EN), {
             virtual: true
         });
@@ -44,6 +27,11 @@ describe('i18n', () => {
         jest.mock('@phrases/no.json', () => (PHRASES_NO), {
             virtual: true
         });
+    });
+
+    afterEach(() => {
+        jest.resetModules();
+        jest.resetAllMocks(); // Resets the state of all mocks. Equivalent to calling .mockReset() on every mocked function.
     });
 
     it("does it's thing", () => {
