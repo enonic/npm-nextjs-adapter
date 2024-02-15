@@ -4,16 +4,8 @@ import type {ComponentDefinitionParams, PageComponent} from '../src/types';
 import {beforeAll, describe, expect, jest, test as it} from '@jest/globals';
 import DefaultMacro from '../src/views/macros/DefaultMacro';
 import PropsView from '../src/views/PropsView';
-import {
-    ENONIC_API,
-    ENONIC_APP_NAME,
-    ENONIC_APP_NAME_UNDERSCORED,
-    ENONIC_PROJECTS,
-} from './constants'
-import {
-    CATCH_ALL,
-    XP_COMPONENT_TYPE,
-} from '../src/common/constants';
+import {ENONIC_APP_NAME, ENONIC_APP_NAME_UNDERSCORED, setupServerEnv,} from './constants'
+import {CATCH_ALL, XP_COMPONENT_TYPE} from '../src/common/constants';
 
 
 globalThis.console = {
@@ -138,12 +130,9 @@ let ComponentRegistry;
 describe('ComponentRegistry', () => {
 
     beforeAll((done) => {
-        jest.replaceProperty(process, 'env', {
-            // ...OLD_ENV,
-            ENONIC_API,
-            ENONIC_APP_NAME,
-            ENONIC_PROJECTS,
-        });
+
+        setupServerEnv();
+
         import('../src').then((moduleName) => {
             ComponentRegistry = moduleName.ComponentRegistry;
             done();
@@ -293,13 +282,13 @@ describe('ComponentRegistry', () => {
         });
 
         it('gets registered part component from component.type', () => {
-           
+
             expect(ComponentRegistry.getByComponent(PART_COMPONENT))
                 .toStrictEqual({
                     ...REGISTERED_PART_COMPONENT,
                     catchAll: false
                 });
-            
+
         });
 
         it('gets registered layout component from component.type', () => {

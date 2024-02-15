@@ -1,7 +1,8 @@
 import type {Context} from '../src/types';
 
-import {beforeAll, describe, expect, jest, test as it} from '@jest/globals';
-import {ENONIC_APP_NAME} from './constants';
+import {afterEach, beforeEach, describe, expect, jest, test as it} from '@jest/globals';
+import {setupServerEnv} from './constants';
+import {ENV_VARS} from '../src/common/constants';
 
 
 globalThis.console = {
@@ -19,25 +20,20 @@ const OLD_ENV = process.env;
 
 describe('utils', () => {
 
-    beforeAll((done) => {
-        jest.replaceProperty(process, 'env', {
-            ...OLD_ENV,
-            ENONIC_API: 'http://localhost:8080/site',
-            ENONIC_APP_NAME,
-            ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/omraade'
+    beforeEach((done) => {
+        setupServerEnv({
+            [ENV_VARS.MAPPINGS]: 'en:moviedb/hmdb,no:film-db/omraade'
         });
         done();
     });
 
+    afterEach(() => {
+        jest.resetModules();
+    });
+
     describe('fixDoubleSlashes', () => {
         it('returns correct string', () => {
-            jest.resetModules();
-            process.env = {
-                ...OLD_ENV,
-                ENONIC_API: 'http://localhost:8080/site',
-                ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/omraade',
-                ENONIC_APP_NAME
-            };
+
             import('../src/utils/fixDoubleSlashes').then((moduleName) => {
                 expect(moduleName.fixDoubleSlashes('/content//path')).toEqual('/content/path');
             });
@@ -55,13 +51,7 @@ describe('utils', () => {
         };
         Object.entries(TESTS).forEach(([mode, branch]) => {
             it(`returns correct url with branch ${branch} when mode is ${mode}`, () => {
-                jest.resetModules();
-                process.env = {
-                    ...OLD_ENV,
-                    ENONIC_API: 'http://localhost:8080/site',
-                    ENONIC_APP_NAME,
-                    ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
-                };
+
                 import('../src/utils/getContentApiUrl').then((moduleName) => {
                     const context: Context = {
                         headers: {
@@ -84,13 +74,7 @@ describe('utils', () => {
 
     describe('getProjectLocaleConfig', () => {
         it('returns correct ProjectLocaleConfig when content-studio-project is set', () => {
-            jest.resetModules();
-            process.env = {
-                ...OLD_ENV,
-                ENONIC_API: 'http://localhost:8080/site',
-                ENONIC_APP_NAME,
-                ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
-            };
+
             import('../src/utils/getProjectLocaleConfig').then((moduleName) => {
                 const context: Context = {
                     headers: {
@@ -115,13 +99,11 @@ describe('utils', () => {
             });
         });
         it('returns correct ProjectLocaleConfig when content-studio-project is set', () => {
-            jest.resetModules();
-            process.env = {
-                ...OLD_ENV,
-                ENONIC_API: 'http://localhost:8080/site',
-                ENONIC_APP_NAME,
-                ENONIC_PROJECTS: 'en:moviedb/site,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
-            };
+
+            setupServerEnv({
+                [ENV_VARS.MAPPINGS]: 'en:moviedb/site,no:film-db/omraade'
+            });
+
             import('../src/utils/getProjectLocaleConfig').then((moduleName) => {
                 const context: Context = {
                     headers: {
@@ -149,13 +131,7 @@ describe('utils', () => {
 
     describe('getProjectLocaleConfigById', () => {
         it('returns correct ProjectLocaleConfig', () => {
-            jest.resetModules();
-            process.env = {
-                ...OLD_ENV,
-                ENONIC_API: 'http://localhost:8080/site',
-                ENONIC_APP_NAME,
-                ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
-            };
+
             import('../src/utils/getProjectLocaleConfigById').then((moduleName) => {
                 expect(moduleName.getProjectLocaleConfigById('film-db')).toEqual({
                     default: false,
@@ -167,13 +143,10 @@ describe('utils', () => {
         });
 
         it('returns default ProjectLocaleConfig when projectId param is missing', () => {
-            jest.resetModules();
-            process.env = {
-                ...OLD_ENV,
-                ENONIC_API: 'http://localhost:8080/site',
-                ENONIC_APP_NAME,
-                ENONIC_PROJECTS: 'en:moviedb/site,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
-            };
+
+            setupServerEnv({
+                [ENV_VARS.MAPPINGS]: 'en:moviedb/site,no:film-db/omraade'
+            });
             import('../src/utils/getProjectLocaleConfigById').then((moduleName) => {
                 expect(moduleName.getProjectLocaleConfigById()).toEqual({
                     default: true,
@@ -187,13 +160,7 @@ describe('utils', () => {
 
     describe('getProjectLocaleConfigByLocale', () => {
         it('returns correct ProjectLocaleConfig', () => {
-            jest.resetModules();
-            process.env = {
-                ...OLD_ENV,
-                ENONIC_API: 'http://localhost:8080/site',
-                ENONIC_APP_NAME,
-                ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
-            };
+
             import('../src/utils/getProjectLocaleConfigByLocale').then((moduleName) => {
                 expect(moduleName.getProjectLocaleConfigByLocale('no')).toEqual({
                     default: false,
@@ -206,25 +173,23 @@ describe('utils', () => {
     }); // describe getProjectLocaleConfigByLocale
 
     describe('getProjectLocaleConfigs', () => {
-        it('throws when ENONIC_PROJECTS is missing', () => {
-                jest.resetModules();
-                process.env = {
-                    ENONIC_API: 'http://localhost:8080/site',
-                    ENONIC_APP_NAME,
-                };
+        it('throws when ENONIC_MAPPINGS is missing', () => {
+
+            setupServerEnv({
+                [ENV_VARS.MAPPINGS]: undefined
+            });
+
                 expect(import('../src/utils/getProjectLocaleConfigs')
                     .then(moduleName => moduleName.getProjectLocaleConfigs()))
-                    .rejects.toThrow(Error("Environment variable 'ENONIC_PROJECTS' is missing (from .env?)"));
+                    .rejects.toThrow(Error("Environment variable 'ENONIC_MAPPINGS' is missing (from .env?)"));
             }
         );
         it('throws when default-language is missing from any project', () => {
-            jest.resetModules();
-            process.env = {
-                ...OLD_ENV,
-                ENONIC_API: 'http://localhost:8080/site',
-                ENONIC_APP_NAME,
-                ENONIC_PROJECTS: ',sv:project/site,,prosjekt/omraade,' // NEXT_PUBLIC_ENONIC_PROJECTS
-            };
+
+            setupServerEnv({
+                [ENV_VARS.MAPPINGS]: 'sv:project/site,,prosjekt/omraade'
+            });
+
             import('../src/utils/getProjectLocaleConfigs').then((moduleName) => {
                 expect(() => moduleName.getProjectLocaleConfigs()).toThrow(Error(
                     `Project "prosjekt/omraade" doesn't match format: <default-language>:<default-repository-name>/<default-site-path>,<language>:<repository-name>/<site-path>`
@@ -232,13 +197,11 @@ describe('utils', () => {
             });
         });
         it('returns the correct locale configs', () => {
-            jest.resetModules();
-            process.env = {
-                ...OLD_ENV,
-                ENONIC_API: 'http://localhost:8080/site',
-                ENONIC_APP_NAME,
-                ENONIC_PROJECTS: 'en:project/site,no:prosjekt/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
-            };
+
+            setupServerEnv({
+                [ENV_VARS.MAPPINGS]: 'en:project/site,no:prosjekt/omraade'
+            });
+
             import('../src/utils/getProjectLocaleConfigs').then((moduleName) => {
                 expect(moduleName.getProjectLocaleConfigs()).toEqual({
                     en: {
@@ -260,13 +223,7 @@ describe('utils', () => {
 
     describe('getProjectLocales', () => {
         it('returns the correct locales', () => {
-            jest.resetModules();
-            process.env = {
-                ...OLD_ENV,
-                ENONIC_API: 'http://localhost:8080/site',
-                ENONIC_APP_NAME,
-                ENONIC_PROJECTS: 'en:project/site,no:prosjekt/omraade' // NEXT_PUBLIC_ENONIC_PROJECTS
-            };
+
             import('../src/utils/getProjectLocales').then((moduleName) => {
                 expect(moduleName.getProjectLocales()).toEqual(['en', 'no']);
             });
@@ -275,12 +232,11 @@ describe('utils', () => {
 
     describe('getRenderMode', () => {
         it("returns 'next' when there is no content-studio-mode header in the context", () => {
-            jest.resetModules();
-            process.env = {
-                ...OLD_ENV,
-                ENONIC_API: 'http://localhost:8080/site',
-                ENONIC_APP_NAME
-            };
+
+            setupServerEnv({
+                [ENV_VARS.MAPPINGS]: undefined
+            });
+
             import('../src/utils/getRenderMode').then((moduleName) => {
                 const context: Context = {
                     headers: {
@@ -300,12 +256,11 @@ describe('utils', () => {
         const RENDER_MODES = ['edit', 'inline', 'preview', 'live', 'admin', 'next'];
         RENDER_MODES.forEach((mode) => {
             it(`return ${mode} when context header content-studio-mode is ${mode}`, () => {
-                jest.resetModules();
-                process.env = {
-                    ...OLD_ENV,
-                    ENONIC_API: 'http://localhost:8080/site',
-                    ENONIC_APP_NAME
-                };
+
+                setupServerEnv({
+                    [ENV_VARS.MAPPINGS]: undefined
+                });
+
                 import('../src/utils/getRenderMode').then((moduleName) => {
                     const context: Context = {
                         headers: {
@@ -325,15 +280,12 @@ describe('utils', () => {
     }); // getRenderMode
 
     describe('getRequestLocaleInfo', () => {
-        it('returns correct locale, locales and defaultLocale from ENONIC_PROJECTS and content-studio-project header', () => {
-            jest.resetModules() // Most important - it clears the cache
-            process.env = {
-                ...OLD_ENV,  // Make a copy
-                ENONIC_API: 'http://localhost:8080/site',
-                // ENONIC_API_TOKEN: 'token',
-                ENONIC_APP_NAME: 'com.enonic.app.enonic',
-                ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/hmdb'
-            };
+        it('returns correct locale, locales and defaultLocale from ENONIC_MAPPINGS and content-studio-project header', () => {
+
+            setupServerEnv({
+                [ENV_VARS.MAPPINGS]: 'en:moviedb/hmdb,no:film-db/hmdb'
+            });
+
             import('../src/utils/getRequestLocaleInfo').then((moduleName) => {
                 const context: Context = {
                     headers: {
@@ -359,14 +311,11 @@ describe('utils', () => {
         });
 
         it('uses context locale when context header content-studio-project is missing', () => {
-            jest.resetModules() // Most important - it clears the cache
-            process.env = {
-                ...OLD_ENV,  // Make a copy
-                ENONIC_API: 'http://localhost:8080/site',
-                // ENONIC_API_TOKEN: 'token',
-                ENONIC_APP_NAME: 'com.enonic.app.enonic',
-                ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/hmdb'
-            };
+
+            setupServerEnv({
+                [ENV_VARS.MAPPINGS]: 'en:moviedb/hmdb,no:film-db/hmdb'
+            });
+
             import('../src/utils/getRequestLocaleInfo').then((moduleName) => {
                 const context: Context = {
                     headers: {
@@ -392,14 +341,11 @@ describe('utils', () => {
         });
 
         it('uses accept-language when both context header content-studio-project and locale is missing', () => {
-            jest.resetModules() // Most important - it clears the cache
-            process.env = {
-                ...OLD_ENV,  // Make a copy
-                ENONIC_API: 'http://localhost:8080/site',
-                // ENONIC_API_TOKEN: 'token',
-                ENONIC_APP_NAME: 'com.enonic.app.enonic',
-                ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/hmdb'
-            };
+
+            setupServerEnv({
+                [ENV_VARS.MAPPINGS]: 'en:moviedb/hmdb,no:film-db/hmdb'
+            });
+
             import('../src/utils/getRequestLocaleInfo').then((moduleName) => {
                 const context: Context = {
                     headers: {
@@ -425,13 +371,11 @@ describe('utils', () => {
         });
 
         it('falls back to default language when no matches are found', () => {
-            jest.resetModules() // Most important - it clears the cache
-            process.env = {
-                ...OLD_ENV,  // Make a copy
-                ENONIC_API: 'http://localhost:8080/site',
-                ENONIC_APP_NAME: 'com.enonic.app.enonic',
-                ENONIC_PROJECTS: 'en:moviedb/hmdb,no:film-db/hmdb'
-            };
+
+            setupServerEnv({
+                [ENV_VARS.MAPPINGS]: 'en:moviedb/hmdb,no:film-db/hmdb'
+            });
+
             import('../src/utils/getRequestLocaleInfo').then((moduleName) => {
                 const context: Context = {
                     headers: {
