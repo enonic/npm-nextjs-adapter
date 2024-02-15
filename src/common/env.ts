@@ -21,12 +21,12 @@ const mode = isServer ? process.env.MODE : process.env.NEXT_PUBLIC_MODE;
 export const IS_DEV_MODE = (mode === 'development');
 
 /** Locales and Enonic XP projects correspondence list */
-export const PROJECTS = isServer ? process.env[ENV_VARS.PROJECTS] : process.env['NEXT_PUBLIC_ENONIC_PROJECTS'];
+export const MAPPINGS = isServer ? process.env[ENV_VARS.MAPPINGS] : process.env['NEXT_PUBLIC_ENONIC_MAPPINGS'];
 
 const requiredConstants = {
     [ENV_VARS.APP_NAME]: APP_NAME,
     [ENV_VARS.API_URL]: API_URL,
-    [ENV_VARS.PROJECTS]: PROJECTS,
+    [ENV_VARS.MAPPINGS]: MAPPINGS,
 };
 
 // Verify required values on server-side only

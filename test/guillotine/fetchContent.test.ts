@@ -19,6 +19,7 @@ import {
     XP_BASE_URL_HEADER,
     XP_REQUEST_TYPE,
 } from '../../src/common/constants';
+import {setupServerEnv} from '../constants';
 // import {ws} from '../testUtils';
 
 
@@ -30,9 +31,6 @@ globalThis.console = {
     info: jest.fn(),
     // debug: jest.fn(),
 } as Console;
-
-
-const OLD_ENV = process.env;
 
 
 const GUILLOTINE_RESULT_MINIMAL: GuillotineResponseJson = {
@@ -342,11 +340,12 @@ describe('guillotine', () => {
     describe('fetchContent', () => {
 
         beforeAllTestsInThisDescribe(() => {
-            jest.replaceProperty(process, 'env', {
-                ...OLD_ENV,
+
+            setupServerEnv({
                 // RUNTIME_ENV: 'client'
                 RUNTIME_ENV: 'server'
             });
+
             // To avoid: Error: Invariant: headers() expects to have requestAsyncStorage, none available.
             // See: https://github.com/vercel/next.js/discussions/44270
             jest.mock('next/headers', () => ({

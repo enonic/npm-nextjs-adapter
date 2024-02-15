@@ -1,5 +1,6 @@
 import {afterEach, beforeEach, describe, expect, jest, test as it} from '@jest/globals';
-import {ENONIC_API, ENONIC_APP_NAME, ENONIC_PROJECTS} from './constants';
+import {setupServerEnv} from './constants';
+import {ENV_VARS} from '../src/common/constants';
 
 
 globalThis.console = {
@@ -25,11 +26,7 @@ describe('index', () => {
 
     it('returns process.env.ENONIC_APP_NAME', () => {
 
-        jest.replaceProperty(process, 'env', {
-            ENONIC_API,
-            ENONIC_APP_NAME,
-            ENONIC_PROJECTS
-        });
+        setupServerEnv();
 
         import('../src').then((moduleName) => {
             expect(moduleName.APP_NAME).toEqual('com.enonic.app.enonic');
@@ -38,9 +35,8 @@ describe('index', () => {
 
     it('throws when process.env.ENONIC_APP_NAME is missing', () => {
 
-            jest.replaceProperty(process, 'env', {
-                ENONIC_API,
-                ENONIC_PROJECTS
+        setupServerEnv({
+            [ENV_VARS.APP_NAME]: undefined
             });
 
             expect(import('../src'))
@@ -50,9 +46,8 @@ describe('index', () => {
 
     it('throws when process.env.ENONIC_API is missing', () => {
 
-            jest.replaceProperty(process, 'env', {
-                ENONIC_APP_NAME,
-                ENONIC_PROJECTS
+        setupServerEnv({
+            [ENV_VARS.API_URL]: undefined
             });
 
             expect(import('../src'))

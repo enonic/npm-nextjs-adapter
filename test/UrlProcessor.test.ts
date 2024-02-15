@@ -1,21 +1,8 @@
 import type {ImageData, LinkData, MetaData} from '../src/types';
 
-import {
-    beforeAll,
-    describe,
-    expect, jest,
-    test as it
-} from '@jest/globals';
-import {
-    RENDER_MODE,
-    XP_COMPONENT_TYPE,
-    XP_REQUEST_TYPE,
-} from '../src/common/constants';
-import {
-    ENONIC_API,
-    ENONIC_APP_NAME,
-    ENONIC_PROJECTS,
-} from './constants'
+import {beforeAll, describe, expect, jest, test as it} from '@jest/globals';
+import {RENDER_MODE, XP_COMPONENT_TYPE, XP_REQUEST_TYPE} from '../src/common/constants';
+import {setupServerEnv,} from './constants';
 
 
 const warn = jest.fn();
@@ -38,26 +25,22 @@ const pageComponent = {
 
 const META: MetaData = {
     type: 'base:shortcut',
-        path: '/site/playground/2-column-test',
-        requestType: XP_REQUEST_TYPE.PAGE,
-        renderMode: RENDER_MODE.EDIT,
-        requestedComponent: pageComponent,
-        canRender: true,
-        catchAll: false,
-        apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
-        baseUrl: '/site/inline/enonic-homepage/draft',
-        locale: 'no',
-        defaultLocale: 'en',
+    path: '/site/playground/2-column-test',
+    requestType: XP_REQUEST_TYPE.PAGE,
+    renderMode: RENDER_MODE.EDIT,
+    requestedComponent: pageComponent,
+    canRender: true,
+    catchAll: false,
+    apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
+    baseUrl: '/site/inline/enonic-homepage/draft',
+    locale: 'no',
+    defaultLocale: 'en',
 };
 
 describe('UrlProcessor', () => {
 
     beforeAll(() => {
-        jest.replaceProperty(process, 'env', {
-            ENONIC_API,
-            ENONIC_APP_NAME,
-            ENONIC_PROJECTS,
-        });
+        setupServerEnv();
     });
 
     describe('isContentImage', () => {
@@ -246,14 +229,14 @@ describe('UrlProcessor', () => {
                 ...META,
                 renderMode: RENDER_MODE.NEXT,
             }
-        },{
+        }, {
             url: 'http://localhost:8080/site/path',
             expected: '/site/inline/enonic-homepage/draft/no/path',
             meta: {
                 ...META,
                 renderMode: RENDER_MODE.NEXT,
             }
-        },{
+        }, {
             url: 'http://localhost:8080/site/path',
             expected: '/site/inline/enonic-homepage/draft/path',
             meta: META
