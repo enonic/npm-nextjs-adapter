@@ -1,7 +1,7 @@
 export const CATCH_ALL = '*';
 
 export enum ENV_VARS {
-    PROJECTS = 'ENONIC_PROJECTS',
+    MAPPINGS = 'ENONIC_MAPPINGS',
     API_URL = 'ENONIC_API',
     APP_NAME = 'ENONIC_APP_NAME',
 }
