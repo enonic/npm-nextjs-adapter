@@ -1,8 +1,8 @@
-import type {ContentApiBaseBody, ProjectLocaleConfig} from '../../src/types';
+import type {FetchOptions, ProjectLocaleConfig} from '../../src/types';
 
 
-import {beforeEach, describe, expect, jest, test as it} from '@jest/globals';
-import {afterEach} from 'node:test';
+import {afterEach, beforeEach, describe, expect, jest, test as it} from '@jest/globals';
+import {SpiedFunction} from 'jest-mock';
 import {ENV_VARS} from '../../src/common/constants';
 import {setupServerEnv} from '../constants';
 
@@ -27,17 +27,10 @@ const QUERY = `{
 
 const FETCH_GUILLOTINE_PARAMS_VALID: [
     string,
-    ContentApiBaseBody,
     ProjectLocaleConfig,
-    {}
+    FetchOptions?,
 ] = [
     'http://localhost:8080/site/enonic-homepage/master',
-    {
-        query: QUERY,
-        variables: {
-            // key: 'value'
-        }
-    },
     {
         default: true,
         project: 'enonic-homepage',
@@ -45,7 +38,20 @@ const FETCH_GUILLOTINE_PARAMS_VALID: [
         locale: 'en'
     },
     {
-        // headerKey: 'headerValue'
+        cache: 'no-store',
+        next: {
+            revalidate: false,
+            tags: ['tag1', 'tag2'],
+        },
+        headers: {
+            'test-header': 'test-value',
+        },
+        body: {
+            query: QUERY,
+            variables: {
+                // key: 'value'
+            }
+        },
     }
 ];
 
@@ -53,11 +59,13 @@ const FETCH_GUILLOTINE_PARAMS_VALID: [
 describe('guillotine', () => {
     // beforeAll(() => {});
 
+    let fetchMock: SpiedFunction<typeof fetch>;
+
     beforeEach(() => {
         setupServerEnv({
             [ENV_VARS.MAPPINGS]: 'en:enonic-homepage/enonic-homepage'
         });
-        jest.spyOn(globalThis, 'fetch').mockImplementation((input, init = {}) => {
+        fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation((input, init = {}) => {
             // console.debug('fetch', input, init);
             const guillotine = {
                 query: [{
@@ -80,15 +88,15 @@ describe('guillotine', () => {
     }); // beforeEach
 
     afterEach(() => {
+        jest.resetAllMocks();
         jest.resetModules();
-        jest.restoreAllMocks(); // Restores all mocks and replaced properties back to their original value.
     });
 
     // afterAll(() => {});
 
     describe('fetchGuillotine', () => {
-        it('fetches a response from guillotine', () => {
-            import('../../src/server').then((moduleName) => {
+        it('fetches a response from guillotine', async () => {
+            await import('../../src/server').then((moduleName) => {
                 moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID).then((result) => {
                     expect(result).toEqual({
                         guillotine: {
@@ -101,17 +109,14 @@ describe('guillotine', () => {
             });
         });
 
-        it('handles variables = undefined', () => {
-            const [contentApiUrl, body, projectConfig, headers] = [
-                FETCH_GUILLOTINE_PARAMS_VALID[0],
-                {
-                    query: QUERY
-                },
-                FETCH_GUILLOTINE_PARAMS_VALID[2],
-                FETCH_GUILLOTINE_PARAMS_VALID[3],
-            ]
-            import('../../src/server').then((moduleName) => {
-                moduleName.fetchGuillotine(contentApiUrl, body, projectConfig, headers).then((result) => {
+
+        it('handles variables = undefined', async () => {
+            const [contentApiUrl, projectConfig, options] = Object.create(FETCH_GUILLOTINE_PARAMS_VALID);
+            const opts = Object.create(options);
+            delete opts.body.variables;
+
+            await import('../../src/server').then((moduleName) => {
+                moduleName.fetchGuillotine(contentApiUrl, projectConfig, opts).then((result) => {
                     expect(result).toEqual({
                         guillotine: {
                             query: [{
@@ -123,7 +128,7 @@ describe('guillotine', () => {
             });
         });
 
-        it('returns an error when res.json() = []', () => {
+        it('returns an error when res.json() = []', async () => {
             jest.spyOn(globalThis, 'fetch').mockImplementation((input, init = {}) => {
                 const array = [];
                 return Promise.resolve({
@@ -133,7 +138,7 @@ describe('guillotine', () => {
                     status: 200
                 } as Response);
             });
-            import('../../src/server').then((moduleName) => {
+            await import('../../src/server').then((moduleName) => {
                 moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID).then((result) => {
                     expect(result).toEqual({
                         error: {
@@ -145,20 +150,21 @@ describe('guillotine', () => {
             });
         });
 
-        it('handles variables with path', () => {
-            const [contentApiUrl, body, projectConfig, headers] = [
-                FETCH_GUILLOTINE_PARAMS_VALID[0],
-                {
+        it('handles variables with path', async () => {
+            const [contentApiUrl, projectConfig, options] = FETCH_GUILLOTINE_PARAMS_VALID;
+
+            const opts = {
+                ...options,
+                body: {
                     query: QUERY,
                     variables: {
                         path: '/HAS_NO_EFFECT_SINCE_RESPONSE_IS_MOCKED'
                     }
-                },
-                FETCH_GUILLOTINE_PARAMS_VALID[2],
-                FETCH_GUILLOTINE_PARAMS_VALID[3],
-            ]
-            import('../../src/server').then((moduleName) => {
-                moduleName.fetchGuillotine(contentApiUrl, body, projectConfig, headers).then((result) => {
+                }
+            };
+
+            await import('../../src/server').then((moduleName) => {
+                moduleName.fetchGuillotine(contentApiUrl, projectConfig, opts).then((result) => {
                     expect(result).toEqual({
                         guillotine: {
                             query: [{
@@ -170,18 +176,19 @@ describe('guillotine', () => {
             });
         });
 
-        it('returns an error when query is not a string', () => {
-            const [contentApiUrl, body, projectConfig, headers] = [
-                FETCH_GUILLOTINE_PARAMS_VALID[0],
-                {
+        it('returns an error when query is not a string', async () => {
+            const [contentApiUrl, projectConfig, options] = FETCH_GUILLOTINE_PARAMS_VALID;
+
+            const opts = {
+                ...options,
+                body: {
                     query: true as unknown as string,
-                    variables: {}
-                },
-                FETCH_GUILLOTINE_PARAMS_VALID[2],
-                FETCH_GUILLOTINE_PARAMS_VALID[3]
-            ]
-            import('../../src/server').then((moduleName) => {
-                moduleName.fetchGuillotine(contentApiUrl, body, projectConfig, headers).then((result) => {
+                    variables: {},
+                }
+            };
+
+            await import('../../src/server').then((moduleName) => {
+                moduleName.fetchGuillotine(contentApiUrl, projectConfig, opts).then((result) => {
                     expect(result).toEqual({
                         error: {
                             code: '400',
@@ -192,29 +199,29 @@ describe('guillotine', () => {
             });
         });
 
-        it('returns an error when query is an empty string', () => {
-            const [contentApiUrl, body, projectConfig, headers] = [
-                FETCH_GUILLOTINE_PARAMS_VALID[0],
-                {
+        it('returns an error when query is an empty string', async () => {
+            const [contentApiUrl, projectConfig, options] = FETCH_GUILLOTINE_PARAMS_VALID;
+
+            const opts = {
+                ...options,
+                body: {
                     query: '',
-                    variables: {}
-                },
-                FETCH_GUILLOTINE_PARAMS_VALID[2],
-                FETCH_GUILLOTINE_PARAMS_VALID[3],
-            ]
-            import('../../src/server').then((moduleName) => {
-                moduleName.fetchGuillotine(contentApiUrl, body, projectConfig, headers).then((result) => {
-                    expect(result).toEqual({
-                        error: {
-                            code: '400',
-                            message: 'Invalid or missing query. JSON.stringify(query) = ""'
-                        }
-                    });
+                    variables: {},
+                }
+            };
+
+            await import('../../src/server').then(async (moduleName) => {
+                let result = await moduleName.fetchGuillotine(contentApiUrl, projectConfig, opts);
+                return expect(result).toEqual({
+                    error: {
+                        code: '400',
+                        message: 'Invalid or missing query. JSON.stringify(query) = ""'
+                    }
                 });
             });
         });
 
-        it('ensures json.errors is always an array', () => {
+        it('ensures json.errors is always an array', async () => {
             jest.spyOn(globalThis, 'fetch').mockImplementation((input, init = {}) => {
                 const json = {
                     errors: 'Single string error'
@@ -226,7 +233,8 @@ describe('guillotine', () => {
                     status: 200
                 } as Response);
             });
-            import('../../src/server').then((moduleName) => {
+
+            await import('../../src/server').then((moduleName) => {
                 moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID).then((result) => {
                     expect(result).toEqual({
                         error: {
@@ -238,11 +246,11 @@ describe('guillotine', () => {
             });
         });
 
-        it('returns a nice error when fetch throws', () => {
+        it('returns a nice error when fetch throws', async () => {
             jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
                 throw new Error('fetch error');
             });
-            import('../../src/server').then((moduleName) => {
+            await import('../../src/server').then((moduleName) => {
                 expect(moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID)).resolves.toEqual({
                     error: {
                         code: 'API',
@@ -252,7 +260,7 @@ describe('guillotine', () => {
             });
         });
 
-        it('returns a nice error when fetch response not ok', () => {
+        it('returns a nice error when fetch response not ok', async () => {
             jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
                 return Promise.resolve({
                     json: () => Promise.resolve({}),
@@ -261,7 +269,7 @@ describe('guillotine', () => {
                     status: 500
                 } as Response);
             });
-            import('../../src/server').then((moduleName) => {
+            await import('../../src/server').then((moduleName) => {
                 expect(moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID)).resolves.toEqual({
                     error: {
                         code: 500,
@@ -271,7 +279,7 @@ describe('guillotine', () => {
             });
         });
 
-        it('returns a nice error when fetch response is not json', () => {
+        it('returns a nice error when fetch response is not json', async () => {
             jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
                 return Promise.resolve({
                     text: () => Promise.resolve('Could this ever happen? I guess if endpoint url is wrong?'),
@@ -279,7 +287,7 @@ describe('guillotine', () => {
                     status: 200
                 } as Response);
             });
-            import('../../src/server').then((moduleName) => {
+            await import('../../src/server').then((moduleName) => {
                 expect(moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID)).resolves.toEqual({
                     error: {
                         code: 500,
@@ -289,7 +297,7 @@ describe('guillotine', () => {
             });
         });
 
-        it('returns a nice error when fetch response is empty', () => {
+        it('returns a nice error when fetch response is empty', async () => {
             jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
                 return Promise.resolve({
                     json: () => Promise.resolve(),
@@ -298,7 +306,7 @@ describe('guillotine', () => {
                     status: 200
                 } as Response);
             });
-            import('../../src/server').then((moduleName) => {
+            await import('../../src/server').then((moduleName) => {
                 expect(moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID)).resolves.toEqual({
                     error: {
                         code: 500,
@@ -308,15 +316,70 @@ describe('guillotine', () => {
             });
         });
 
-        it("returns a nice error when error.message can't be JSON parsed", () => {
+        it("passes cache and next options and add headers", async () => {
+
+            const [contentApiUrl, projectConfig, options] = FETCH_GUILLOTINE_PARAMS_VALID;
+
+            const opts = Object.create(options);
+            delete opts.headers;
+
+            await import('../../src/server').then((moduleName) => {
+                moduleName.fetchGuillotine(contentApiUrl, projectConfig, opts).then((result) => {
+
+                    const [url, opts] = fetchMock.mock.lastCall;
+
+                    expect(opts.cache).toEqual('no-store');
+                    expect((opts as FetchOptions).next).toEqual({
+                        revalidate: false,
+                        tags: ['tag1', 'tag2'],
+                    })
+                    const headers = opts.headers as Headers;
+                    expect(headers).toBeTruthy();
+                    expect(headers.get('X-Guillotine-SiteKey')).toEqual('enonic-homepage');
+                    expect(headers.get('Content-Type')).toEqual('application/json');
+                    expect(headers.get('Accept')).toEqual('application/json');
+
+                });
+            });
+        });
+
+        it("does not allow to override X-Guillotine-SiteKey header only", async () => {
+
+            const [contentApiUrl, projectConfig, options] = FETCH_GUILLOTINE_PARAMS_VALID;
+
+            const opts = {
+                ...options,
+                headers: {
+                    'X-Guillotine-SiteKey': 'should-not-be-applied',
+                    'Content-Type': 'text/plain',
+                    'Accept': 'text/plain',
+                }
+            };
+
+            await import('../../src/server').then((moduleName) => {
+                moduleName.fetchGuillotine(contentApiUrl, projectConfig, opts).then((result) => {
+
+                    const [url, opts] = fetchMock.mock.lastCall;
+
+                    const headers = opts.headers as Headers;
+                    expect(headers).toBeTruthy();
+                    expect(headers.get('X-Guillotine-SiteKey')).toEqual('enonic-homepage');
+                    expect(headers.get('Content-Type')).toEqual('text/plain');
+                    expect(headers.get('Accept')).toEqual('text/plain');
+
+                });
+            });
+        });
+
+        // THIS NEEDS TO GO LAST BECAUSE THIS MOCK AFFECTS OTHER TESTS
+        it("returns a nice error when error.message can't be JSON parsed", async () => {
             const fetchFromApi = jest.fn(async () => {
                 throw new Error('not json parseable');
             });
-            jest.resetModules(); // Required or next line wont work
-            jest.doMock<typeof import('../../src/guillotine/fetchFromApi')>(
+            jest.mock<typeof import('../../src/guillotine/fetchFromApi')>(
                 '../../src/guillotine/fetchFromApi', () => ({fetchFromApi})
             );
-            import('../../src/server').then((moduleName) => {
+            await import('../../src/server').then((moduleName) => {
                 expect(moduleName.fetchGuillotine(...FETCH_GUILLOTINE_PARAMS_VALID)).resolves.toEqual({
                     error: {
                         code: 'Client-side error',

@@ -1,8 +1,4 @@
-import type {
-    ContentApiBaseBody,
-    MetaResult,
-    ProjectLocaleConfig,
-} from '../types';
+import type {ContentApiBaseBody, MetaResult, ProjectLocaleConfig} from '../types';
 
 
 import {getMetaQuery, pageFragmentQuery} from './getMetaData';
@@ -21,7 +17,10 @@ export const fetchMetaData = async (
             path: xpContentPath,
         },
     };
-    const metaResult = await fetchGuillotine<MetaResult>(contentApiUrl, body, projectConfig, headers);
+    const metaResult = await fetchGuillotine<MetaResult>(contentApiUrl, projectConfig, {
+        body,
+        headers,
+    });
     if (metaResult.error) {
         return metaResult;
     } else {

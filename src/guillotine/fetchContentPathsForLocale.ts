@@ -23,7 +23,7 @@ export async function fetchContentPathsForLocale(
             count,
         },
     };
-    return fetchGuillotine<ContentPathItem[]>(contentApiUrl, body, config).then((
+    return fetchGuillotine<ContentPathItem[]>(contentApiUrl, config, {body}).then((
         results: GuillotineResult,
     ) => {
         return results.guillotine.queryDsl.reduce((
