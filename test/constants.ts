@@ -6,7 +6,7 @@ export const ENONIC_APP_NAME = 'com.enonic.app.enonic';
 export const ENONIC_APP_NAME_UNDERSCORED = ENONIC_APP_NAME.replace(/\./g, '_');
 export const ENONIC_MAPPINGS = 'en:project/site,no:prosjekt/nettsted';
 
-export function setupServerEnv(overrides: Record<string, string> = {}) {
+export function setupServerEnv(overrides: Record<string, string> = {}): void {
     jest.replaceProperty(process, 'env', {
         [ENV_VARS.API_URL]: ENONIC_API,
         [ENV_VARS.APP_NAME]: ENONIC_APP_NAME,
@@ -15,7 +15,7 @@ export function setupServerEnv(overrides: Record<string, string> = {}) {
     });
 }
 
-export function setupClientEnv(overrides: Record<string, string> = {}) {
+export function setupClientEnv(overrides: Record<string, string> = {}): void {
     jest.replaceProperty(process, 'env', {
         NEXT_PUBLIC_ENONIC_API: ENONIC_API,
         NEXT_PUBLIC_ENONIC_MAPPINGS: ENONIC_MAPPINGS,

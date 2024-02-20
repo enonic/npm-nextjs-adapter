@@ -1,31 +1,23 @@
-import type {ContentApiBaseBody, GuillotineResponse, GuillotineResponseJson, ProjectLocaleConfig} from '../types';
-
+import type {FetchOptions, GuillotineResponse, GuillotineResponseJson, ProjectLocaleConfig} from '../types';
 
 /** Generic fetch */
 export async function fetchFromApi<Data = Record<string, unknown>>(
     apiUrl: string,
-    body: ContentApiBaseBody,
     projectConfig: ProjectLocaleConfig,
-    headers?: {},
-    method = 'POST',
-) {
-    const options = {
-        method,
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-Guillotine-SiteKey': projectConfig.site,
-        },
-        body: JSON.stringify(body),
-    };
+    options?: FetchOptions,
+): Promise<GuillotineResponseJson> {
 
-    if (headers) {
-        Object.assign(options.headers, headers);
-    }
+    const opts = {
+        method: options?.method || 'POST',
+        body: options?.body ? JSON.stringify(options?.body) : null,
+        headers: mergeHeaders(projectConfig, options?.headers),
+        next: options?.next,
+        cache: options?.cache,
+    };
 
     let res: GuillotineResponse<Data>;
     try {
-        res = await fetch(apiUrl, options);
+        res = await fetch(apiUrl, opts as RequestInit);
     } catch (e: any) {
         console.warn(apiUrl, e);
         throw new Error(JSON.stringify({
@@ -66,4 +58,19 @@ export async function fetchFromApi<Data = Record<string, unknown>>(
     }
 
     return json;
+}
+
+function mergeHeaders(projectConfig: ProjectLocaleConfig, headers?: HeadersInit): Headers {
+    const newHeaders = new Headers({
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+    });
+    if (headers) {
+        for (const headersKey in headers) {
+            newHeaders.set(headersKey, headers[headersKey]);
+        }
+        // append last to make sure it is not overwritten
+    }
+    newHeaders.set('X-Guillotine-SiteKey', projectConfig.site);
+    return newHeaders;
 }

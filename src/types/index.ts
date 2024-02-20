@@ -44,12 +44,14 @@ export type ProjectLocalesConfig = Record<string, ProjectLocaleConfig>;
 
 export type SelectorName = 'contentType' | 'page' | 'component' | 'part' | 'layout' | 'macro';
 
-export interface ServerSideParams
-    extends NodeJS.Dict<string | string[]> {
-    // String array catching a sub-path assumed to match the site-relative path of an XP content.
-    contentPath?: string[];
-    mode?: string;
-}
+// https://nextjs.org/docs/app/api-reference/functions/fetch
+export type FetchOptions = Omit<RequestInit, 'body'> & {
+    body?: ContentApiBaseBody,
+    next?: {
+        revalidate?: boolean | number,
+        tags?: string[],
+    }
+};
 
 export interface StaticContentProps extends Record<string, any> {
     children?: React.ReactNode;
