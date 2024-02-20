@@ -20,32 +20,30 @@ const ENONIC_APP_NAME = 'com.enonic.web.enonic.com';
 
 const FETCH_FROM_API_PARAMS_VALID: [
     string,
-    ContentApiBaseBody,
     ProjectLocaleConfig,
-    {}
+    { body: ContentApiBaseBody, }
 ] = [
     'http://localhost:8080/site/enonic-homepage/master',
-    {
-        query: `{
-    guillotine {
-        query(first: 1) {
-            valid
-        }
-    }
-}`,
-        variables: {
-            // key: 'value'
-        }
-    },
     {
         default: true,
         project: 'enonic-homepage',
         site: 'enonic-homepage',
-        locale: 'en'
+        locale: 'en',
     },
     {
-        // headerKey: 'headerValue'
-    }
+        body: {
+            query: `{
+                        guillotine {
+                            query(first: 1) {
+                                valid
+                            }
+                        }
+                    }`,
+            variables: {
+                // key: 'value'
+            },
+        },
+    },
 ];
 
 
