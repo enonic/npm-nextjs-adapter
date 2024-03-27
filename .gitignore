@@ -4,6 +4,8 @@
 /baseMappings.js
 /client.js
 /server.js
+/client/
+/server/
 /common/
 /guillotine/
 /index.js

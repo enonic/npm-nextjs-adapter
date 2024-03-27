@@ -1,4 +1,4 @@
-/// <reference types="react" />
+import React, {Suspense} from 'react';
 import type {BaseComponentProps, MetaData, PageComponent} from '../types';
 
 
@@ -6,7 +6,9 @@ import {PORTAL_COMPONENT_ATTRIBUTE, RENDER_MODE, XP_COMPONENT_TYPE} from '../com
 import {IS_DEV_MODE} from '../common/env';
 import {ComponentRegistry} from '../common/ComponentRegistry';
 import Empty from './Empty';
-import getClientHydratedHtml from './getClientHydratedHtml';
+import getClientHydratedHtml from '../client/getClientHydratedHtml';
+import {enonicDebug} from '../utils/enonicLog';
+import {getServerRenderedHtml} from '../server/getServerRenderedHtml';
 
 
 const BaseComponent = ({component, meta, common}: BaseComponentProps) => {
@@ -15,6 +17,8 @@ const BaseComponent = ({component, meta, common}: BaseComponentProps) => {
     const descriptor = cmpData && 'descriptor' in cmpData ? cmpData.descriptor : undefined;
 
     let ComponentView: JSX.Element | null;
+
+    enonicDebug('BaseComponent', type, cmpData);
 
     if (error) {
         // renders error component when rendering whole page
@@ -36,12 +40,8 @@ const BaseComponent = ({component, meta, common}: BaseComponentProps) => {
     }
 
     // need to display a placeholder if descriptor is empty as component is not initialized yet
-    if (descriptor && shouldShowPlaceholderView(meta)) {
-        const outputHTML = renderComponent(ComponentView);
-        if (!outputHTML?.trim().length) {
-            // render some placeholder in case of empty output
-            ComponentView = <PlaceholderComponent type={type} descriptor={descriptor}/>;
-        }
+    if (descriptor && shouldShowPlaceholderView(meta) && isComponentOutputEmpty(ComponentView)) {
+        ComponentView = <PlaceholderComponent type={type} descriptor={descriptor}/>;
     }
 
     if (meta.renderMode === RENDER_MODE.EDIT) {
@@ -72,13 +72,14 @@ export const MissingComponent = ({descriptor, type}: { descriptor?: string, type
     );
 };
 
-const renderComponent = (component: React.ReactElement) => {
+const isComponentOutputEmpty = (component: React.ReactElement) => {
     if (typeof document !== 'undefined') {
         // render component on the client to see if it's empty
-        return getClientHydratedHtml(component);
+        return !getClientHydratedHtml(component)?.length;
     } else {
-        // report non-empty output for server-side rendering
-        return '<div>Server-side rendered component</div>';
+        // render component on the server to see if it's empty
+        // Suspense is needed to render component on the server
+        return getServerRenderedHtml(<Suspense fallback={<p>Loading...</p>}>{component}</Suspense>) === '<!--$--><!--/$-->';
     }
 };
 

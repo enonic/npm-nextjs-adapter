@@ -34,7 +34,7 @@
     "access": "public"
   },
   "scripts": {
-    "clean": "del-cli *.d.ts *.js.map baseMappings.* client.* server.* common coverage index.* enonic-nextjs-adapter-*.tgz guillotine i18n query types utils views dist",
+    "clean": "del-cli *.d.ts *.js.map baseMappings.* client.* server.* common coverage index.* enonic-nextjs-adapter-*.tgz guillotine i18n query types utils views dist server client",
     "build": "tsc",
     "check:types": "tsc --noEmit",
     "madge": "madge -i docs/madge.png -x '(constants|env)\\.ts' src/index.ts",

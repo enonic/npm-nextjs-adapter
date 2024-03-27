@@ -20,6 +20,8 @@ const mode = isServer ? process.env.MODE : process.env.NEXT_PUBLIC_MODE;
 
 export const IS_DEV_MODE = (mode === 'development');
 
+export const LOGGING = isServer ? process.env[ENV_VARS.LOG] : process.env['NEXT_PUBLIC_ENONIC_LOGGING'];
+
 /** Locales and Enonic XP projects correspondence list */
 export const MAPPINGS = isServer ? process.env[ENV_VARS.MAPPINGS] : process.env['NEXT_PUBLIC_ENONIC_MAPPINGS'];
 
