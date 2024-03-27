@@ -4,6 +4,7 @@ export enum ENV_VARS {
     MAPPINGS = 'ENONIC_MAPPINGS',
     API_URL = 'ENONIC_API',
     APP_NAME = 'ENONIC_APP_NAME',
+    LOG = 'ENONIC_LOGGING',
 }
 
 export const FRAGMENT_CONTENTTYPE_NAME = 'portal:fragment';
