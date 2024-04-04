@@ -298,6 +298,30 @@ const GUILLOTINE_RESULT_WITH_ERROR: GuillotineResponseJson = {
 };
 
 
+function mockHeadersImport(draft: boolean, mode: string) {
+    const headersFile = {
+        draftMode: () => {
+            console.info('read draft mode', draft)
+            return {
+                isEnabled: draft,
+            }
+        },
+        headers: jest.fn(() => new Headers(draft ? {
+            'content-studio-mode': mode,
+        } : undefined))
+    }
+
+    jest.spyOn(headersFile, 'headers');
+
+    jest.mock('next/headers', () => (
+        headersFile
+    ), {
+        virtual: true
+    });
+
+    return headersFile;
+}
+
 function mockFetch({
     contentJson,
     contentOk = true,
@@ -339,6 +363,8 @@ function mockFetch({
 describe('guillotine', () => {
     describe('fetchContent', () => {
 
+        let headersImport: ReturnType<typeof mockHeadersImport>;
+
         beforeAllTestsInThisDescribe(() => {
 
             setupServerEnv({
@@ -348,9 +374,7 @@ describe('guillotine', () => {
 
             // To avoid: Error: Invariant: headers() expects to have requestAsyncStorage, none available.
             // See: https://github.com/vercel/next.js/discussions/44270
-            jest.mock('next/headers', () => ({
-                headers: jest.fn(() => new Headers()),
-            }));
+            headersImport = mockHeadersImport(false, 'next');
         });
 
         afterAllTestsInThisDescribe(() => {
@@ -372,6 +396,9 @@ describe('guillotine', () => {
                     contentJson: GUILLOTINE_RESULT_CONTENT,
                     metaJson: GUILLOTINE_RESULT_META_MINIMAL,
                 });
+
+                const headersImport = mockHeadersImport(true, mode);
+
                 import('../../src/server').then((moduleName) => {
                     const context: Context = {
                         headers: {
@@ -389,9 +416,13 @@ describe('guillotine', () => {
                                     return '/admin/SOMETHING';
                                 }
                                 console.error('headers get name', name);
+                            },
+                            set(name: string, value: string) {
+                                console.info('headers set name', name, value);
                             }
                         },
                     } as Context;
+
                     expect(moduleName.fetchContent(context)).resolves.toStrictEqual({
                         common: null,
                         data: null,
@@ -418,11 +449,15 @@ describe('guillotine', () => {
                             type: 'page',
                         },
                     }); // expect
+
+                    // should go after fetchContent
+                    expect(headersImport.headers.mock.calls.length).toBeGreaterThan(0);
+
                 }); // import
             }); // it
         }); // TESTS.forEach
 
-        it('handles context without headers', () => {
+        it('handles context without headers and does not headers in non-draft mode', () => {
             mockFetch({
                 contentJson: GUILLOTINE_RESULT_CONTENT,
                 metaJson: GUILLOTINE_RESULT_META_MINIMAL,
@@ -453,6 +488,8 @@ describe('guillotine', () => {
                         type: 'page',
                     },
                 });
+
+                expect(headersImport.headers.mock.calls.length).toBe(0);
             });
         }); // it handles context without headers
 
@@ -609,7 +646,6 @@ describe('guillotine', () => {
                             }
                         }
                     }
-                
                 },
             });
             import('../../src/server').then(async ({fetchContent}) => {

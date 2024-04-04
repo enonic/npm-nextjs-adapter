@@ -1,7 +1,4 @@
 import type {ComponentDescriptor, Context, FetchContentResult} from '../types';
-
-
-import {headers} from 'next/headers';
 import {ComponentRegistry} from '../common/ComponentRegistry';
 import {UrlProcessor} from '../common/UrlProcessor';
 import {
@@ -33,6 +30,7 @@ import {combineMultipleQueries} from './combineMultipleQueries';
 import {fetchContentData} from './fetchContentData';
 import {applyProcessors} from './applyProcessors';
 import {createMetaData} from './createMetaData';
+import {draftMode, headers} from 'next/headers';
 
 
 /**
@@ -45,15 +43,13 @@ import {createMetaData} from './createMetaData';
 export async function fetchContent(context: Context): Promise<FetchContentResult> {
     const {locale, locales, defaultLocale} = getRequestLocaleInfo(context);
 
-    // ideally we only want to set headers in draft mode,
-    // but draft mode token is not passed in non-static mode
-    // so try to add them whenever they are absent
-    if (!context.headers) {
-        // TODO does this break routing or dynamic server-side rendering?
-        // I guess hydration will fix it anyway?
+    // we only want to read headers in draft mode, because they bail out static generation
+    if (draftMode().isEnabled) {
         const allHeaders = headers();
 
-        context.headers = new Headers();
+        if (!context.headers) {
+            context.headers = new Headers();
+        }
         allHeaders.forEach((value, key) => {
             context.headers.set(key, value);
         });
@@ -106,7 +102,7 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
                 type === FRAGMENT_CONTENTTYPE_NAME ||
                 type === PAGE_TEMPLATE_CONTENTTYPE_NAME ||
                 type === PAGE_TEMPLATE_FOLDER
-        )) {
+            )) {
             return errorResponse('404', `Content type [${type}] is not accessible in ${renderMode} mode`);
         }
 
