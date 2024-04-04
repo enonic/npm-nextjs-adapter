@@ -28,7 +28,6 @@ export const LocaleContextProvider = ({
         setLocaleState(locale);
         return loadPhrases(locale).then((phrases) => {
             setPhrasesState(phrases);
-            console.info(`Loaded client-side phrases for locale "${locale}"`);
             return phrases;
         });
     };

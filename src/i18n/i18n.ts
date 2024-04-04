@@ -9,7 +9,6 @@ export class I18n {
         this.locale = locale;
         return loadPhrases(locale).then((phrases) => {
             this.dictionary = phrases;
-            console.info(`Loaded server-side phrases for locale "${locale}"`);
             return phrases;
         });
     }
