@@ -5,6 +5,8 @@
 /client.js
 /server.js
 /common/
+/server/
+/client/
 /guillotine/
 /index.js
 /i18n/
