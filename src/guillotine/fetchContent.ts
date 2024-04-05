@@ -1,4 +1,6 @@
 import type {ComponentDescriptor, Context, FetchContentResult} from '../types';
+
+import {draftMode, headers} from 'next/headers';
 import {ComponentRegistry} from '../common/ComponentRegistry';
 import {UrlProcessor} from '../common/UrlProcessor';
 import {
@@ -30,7 +32,6 @@ import {combineMultipleQueries} from './combineMultipleQueries';
 import {fetchContentData} from './fetchContentData';
 import {applyProcessors} from './applyProcessors';
 import {createMetaData} from './createMetaData';
-import {draftMode, headers} from 'next/headers';
 
 
 /**
