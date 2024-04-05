@@ -14,6 +14,8 @@
     "client.js",
     "server.js",
     "common",
+    "client",
+    "server",
     "guillotine",
     "index*",
     "i18n",
