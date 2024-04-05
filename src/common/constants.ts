@@ -25,9 +25,8 @@ export const GET_STATIC_PATHS_QUERY = `query ($count: Int) {
                 direction: DESC
             }
             query: {boolean: {mustNot: [
-                {in: {field: "type", stringValues: ["base:folder", "base:shortcut"]}}
+                {in: {field: "type", stringValues: ["base:shortcut", "portal:fragment", "portal:template-folder", "portal:page-template"]}}
                 {like: {field: "type", value: "media:*"}}
-                {like: {field: "_path", value: "*/_*"}}
             ]}}
         ) {
             _name
