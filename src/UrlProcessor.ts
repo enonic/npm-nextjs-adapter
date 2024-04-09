@@ -81,7 +81,7 @@ export class UrlProcessor {
         // normalise localhost-127.0.0.1 if present in urls
         const normalUrl = url.replace(this.localhostPattern, '127.0.0.1');
         const normalApiUrl = apiUrl.replace(this.localhostPattern, '127.0.0.1');
-        const common = commonChars(normalUrl, normalApiUrl);
+        const common = commonChars(normalUrl, normalApiUrl, '/');
         const remaining = common.length > 0 ? normalUrl.substring(common.length) : normalUrl;
         return (remaining.length > 0 && remaining.charAt(0) === '/') ? remaining.substring(1) : remaining;
     }

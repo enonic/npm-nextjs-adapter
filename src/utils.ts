@@ -270,18 +270,29 @@ export const getXpBaseUrl = (context?: MinimalContext): string => {
 };
 
 
-export const commonChars = (s1?: string, s2?: string) => {
+export const commonChars = (s1?: string, s2?: string, wordSeparators?: string) => {
     let result = '';
     if (!s1 || s1.length === 0 || !s2 || s2.length === 0) {
         return result;
     }
+    let lastSeparatorIndex = -1;
+    let lastCommonIndex = -1;
     for (let i = 0; i < s1.length; i++) {
-        const s1Element = s1[i];
-        if (s2[i] === s1Element) {
-            result += s1Element;
+        const s1El = s1[i];
+        if (wordSeparators?.indexOf(s1El) >= 0) {
+            lastSeparatorIndex = i;
+        }
+        if (s2[i] === s1El) {
+            lastCommonIndex = i;
         } else {
             break;
         }
+    }
+
+    if (lastSeparatorIndex > 0 || lastCommonIndex === lastSeparatorIndex) {
+        result = s1.substring(0, lastSeparatorIndex);
+    } else if (lastCommonIndex > -1) {
+        result = s1.substring(0, lastCommonIndex + 1);
     }
 
     return result;
