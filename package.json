@@ -7,7 +7,7 @@
     "access": "public"
   },
   "scripts": {
-    "copy": "npx --yes cpy-cli package.json README.md dist",
+    "copy": "npx --yes cpy-cli package.json README.md setversion.js dist",
     "build": "tsc --build src/tsconfig.json && tsc --build server/tsconfig.json",
     "lint": "eslint --quiet server && eslint --quiet src",
     "lint:fix": "eslint --fix server && eslint --fix src",

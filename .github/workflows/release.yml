@@ -28,8 +28,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build JS and DTS to /dist
+        run: npm run build --if-present
+
+      - name: Copy package.json to /dist
+        run: npm run copy
+
       - name: Publish
         run: npm publish
+        working-directory: dist
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
