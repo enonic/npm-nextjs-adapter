@@ -33,14 +33,14 @@ export interface PreviewParams {
     params: Record<string, string>
 }
 
-export interface ProjectLocaleConfig {
+export interface LocaleMapping {
     default: boolean
     project: string
     site: string
     locale: string
 }
 
-export type ProjectLocalesConfig = Record<string, ProjectLocaleConfig>;
+export type LocaleMappings = Record<string, LocaleMapping>;
 
 export type SelectorName = 'contentType' | 'page' | 'component' | 'part' | 'layout' | 'macro';
 

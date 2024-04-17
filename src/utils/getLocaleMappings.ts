@@ -1,4 +1,4 @@
-import type {ProjectLocalesConfig} from '../types';
+import type {LocaleMappings} from '../types';
 
 
 import {ENV_VARS} from '../common/constants';
@@ -9,7 +9,7 @@ import {MAPPINGS} from '../common/env';
 const PROJECT_CONFIG_REGEXP = /^([\w-]+):([^/\s]+)(\/[\w.-]+)?$/i;
 
 
-export function getProjectLocaleConfigs(): ProjectLocalesConfig {
+export function getLocaleMappings(): LocaleMappings {
     const str = MAPPINGS;
     if (!str?.length) {
         throw new Error(`Did you forget to define "${ENV_VARS.MAPPINGS}" environmental variable?

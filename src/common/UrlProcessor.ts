@@ -3,7 +3,7 @@ import type {ImageData, LinkData, MetaData} from '../types';
 
 import {RENDER_MODE} from './constants';
 import {fixDoubleSlashes} from '../utils/fixDoubleSlashes';
-import {getProjectLocaleConfigById} from '../utils/getProjectLocaleConfigById';
+import {getLocaleMappingByProjectId} from '../utils/getLocaleMappingByProjectId';
 import {commonChars} from '../utils/commonChars';
 import {addBasePath} from 'next/dist/client/add-base-path';
 
@@ -129,8 +129,8 @@ export class UrlProcessor {
 }
 
 // Actual site is going to be set in fetchContent method, but set a default fallback here too
-const defaultConfig = getProjectLocaleConfigById();
-UrlProcessor.setSiteKey(defaultConfig.site);
+const defaultMapping = getLocaleMappingByProjectId();
+UrlProcessor.setSiteKey(defaultMapping.site);
 
 export function getUrl(url: string, meta: MetaData): string {
     return UrlProcessor.process(url, meta, false, false);

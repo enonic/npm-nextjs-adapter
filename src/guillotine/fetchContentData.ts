@@ -1,4 +1,4 @@
-import type {ContentApiBaseBody, ContentResult, ProjectLocaleConfig} from '../types';
+import type {ContentApiBaseBody, ContentResult, LocaleMapping} from '../types';
 
 
 import {fetchGuillotine} from './fetchGuillotine';
@@ -7,7 +7,7 @@ import {fetchGuillotine} from './fetchGuillotine';
 export const fetchContentData = async <Content = Record<string, unknown>>(
     contentApiUrl: string,
     xpContentPath: string,
-    projectConfig: ProjectLocaleConfig,
+    mapping: LocaleMapping,
     query: string,
     variables?: {},
     headers?: {},
@@ -16,7 +16,7 @@ export const fetchContentData = async <Content = Record<string, unknown>>(
     if (variables && Object.keys(variables).length > 0) {
         body.variables = variables;
     }
-    const contentResults = await fetchGuillotine<ContentResult<Content>>(contentApiUrl, projectConfig, {
+    const contentResults = await fetchGuillotine<ContentResult<Content>>(contentApiUrl, mapping, {
         body,
         headers,
     });
