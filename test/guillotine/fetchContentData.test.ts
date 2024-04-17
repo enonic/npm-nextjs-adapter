@@ -1,13 +1,7 @@
-import type {FetchContentResult, ProjectLocaleConfig, Result} from '../../src/types';
+import type {FetchContentResult, LocaleMapping, Result} from '../../src/types';
 
 
-import {
-    beforeAll as beforeAllTestsInThisDescribe,
-    describe,
-    expect,
-    jest,
-    test as it
-} from '@jest/globals';
+import {beforeAll as beforeAllTestsInThisDescribe, describe, expect, jest, test as it} from '@jest/globals';
 import {fetchContentData} from '../../src/guillotine/fetchContentData';
 import {RENDER_MODE, XP_REQUEST_TYPE} from '../../src/common/constants';
 
@@ -56,7 +50,7 @@ describe('guillotine', () => {
         it('should return an error when query is empty', () => {
             const contentApiUrl = 'http://localhost:8080/site/site-name/master';
             const xpContentPath = '/xpContentPath'
-            const projectConfig: ProjectLocaleConfig = {
+            const mapping: LocaleMapping = {
                 default: true,
                 project: 'project',
                 site: 'site',
@@ -66,7 +60,7 @@ describe('guillotine', () => {
             // const variables = undefined;
             // const headers = undefined;
             expect(fetchContentData(
-                contentApiUrl, xpContentPath, projectConfig, query
+                contentApiUrl, xpContentPath, mapping, query
             )).resolves.toEqual({
                 error: {
                     code: '400',
@@ -78,7 +72,7 @@ describe('guillotine', () => {
         it('should return an error when query is empty', () => {
             const contentApiUrl = 'http://localhost:8080/site/site-name/master';
             const xpContentPath = '/xpContentPath'
-            const projectConfig: ProjectLocaleConfig = {
+            const mapping: LocaleMapping = {
                 default: true,
                 project: 'project',
                 site: 'site-name',
@@ -90,7 +84,7 @@ describe('guillotine', () => {
             };
             // const headers = undefined;
             expect(fetchContentData(
-                contentApiUrl, xpContentPath, projectConfig, query, variables
+                contentApiUrl, xpContentPath, mapping, query, variables
             )).resolves.toEqual({
                 contents: [FETCH_CONTENT_RESULT?.data?.guillotine]
             });

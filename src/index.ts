@@ -29,9 +29,9 @@ export {validateData} from './guillotine/validateData';
 export {I18n} from './i18n/i18n';
 
 export {getContentApiUrl} from './utils/getContentApiUrl';
-export {getProjectLocaleConfig} from './utils/getProjectLocaleConfig';
-export {getProjectLocaleConfigById} from './utils/getProjectLocaleConfigById';
-export {getProjectLocaleConfigByLocale} from './utils/getProjectLocaleConfigByLocale';
+export {getLocaleMapping} from './utils/getLocaleMapping';
+export {getLocaleMappingByProjectId} from './utils/getLocaleMappingByProjectId';
+export {getLocaleMappingByLocale} from './utils/getLocaleMappingByLocale';
 export {getRequestLocaleInfo} from './utils/getRequestLocaleInfo';
 export {sanitizeGraphqlName} from './utils/sanitizeGraphqlName';
 

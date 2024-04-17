@@ -1,4 +1,4 @@
-import type {ContentApiBaseBody, ProjectLocaleConfig} from '../../src/types';
+import type {ContentApiBaseBody, LocaleMapping} from '../../src/types';
 
 import {beforeEach, describe, expect, jest, test as it} from '@jest/globals';
 import {afterEach} from 'node:test';
@@ -20,7 +20,7 @@ const ENONIC_APP_NAME = 'com.enonic.web.enonic.com';
 
 const FETCH_FROM_API_PARAMS_VALID: [
     string,
-    ProjectLocaleConfig,
+    LocaleMapping,
     { body: ContentApiBaseBody, }
 ] = [
     'http://localhost:8080/site/enonic-homepage/master',

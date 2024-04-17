@@ -1,4 +1,4 @@
-import type {ContentApiBaseBody, ContentPathItem, GuillotineResult, ProjectLocaleConfig} from '../types';
+import type {ContentApiBaseBody, ContentPathItem, GuillotineResult, LocaleMapping} from '../types';
 
 
 import {GET_STATIC_PATHS_QUERY} from '../common/constants';
@@ -8,7 +8,7 @@ import {fetchGuillotine} from './fetchGuillotine';
 
 export async function fetchContentPathsForLocale(
     path: string,
-    config: ProjectLocaleConfig,
+    config: LocaleMapping,
     query: string = GET_STATIC_PATHS_QUERY,
     count = 999,
 ): Promise<ContentPathItem[]> {

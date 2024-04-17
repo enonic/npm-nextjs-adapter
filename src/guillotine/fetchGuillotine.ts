@@ -1,4 +1,4 @@
-import type {FetchOptions, GuillotineResult, ProjectLocaleConfig} from '../types';
+import type {FetchOptions, GuillotineResult, LocaleMapping} from '../types';
 
 
 import {fetchFromApi} from './fetchFromApi';
@@ -7,7 +7,7 @@ import {fetchFromApi} from './fetchFromApi';
 /** Guillotine-specialized fetch, using the generic fetch above */
 export async function fetchGuillotine<Data = Record<string, unknown>>(
     contentApiUrl: string,
-    projectConfig: ProjectLocaleConfig,
+    mapping: LocaleMapping,
     options?: FetchOptions,
 ): Promise<GuillotineResult> {
     const body = options?.body;
@@ -24,7 +24,7 @@ export async function fetchGuillotine<Data = Record<string, unknown>>(
     const pathMessage = path ? JSON.stringify(path) : '';
     return await fetchFromApi<Data>(
         contentApiUrl,
-        projectConfig,
+        mapping,
         options,
     )
         .then(json => {
