@@ -72,10 +72,10 @@ describe('utils', () => {
         });
     });
 
-    describe('getProjectLocaleConfig', () => {
-        it('returns correct ProjectLocaleConfig when content-studio-project is set', () => {
+    describe('getLocaleMapping', () => {
+        it('returns correct LocaleMapping when content-studio-project is set', () => {
 
-            import('../src/utils/getProjectLocaleConfig').then((moduleName) => {
+            import('../src/utils/getLocaleMapping').then((moduleName) => {
                 const context: Context = {
                     headers: {
                         get(name: string) {
@@ -90,7 +90,7 @@ describe('utils', () => {
                     },
                     // contentPath: '/omraade',
                 } as Context;
-                expect(moduleName.getProjectLocaleConfig(context)).toEqual({
+                expect(moduleName.getLocaleMapping(context)).toEqual({
                     default: false,
                     locale: 'no',
                     project: 'film-db',
@@ -98,13 +98,13 @@ describe('utils', () => {
                 });
             });
         });
-        it('returns correct ProjectLocaleConfig when content-studio-project is set', () => {
+        it('returns correct LocaleMapping when content-studio-project is set', () => {
 
             setupServerEnv({
                 [ENV_VARS.MAPPINGS]: 'en:moviedb/site,no:film-db/omraade'
             });
 
-            import('../src/utils/getProjectLocaleConfig').then((moduleName) => {
+            import('../src/utils/getLocaleMapping').then((moduleName) => {
                 const context: Context = {
                     headers: {
                         get(name: string) {
@@ -119,7 +119,7 @@ describe('utils', () => {
                     },
                     // contentPath: '/omraade',
                 } as Context;
-                expect(moduleName.getProjectLocaleConfig(context)).toEqual({
+                expect(moduleName.getLocaleMapping(context)).toEqual({
                     default: true,
                     locale: 'en',
                     project: 'moviedb',
@@ -127,13 +127,13 @@ describe('utils', () => {
                 });
             });
         });
-    }); // describe getProjectLocaleConfig
+    }); // describe getLocaleMapping
 
-    describe('getProjectLocaleConfigById', () => {
-        it('returns correct ProjectLocaleConfig', () => {
+    describe('getLocaleMappingById', () => {
+        it('returns correct LocaleMapping', () => {
 
-            import('../src/utils/getProjectLocaleConfigById').then((moduleName) => {
-                expect(moduleName.getProjectLocaleConfigById('film-db')).toEqual({
+            import('../src/utils/getLocaleMappingByProjectId').then((moduleName) => {
+                expect(moduleName.getLocaleMappingByProjectId('film-db')).toEqual({
                     default: false,
                     locale: 'no',
                     project: 'film-db',
@@ -142,13 +142,13 @@ describe('utils', () => {
             });
         });
 
-        it('returns default ProjectLocaleConfig when projectId param is missing', () => {
+        it('returns default LocaleMapping when projectId param is missing', () => {
 
             setupServerEnv({
                 [ENV_VARS.MAPPINGS]: 'en:moviedb/site,no:film-db/omraade'
             });
-            import('../src/utils/getProjectLocaleConfigById').then((moduleName) => {
-                expect(moduleName.getProjectLocaleConfigById()).toEqual({
+            import('../src/utils/getLocaleMappingByProjectId').then((moduleName) => {
+                expect(moduleName.getLocaleMappingByProjectId()).toEqual({
                     default: true,
                     locale: 'en',
                     project: 'moviedb',
@@ -156,13 +156,13 @@ describe('utils', () => {
                 });
             });
         });
-    }); // describe getProjectLocaleConfigById
+    }); // describe getLocaleMappingById
 
-    describe('getProjectLocaleConfigByLocale', () => {
-        it('returns correct ProjectLocaleConfig', () => {
+    describe('getLocaleMappingByLocale', () => {
+        it('returns correct LocaleMapping', () => {
 
-            import('../src/utils/getProjectLocaleConfigByLocale').then((moduleName) => {
-                expect(moduleName.getProjectLocaleConfigByLocale('no')).toEqual({
+            import('../src/utils/getLocaleMappingByLocale').then((moduleName) => {
+                expect(moduleName.getLocaleMappingByLocale('no')).toEqual({
                     default: false,
                     locale: 'no',
                     project: 'film-db',
@@ -170,17 +170,17 @@ describe('utils', () => {
                 });
             });
         });
-    }); // describe getProjectLocaleConfigByLocale
+    }); // describe getLocaleMappingByLocale
 
-    describe('getProjectLocaleConfigs', () => {
+    describe('getLocaleMappings', () => {
         it('throws when ENONIC_MAPPINGS is missing', () => {
 
             setupServerEnv({
                 [ENV_VARS.MAPPINGS]: undefined
             });
 
-                expect(import('../src/utils/getProjectLocaleConfigs')
-                    .then(moduleName => moduleName.getProjectLocaleConfigs()))
+            expect(import('../src/utils/getLocaleMappings')
+                .then(moduleName => moduleName.getLocaleMappings()))
                     .rejects.toThrow(Error("Environment variable 'ENONIC_MAPPINGS' is missing (from .env?)"));
             }
         );
@@ -190,8 +190,8 @@ describe('utils', () => {
                 [ENV_VARS.MAPPINGS]: 'sv:project/site,,prosjekt/omraade'
             });
 
-            import('../src/utils/getProjectLocaleConfigs').then((moduleName) => {
-                expect(() => moduleName.getProjectLocaleConfigs()).toThrow(Error(
+            import('../src/utils/getLocaleMappings').then((moduleName) => {
+                expect(() => moduleName.getLocaleMappings()).toThrow(Error(
                     `Project "prosjekt/omraade" doesn't match format: <default-language>:<default-repository-name>/<default-site-path>,<language>:<repository-name>/<site-path>`
                 ));
             });
@@ -202,8 +202,8 @@ describe('utils', () => {
                 [ENV_VARS.MAPPINGS]: 'en:project/site,no:prosjekt/omraade'
             });
 
-            import('../src/utils/getProjectLocaleConfigs').then((moduleName) => {
-                expect(moduleName.getProjectLocaleConfigs()).toEqual({
+            import('../src/utils/getLocaleMappings').then((moduleName) => {
+                expect(moduleName.getLocaleMappings()).toEqual({
                     en: {
                         default: true,
                         locale: 'en',
@@ -221,11 +221,11 @@ describe('utils', () => {
         });
     });
 
-    describe('getProjectLocales', () => {
+    describe('getAllLocales', () => {
         it('returns the correct locales', () => {
 
-            import('../src/utils/getProjectLocales').then((moduleName) => {
-                expect(moduleName.getProjectLocales()).toEqual(['en', 'no']);
+            import('../src/utils/getAllLocales').then((moduleName) => {
+                expect(moduleName.getAllLocales()).toEqual(['en', 'no']);
             });
         });
     });

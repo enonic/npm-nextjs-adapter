@@ -13,7 +13,7 @@ import {
 } from '../common/constants';
 import {APP_NAME, APP_NAME_DASHED, IS_DEV_MODE} from '../common/env';
 import {getContentApiUrl} from '../utils/getContentApiUrl';
-import {getProjectLocaleConfig} from '../utils/getProjectLocaleConfig';
+import {getLocaleMapping} from '../utils/getLocaleMapping';
 import {getRenderMode} from '../utils/getRenderMode';
 import {getXpBaseUrl} from '../utils/getXpBaseUrl';
 import {getRequestLocaleInfo} from '../utils/getRequestLocaleInfo';
@@ -64,13 +64,13 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
     });
     const xpBaseUrl = getXpBaseUrl(context);
     const contentApiUrl = getContentApiUrl(context);
-    const projectConfig = getProjectLocaleConfig(context);
+    const mapping = getLocaleMapping(context);
     const renderMode = getRenderMode(context);
     let requestType = XP_REQUEST_TYPE.TYPE;
     const requestContentPath = getCleanContentPathArrayOrThrow400(context.contentPath);
     const errorResponse = buildErrorResponse(requestType, renderMode, contentApiUrl, xpBaseUrl, locale, defaultLocale, requestContentPath);
 
-    UrlProcessor.setSiteKey(projectConfig.site);
+    UrlProcessor.setSiteKey(mapping.site);
 
     try {
         const [siteRelativeContentPath, componentPath] = getContentAndComponentPaths(requestContentPath);
@@ -80,7 +80,7 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
         }
 
         // /////////////  FIRST GUILLOTINE CALL FOR METADATA     /////////////////
-        const metaResult = await fetchMetaData(contentApiUrl, '${site}/' + siteRelativeContentPath, projectConfig, outHeaders);
+        const metaResult = await fetchMetaData(contentApiUrl, '${site}/' + siteRelativeContentPath, mapping, outHeaders);
         // ///////////////////////////////////////////////////////////////////////
 
         const {_path, type} = metaResult.meta || {};
@@ -166,7 +166,7 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
         }
 
         // ///////////////    SECOND GUILLOTINE CALL FOR DATA   //////////////////////
-        const contentResults = await fetchContentData(contentApiUrl, contentPath, projectConfig, query, variables, outHeaders);
+        const contentResults = await fetchContentData(contentApiUrl, contentPath, mapping, query, variables, outHeaders);
         // ///////////////////////////////////////////////////////////////////////////
 
         if (contentResults.error) {

@@ -1,7 +1,7 @@
 import type {ContentPathItem} from '../types';
 
 import {GET_STATIC_PATHS_QUERY} from '../common/constants';
-import {getProjectLocaleConfigs} from '../utils/getProjectLocaleConfigs';
+import {getLocaleMappings} from '../utils/getLocaleMappings';
 import {fetchContentPathsForLocale} from './fetchContentPathsForLocale';
 
 
@@ -10,7 +10,7 @@ export async function fetchContentPathsForAllLocales(
     query: string = GET_STATIC_PATHS_QUERY,
     countPerLocale = 999,
 ): Promise<ContentPathItem[]> {
-    const promises = Object.values(getProjectLocaleConfigs()).map(
+    const promises = Object.values(getLocaleMappings()).map(
         config => fetchContentPathsForLocale(
             path, config, query, countPerLocale,
         ),
