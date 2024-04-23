@@ -873,7 +873,7 @@ const locale = I18n.getLocale();
 
 #### `static I18n.getDictionary(): Dict`
 
-Returns the dictionary for the currently set locale.
+Returns dictionary for the current locale.
 
 Usage:
 
