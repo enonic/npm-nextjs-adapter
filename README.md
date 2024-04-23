@@ -598,7 +598,7 @@ Helper singleton for processing URLs.
 Processes the absolute URL to become relative for the current viewer, while keeping in mind Next.js assets and Enonic XP binary content
 links
 
-> **NOTE:** There is a convenience aliases to this function called [getUrl()](#get-url) and [getAsset()](#get-asset)
+> **NOTE:** There are convenience aliases to this function called [getUrl()](#get-url) and [getAsset()](#get-asset)
 
 | Argument     | Description                                                                  |
 |--------------|------------------------------------------------------------------------------|
