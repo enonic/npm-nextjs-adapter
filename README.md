@@ -859,7 +859,7 @@ const localizedText = I18n.localize('text.key', 'value1', 'value2');
 
 #### `static I18n.getLocale(): string`
 
-Returns currently set locale.
+Returns the current locale.
 
 Usage:
 
