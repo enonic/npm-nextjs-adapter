@@ -220,7 +220,7 @@ const contentPaths = fetchContentPathsForLocale('/', 'custom graphql query', 100
 #### `fetchContentPathsForLocale(path: string, mapping: LocaleMapping, query?: string, count?: number) => Promise<ContentPathItem[]>`
 
 Loads all content paths for the current locale. Generally used for static site generation.
-Used by the Used by the [fetchContentPathsForAllLocales()](#fetch-paths-for-all-locales)
+Used by [fetchContentPathsForAllLocales()](#fetch-paths-for-all-locales)
 
 | Argument  | Description                                                                                         |
 |-----------|-----------------------------------------------------------------------------------------------------|
