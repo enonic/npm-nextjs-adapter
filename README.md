@@ -306,7 +306,7 @@ They are available at `@enonic/nextjs-adapter`
 
 #### <a id="get-url"></a>`getUrl(url: string, meta: MetaData) => string`
 
-Converts a site-relative or absolute URL to the relative one for current viewer (Next.js/Enonic XP). Also takes care of locale if needed.
+Converts a site-relative or absolute URL to relative one for current viewer (Next.js/Enonic XP). Also takes care of locale if needed.
 
 > **INFO:** For your URLs to work both in Enonic XP and Next.js you need to:
 > 1. Query site-relative or absolute URLs from guillotine
