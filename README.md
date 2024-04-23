@@ -15,7 +15,7 @@ All functions and views are split into 4 categories by usage:
 - `@enonic/nextjs-adapter` -- can be used both on server and client sides
 - `@enonic/nextjs-adapter/server` -- can only be used on server side
 - `@enonic/nextjs-adapter/client` -- can only be used on client side
-- `@enonic/nextjs-adapter/views/...` -- views folder, every view has own file and is default export
+- `@enonic/nextjs-adapter/views/...` -- views folder, every view has its own file with a default export
 
 Here's the usage example in your project:
 
