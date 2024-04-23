@@ -189,7 +189,7 @@ const result = fetchFromApi(apiUrl, mapping, opts);
 
 #### <a id="fetch-paths-for-all-locales"></a>`fetchContentPathsForAllLocales(path: string, query?: string, count?: number) => Promise<ContentPathItem[]>`
 
-Loads all content paths for all locals. Generally used for static site generation.
+Loads all content paths for all locales. Generally used for static site generation.
 
 | Argument | Description                                       |
 |----------|---------------------------------------------------|
