@@ -340,7 +340,7 @@ describe('utils', () => {
             });
         });
 
-        it('uses accept-language when both context header content-studio-project and locale is missing', () => {
+        it('does not use accept-language header when both content-studio-project header and locale is missing', () => {
 
             setupServerEnv({
                 [ENV_VARS.MAPPINGS]: 'en:moviedb/hmdb,no:film-db/hmdb'
@@ -363,7 +363,7 @@ describe('utils', () => {
                     contentPath: '/content/path',
                 } as Context;
                 expect(moduleName.getRequestLocaleInfo(context)).toEqual({
-                    locale: 'no',
+                    locale: 'en',
                     locales: ['en', 'no'],
                     defaultLocale: 'en'
                 });
