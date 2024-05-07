@@ -7,6 +7,10 @@ export const getShortcutQuery = `
             target {
               pageUrl(type: absolute)
             }
+            parameters {
+              name
+              value
+            }
           }
         }
       }
