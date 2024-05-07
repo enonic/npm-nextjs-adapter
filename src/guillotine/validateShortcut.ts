@@ -9,7 +9,9 @@ import {UrlProcessor} from '../common/UrlProcessor';
 
 export function validateShortcut(props: FetchContentResult): void {
     const {data, meta, error} = props;
-    const pageUrl = data?.get?.data?.target?.pageUrl;
+    const dataObj = data?.get?.data;
+    const pageUrl = dataObj?.target?.pageUrl;
+    const parameters = dataObj?.parameters;
     if (meta.type === 'base:shortcut' && pageUrl) {
         if (meta.renderMode !== RENDER_MODE.NEXT) {
             // do not show shortcut targets in preview/edit mode
@@ -17,7 +19,11 @@ export function validateShortcut(props: FetchContentResult): void {
             notFound();
         }
 
-        const destination = UrlProcessor.process(pageUrl, meta, true);
+        let destination = UrlProcessor.process(pageUrl, meta, true);
+        if (parameters) {
+            const searchParams = parameters.map(({name, value}) => `${encodeURIComponent(name)}=${encodeURIComponent(value)}`).join('&');
+            destination += '?' + searchParams;
+        }
         console.debug(`Redirecting shortcut content [${meta.path}] to`, destination);
         redirect(destination, RedirectType.replace);
     }
