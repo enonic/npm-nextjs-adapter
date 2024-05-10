@@ -15,7 +15,7 @@ export function validateShortcut(props: FetchContentResult): void {
     if (meta.type === 'base:shortcut' && pageUrl) {
         if (meta.renderMode !== RENDER_MODE.NEXT) {
             // do not show shortcut targets in preview/edit mode
-            console.warn(404, `Shortcuts are not available in ${RENDER_MODE.NEXT} render mode`);
+            console.warn(404, `Shortcuts are not available in ${meta.renderMode} render mode`);
             notFound();
         }
 

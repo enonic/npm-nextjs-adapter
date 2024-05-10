@@ -4,7 +4,7 @@ import type {FetchContentResult} from '../../src';
 import {afterEach, beforeEach, describe, expect, jest, test as it} from '@jest/globals';
 import {setupServerEnv} from '../constants';
 import {RENDER_MODE, XP_COMPONENT_TYPE, XP_REQUEST_TYPE} from '../../src/common/constants';
-
+import {RedirectType} from 'next/navigation';
 
 globalThis.console = {
     // error: console.error,
@@ -16,20 +16,9 @@ globalThis.console = {
 } as unknown as Console;
 
 
-const OLD_ENV = process.env;
-
 const notFound = jest.fn();
 const redirect = jest.fn();
 
-const data = {
-    get: {
-        data: {
-            target: {
-                pageUrl: '/site/playground/2-column-test'
-            }
-        }
-    }
-};
 
 describe('guillotine', () => {
 
@@ -85,8 +74,8 @@ describe('guillotine', () => {
                 common: null,
                 data: null,
                 error: {
-                   code: '404',
-                   message: 'Not Found'
+                    code: '404',
+                    message: 'Not Found'
                 },
                 meta: {
                     type: '',
@@ -115,8 +104,8 @@ describe('guillotine', () => {
                 common: null,
                 data: null,
                 error: {
-                   code: 'NOT404',
-                   message: 'Error message'
+                    code: 'NOT404',
+                    message: 'Error message'
                 },
                 meta: {
                     type: '',
@@ -139,7 +128,7 @@ describe('guillotine', () => {
             });
         });
 
-        it('calls next/navigation.notFound and redirect when meta.renderMode not next', () => {
+        it('calls next/navigation.notFound and redirect when meta.type is base:shortcut and meta.renderMode is not next', () => {
             const pageComponent = {
                 type: XP_COMPONENT_TYPE.PAGE,
                 path: '/site/playground/2-column-test'
@@ -176,6 +165,60 @@ describe('guillotine', () => {
                 moduleName.validateData(fetchContentResult);
                 expect(notFound).toHaveBeenCalled();
                 expect(redirect).toHaveBeenCalled();
+            });
+        });
+
+        it('calls redirect when meta.type is base:shortcut and meta.renderMode is next', () => {
+            const pageComponent = {
+                type: XP_COMPONENT_TYPE.PAGE,
+                path: '/site/playground/2-column-test'
+            };
+            const fetchContentResult = {
+                data: {
+                    get: {
+                        data: {
+                            target: {
+                                pageUrl: '/redirect/page'
+                            },
+                            parameters: [
+                                {
+                                    name: 'intValue',
+                                    value: 1,
+                                },
+                                {
+                                    name: 'boolValue',
+                                    value: true,
+                                },
+                                {
+                                    name: 'strValue',
+                                    value: 'string',
+                                }
+                            ]
+                        }
+                    }
+                },
+                common: {},
+                meta: {
+                    type: 'base:shortcut',
+                    path: '/site/playground/2-column-test',
+                    requestType: XP_REQUEST_TYPE.PAGE,
+                    renderMode: RENDER_MODE.NEXT,
+                    requestedComponent: pageComponent,
+                    canRender: true,
+                    catchAll: false,
+                    apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
+                    baseUrl: 'http://localhost:8080/site',
+                    locale: 'no',
+                    defaultLocale: 'en',
+                },
+                page: pageComponent
+            };
+            import('../../src').then((moduleName) => {
+                expect(notFound).not.toHaveBeenCalled();
+                expect(redirect).not.toHaveBeenCalled();
+                moduleName.validateData(fetchContentResult);
+                expect(notFound).not.toHaveBeenCalled();
+                expect(redirect).toHaveBeenCalledWith("/no/redirect/page?intValue=1&boolValue=true&strValue=string", RedirectType.replace);
             });
         });
 
