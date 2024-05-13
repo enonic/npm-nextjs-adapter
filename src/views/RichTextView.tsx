@@ -3,16 +3,15 @@ import type {MetaData, Replacer, ReplacerResult, RichTextData, RichTextViewProps
 
 
 import {getUrl, UrlProcessor} from '../common/UrlProcessor';
-import HTMLReactParser, {DOMNode} from 'html-react-parser';
+import HTMLReactParser, {DOMNode, domToReact} from 'html-react-parser';
 import {ElementType} from 'domelementtype';
 import BaseMacro from './BaseMacro';
 import Link from 'next/link';
-import {Text} from 'domhandler';
 
 
 export function createReplacer(allData: RichTextData, meta: MetaData, renderMacroInEditMode = true, customReplacer?: Replacer): (domNode: DOMNode) => ReplacerResult {
     // eslint-disable-next-line react/display-name
-    return (domNode: DOMNode): ReplacerResult => {
+    const replacerFn = (domNode: DOMNode): ReplacerResult => {
         if (domNode.type !== ElementType.Tag) {
             return domNode;
         }
@@ -41,8 +40,8 @@ export function createReplacer(allData: RichTextData, meta: MetaData, renderMacr
                 const href = el.attribs['href'];
 
                 if (ref && href) {
-                    const textChild = el.children?.find(c => c.type === ElementType.Text) as Text;
-                    return <Link href={getUrl(href, meta)}>{textChild?.data}</Link>;
+                    const domNodes = el.children as DOMNode[];
+                    return <Link href={getUrl(href, meta)}>{domToReact(domNodes, {replace: replacerFn})}</Link>;
                 }
                 break;
             case UrlProcessor.MACRO_TAG:
@@ -63,6 +62,7 @@ export function createReplacer(allData: RichTextData, meta: MetaData, renderMacr
         }
         return el;
     };
+    return replacerFn;
 }
 
 const RichTextView = ({className, tag, data, meta, renderMacroInEditMode, customReplacer}: RichTextViewProps) => {
