@@ -1,8 +1,5 @@
 import {DOMNode} from 'html-react-parser';
-import type {
-    RENDER_MODE,
-    XP_REQUEST_TYPE,
-} from '../common/constants';
+import type {RENDER_MODE, XP_REQUEST_TYPE} from '../common/constants';
 import type {
     FragmentData,
     LayoutData,
@@ -130,7 +127,7 @@ export type Replacer = (
     renderMacroInEditMode: boolean
 ) => ReplacerResult;
 
-export type ReplacerResult = JSX.Element | object | void | undefined | null | false;
+export type ReplacerResult = JSX.Element | DOMNode;
 
 export interface RichTextViewProps {
     data: RichTextData
