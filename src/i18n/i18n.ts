@@ -4,17 +4,20 @@ import type {Dict} from '../types';
 export class I18n {
     private static locale = '';
     private static dictionary: Dict = {};
+    private static isLoaded = false;
 
     public static async setLocale(locale: string): Promise<Dict> {
         this.locale = locale;
+        this.isLoaded = false;
         return loadPhrases(locale).then((phrases) => {
             this.dictionary = phrases;
+            this.isLoaded = true;
             return phrases;
         });
     }
 
     public static localize(key: string, ...args: any[]): string {
-        return getPhrase(this.locale, this.dictionary, key, ...args);
+        return this.isLoaded ? getPhrase(this.locale, this.dictionary, key, ...args) : key;
     }
 
     public static getLocale() {
