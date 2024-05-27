@@ -23,11 +23,14 @@ export const LocaleContextProvider = ({
 }) => {
     const [currentLocale, setLocaleState] = useState(localeProps);
     const [dictionary, setPhrasesState] = useState<Dict>({});
+    const [isLoaded, setLoadedState] = useState(false);
 
     const setLocale = async (locale: string): Promise<Dict> => {
         setLocaleState(locale);
+        setLoadedState(false);
         return loadPhrases(locale).then((phrases) => {
             setPhrasesState(phrases);
+            setLoadedState(true);
             return phrases;
         });
     };
@@ -38,7 +41,9 @@ export const LocaleContextProvider = ({
         }
     }, []);
 
-    const localize = (key: string, ...args: any[]) => getPhrase(currentLocale, dictionary, key, ...args);
+    const localize = (key: string, ...args: any[]) => {
+        return isLoaded ? getPhrase(currentLocale, dictionary, key, ...args) : key;
+    };
 
     return (
         <LocaleContext.Provider value={{
