@@ -1,5 +1,5 @@
 import {afterEach, describe, expect, jest, test as it} from '@jest/globals';
-import {ENONIC_APP_NAME, setupClientEnv} from './constants';
+import {ENONIC_APP_NAME, setupClientEnv, META} from './constants';
 
 
 globalThis.console = {
@@ -46,6 +46,16 @@ describe('index (CLIENT)', () => {
 
             expect(import('../src'))
                 .rejects.toThrow(Error("Environment variable 'NEXT_PUBLIC_ENONIC_API' is missing (from .env?)"));
+        }
+    );
+
+    it('should process urls same way as on the server (CLIENT)', () => {
+
+            setupClientEnv();
+
+            import('../src').then(({UrlProcessor}) => {
+                expect(UrlProcessor.process('https://localhost:8080/some/test/url', META)).toEqual('/site/inline/enonic-homepage/draft/some/test/url');
+            });
         }
     );
 }); // describe index

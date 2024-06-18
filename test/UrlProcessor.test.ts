@@ -1,8 +1,8 @@
 import type {ImageData, LinkData, MetaData} from '../src/types';
 
 import {beforeAll, describe, expect, jest, test as it} from '@jest/globals';
-import {RENDER_MODE, XP_COMPONENT_TYPE, XP_REQUEST_TYPE} from '../src/common/constants';
-import {setupServerEnv,} from './constants';
+import {RENDER_MODE} from '../src/common/constants';
+import {setupServerEnv, META} from './constants';
 
 
 const warn = jest.fn();
@@ -16,26 +16,6 @@ globalThis.console = {
     debug: console.debug,
     // debug: jest.fn(),
 } as unknown as Console;
-
-
-const pageComponent = {
-    type: XP_COMPONENT_TYPE.PAGE,
-    path: '/site/playground/2-column-test'
-};
-
-const META: MetaData = {
-    type: 'base:shortcut',
-    path: '/site/playground/2-column-test',
-    requestType: XP_REQUEST_TYPE.PAGE,
-    renderMode: RENDER_MODE.EDIT,
-    requestedComponent: pageComponent,
-    canRender: true,
-    catchAll: false,
-    apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
-    baseUrl: '/site/inline/enonic-homepage/draft',
-    locale: 'no',
-    defaultLocale: 'en',
-};
 
 describe('UrlProcessor', () => {
 
@@ -181,10 +161,13 @@ describe('UrlProcessor', () => {
 
 
     describe('getAsset', () => {
-        it("returns baseurl when url is empty", () => {
+        it("returns asset url without language prefix", () => {
             import('../src').then(({getAsset}) => {
-                const url = '';
-                expect(getAsset(url, META)).toEqual('/site/inline/enonic-homepage/draft/');
+                const url = '/images/image.jpg';
+                expect(getAsset(url, {
+                    ...META,
+                    renderMode: RENDER_MODE.NEXT
+                })).toEqual('/site/inline/enonic-homepage/draft/images/image.jpg');
             });
         });
     });
@@ -208,15 +191,15 @@ describe('UrlProcessor', () => {
             expected: 'http://localhost:8080/site/path',
             meta: false as unknown as MetaData,
         }, {
-            url: '_/image/1234',
-            expected: '_/image/1234',
+            url: 'http://localhost:8080/site/_/image/1234',
+            expected: 'http://localhost:8080/site/_/image/1234',
             meta: {
                 ...META,
                 renderMode: RENDER_MODE.NEXT,
             }
         }, {
-            url: '_/attachment/1234',
-            expected: '_/attachment/1234',
+            url: 'http://localhost:8080/site/_/attachment/1234',
+            expected: 'http://localhost:8080/site/_/attachment/1234',
             meta: {
                 ...META,
                 renderMode: RENDER_MODE.NEXT,
@@ -239,7 +222,17 @@ describe('UrlProcessor', () => {
         }, {
             url: 'http://localhost:8080/site/path',
             expected: '/site/inline/enonic-homepage/draft/path',
-            meta: META
+            meta: {
+                ...META,
+                apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
+            }
+        }, {
+            url: 'http://localhost:8080/simon',
+            expected: '/site/inline/enonic-homepage/draft/simon',
+            meta: {
+                ...META,
+                apiUrl: 'https://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
+            }
         }].forEach(({url, expected, meta}) => {
             it(`should return ${expected} when url is ${url}`, () => {
                 import('../src').then(({UrlProcessor}) => {

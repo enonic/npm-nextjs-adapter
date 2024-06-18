@@ -4,8 +4,8 @@ import type {ImageData, LinkData, MetaData} from '../types';
 import {RENDER_MODE} from './constants';
 import {fixDoubleSlashes} from '../utils/fixDoubleSlashes';
 import {getLocaleMappingByProjectId} from '../utils/getLocaleMappingByProjectId';
-import {commonChars} from '../utils/commonChars';
 import {addBasePath} from 'next/dist/client/add-base-path';
+import {parseUrl} from 'next/dist/shared/lib/router/utils/parse-url';
 
 
 export class UrlProcessor {
@@ -43,9 +43,9 @@ export class UrlProcessor {
             const apiUrl = this.getApiUrl(meta);
             normalUrl = this.stripApiUrl(url, apiUrl);
         }
-        
+
         const baseUrl = meta?.baseUrl && meta?.baseUrl !== '/' ? meta.baseUrl : '';
-        
+
         let result: string;
         if (meta.renderMode === RENDER_MODE.NEXT) {
             // only add basePath and locale in next mode
@@ -100,11 +100,31 @@ export class UrlProcessor {
 
     private static stripApiUrl(url: string, apiUrl: string): string {
         // normalise localhost-127.0.0.1 if present in urls
-        const normalUrl = url.replace(this.localhostPattern, '127.0.0.1');
-        const normalApiUrl = apiUrl.replace(this.localhostPattern, '127.0.0.1');
-        const common = commonChars(normalUrl, normalApiUrl);
-        const remaining = common.length > 0 ? normalUrl.substring(common.length) : normalUrl;
-        return (remaining.length > 0 && remaining.charAt(0) === '/') ? remaining.substring(1) : remaining;
+        const normalUrl = parseUrl(url.replace(this.localhostPattern, '127.0.0.1'));
+        const normalApiUrl = parseUrl(apiUrl.replace(this.localhostPattern, '127.0.0.1'));
+
+        // WARNING! disregarding the protocol (http/https)
+
+        if (normalUrl.hostname !== normalApiUrl.hostname
+            || normalUrl.port !== normalApiUrl.port) {
+            // can't strip apiUrl if hostnames or ports are different
+            return url;
+        }
+
+        const urlPathCrumbs = normalUrl.pathname.split('/');
+        const apiUrlPathCrumbs = normalApiUrl.pathname.split('/');
+        for (let i = 0; i < Math.min(apiUrlPathCrumbs.length, urlPathCrumbs.length);) {
+            const urlPathCrumb = urlPathCrumbs[i];
+            const apiUrlPathCrumb = apiUrlPathCrumbs[i];
+            if (urlPathCrumb === apiUrlPathCrumb) {
+                urlPathCrumbs.shift();
+                apiUrlPathCrumbs.shift();
+            } else {
+                i++;
+            }
+        }
+
+        return `/${urlPathCrumbs.join('/')}` + normalUrl.search + normalUrl.hash;
     }
 
     private static isAttachmentUrl(url: string): boolean {
