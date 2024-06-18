@@ -1060,6 +1060,7 @@ export async function fetchContentPathsForLocale(path: string, config: LocalePro
         query,
         variables: {
             path,
+            pathRegex: `/content${config.site}/*`,
             count,
         },
     };

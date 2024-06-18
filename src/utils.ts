@@ -61,7 +61,7 @@ export const DEFAULT_LOCALE_HEADER = 'default-locale';
  * - media
  * - paths with '/_' in them
  */
-export const GET_STATIC_PATHS_QUERY = `query ($count: Int) {
+export const GET_STATIC_PATHS_QUERY = `query ($pathRegex: String!, $count: Int) {
   guillotine {
     queryDsl(
       first: $count,
@@ -69,11 +69,17 @@ export const GET_STATIC_PATHS_QUERY = `query ($count: Int) {
         field: "modifiedTime",
         direction: DESC     
       }
-      query: {boolean: {mustNot: [
-        {in: {field: "type", stringValues: ["base:folder", "base:shortcut"]}}
-        {like: {field: "type", value: "media:*"}}
-        {like: {field: "_path", value: "*/_*"}}
-      ]}}
+        query: {
+            boolean: {
+                mustNot: [
+                    {in: {field: "type", stringValues: ["base:shortcut", "portal:fragment", "portal:template-folder", "portal:page-template"]}}
+                    {like: {field: "type", value: "media:*"}}
+                ]
+                must: [
+                    {like: {field:"_path", value: $pathRegex}}
+                ]
+            }
+        }
     ) {
       _name
       _path
