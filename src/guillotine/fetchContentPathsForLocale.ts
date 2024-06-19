@@ -20,6 +20,7 @@ export async function fetchContentPathsForLocale(
         query,
         variables: {
             path,
+            pathRegex: `/content${config.site}/*`,
             count,
         },
     };
