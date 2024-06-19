@@ -42,6 +42,11 @@ export class UrlProcessor {
             // NB: will fail if content api is not on the same domain as enonic xp
             const apiUrl = this.getApiUrl(meta);
             normalUrl = this.stripApiUrl(url, apiUrl);
+
+            // if url is still absolute, return it as is
+            if (!this.isRelative(normalUrl)) {
+                return normalUrl;
+            }
         }
 
         const baseUrl = meta?.baseUrl && meta?.baseUrl !== '/' ? meta.baseUrl : '';

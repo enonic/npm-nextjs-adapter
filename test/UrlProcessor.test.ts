@@ -233,6 +233,13 @@ describe('UrlProcessor', () => {
                 ...META,
                 apiUrl: 'https://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
             }
+        }, {
+            url: 'https://google.com',
+            expected: 'https://google.com',
+            meta: {
+                ...META,
+                apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
+            }
         }].forEach(({url, expected, meta}) => {
             it(`should return ${expected} when url is ${url}`, () => {
                 import('../src').then(({UrlProcessor}) => {
