@@ -62,7 +62,7 @@
     "@edge-runtime/jest-environment": "^3.0.1",
     "@enonic-types/core": "^7.14.3",
     "@enonic/eslint-config": "^1.2.1",
-    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.0.0",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^20.14.11",
