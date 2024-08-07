@@ -2,7 +2,6 @@ import type {ComponentDescriptor, Context, FetchContentResult} from '../types';
 
 import {draftMode, headers} from 'next/headers';
 import {ComponentRegistry} from '../common/ComponentRegistry';
-import {UrlProcessor} from '../common/UrlProcessor';
 import {
     FRAGMENT_CONTENTTYPE_NAME,
     PAGE_TEMPLATE_CONTENTTYPE_NAME,
@@ -69,8 +68,6 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
     let requestType = XP_REQUEST_TYPE.TYPE;
     const requestContentPath = getCleanContentPathArrayOrThrow400(context.contentPath);
     const errorResponse = buildErrorResponse(requestType, renderMode, contentApiUrl, xpBaseUrl, locale, defaultLocale, requestContentPath);
-
-    UrlProcessor.setSiteKey(mapping.site);
 
     try {
         const [siteRelativeContentPath, componentPath] = getContentAndComponentPaths(requestContentPath);

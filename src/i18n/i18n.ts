@@ -1,4 +1,6 @@
 import type {Dict} from '../types';
+import {getLocaleMappingByLocale} from '../utils/getLocaleMappingByLocale';
+import {UrlProcessor} from '../common/UrlProcessor';
 
 
 export class I18n {
@@ -9,6 +11,10 @@ export class I18n {
     public static async setLocale(locale: string): Promise<Dict> {
         this.locale = locale;
         this.isLoaded = false;
+
+        const mapping = getLocaleMappingByLocale(locale);
+        UrlProcessor.setSiteKey(mapping.site);
+
         return loadPhrases(locale).then((phrases) => {
             this.dictionary = phrases;
             this.isLoaded = true;

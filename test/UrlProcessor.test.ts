@@ -247,6 +247,23 @@ describe('UrlProcessor', () => {
                 });
             });
         });
+        it("should not cut out site name from url if siteKey is not set", () => {
+            import('../src').then(({UrlProcessor}) => {
+                expect(UrlProcessor.process('http://localhost:8080/site/homepage/simon', {
+                    ...META,
+                    apiUrl: 'http://localhost:8080/site'
+                })).toEqual('/site/inline/enonic-homepage/draft/homepage/simon');
+            });
+        })
+        it("should cut out site name from url if siteKey is set", () => {
+            import('../src').then(({UrlProcessor}) => {
+                UrlProcessor.setSiteKey('homepage');
+                expect(UrlProcessor.process('http://localhost:8080/site/homepage/simon', {
+                    ...META,
+                    apiUrl: 'http://localhost:8080/site'
+                })).toEqual('/site/inline/enonic-homepage/draft/simon');
+            });
+        })
     }); // process
 
     describe('processSrcSet', () => {
