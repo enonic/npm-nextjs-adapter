@@ -3,6 +3,8 @@ import type {Dict, LocaleContextType} from '../types';
 
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import {getPhrase, loadPhrases} from './i18n';
+import {getLocaleMappingByLocale} from '../utils/getLocaleMappingByLocale';
+import {UrlProcessor} from '../common/UrlProcessor';
 
 
 const LocaleContext = createContext<LocaleContextType>({
@@ -28,6 +30,10 @@ export const LocaleContextProvider = ({
     const setLocale = async (locale: string): Promise<Dict> => {
         setLocaleState(locale);
         setLoadedState(false);
+
+        const mapping = getLocaleMappingByLocale(locale);
+        UrlProcessor.setSiteKey(mapping.site);
+
         return loadPhrases(locale).then((phrases) => {
             setPhrasesState(phrases);
             setLoadedState(true);
