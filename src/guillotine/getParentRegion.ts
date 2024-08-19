@@ -1,13 +1,8 @@
-import type {
-    PageComponent,
-    PageRegion,
-    PathFragment,
-    RegionTree,
-} from '../types';
+import type {PageComponent, PageRegion, PathFragment, RegionTree} from '../types';
 
 
 import {XP_COMPONENT_TYPE} from '../common/constants';
-import {prefixLayoutPath} from './prefixLayoutPath';
+import {prefixFragmentCmpPath} from './prefixFragmentCmpPath';
 
 
 export function getParentRegion(
@@ -43,7 +38,7 @@ export function getParentRegion(
             // look for layouts inside if this is not the last path fragment
 
             const layout = components.find((cmp: PageComponent) => {
-                return cmp.type === XP_COMPONENT_TYPE.LAYOUT && prefixLayoutPath(contentType, cmp.path) === parentPath;
+                return cmp.type === XP_COMPONENT_TYPE.LAYOUT && prefixFragmentCmpPath(contentType, cmp.path) === parentPath;
             });
             if (!layout) {
                 throw `Layout [${parentPath}] not found among components, but needed for component [${JSON.stringify(cmpPath, null, 2)}]`;

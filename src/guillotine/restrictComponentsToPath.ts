@@ -3,6 +3,7 @@ import type {PageComponent} from '../types';
 
 import {XP_COMPONENT_TYPE} from '../common/constants';
 import {parseComponentPath} from './parseComponentPath';
+import {prefixFragmentCmpPath} from './prefixFragmentCmpPath';
 
 
 export function restrictComponentsToPath(
@@ -29,7 +30,9 @@ export function restrictComponentsToPath(
         const cmpPath = parseComponentPath(contentType, component.path);
         for (let i = cmpPath.length - 2; i >= 0; i--) {
             const parentPath = cmpPath[i];
-            const parentCmp = components.find(cmp => cmp.path === `/${parentPath.region}/${parentPath.index}`);
+            const parentCmp = components.find(cmp => {
+                return prefixFragmentCmpPath(contentType, cmp.path) === `/${parentPath.region}/${parentPath.index}`;
+            });
             if (parentCmp) {
                 result.unshift(parentCmp);
             }

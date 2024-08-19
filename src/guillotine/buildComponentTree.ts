@@ -1,13 +1,7 @@
-import type {
-    PageComponent,
-    RegionTree,
-} from '../types';
+import type {PageComponent, RegionTree} from '../types';
 
 
-import {
-    FRAGMENT_CONTENTTYPE_NAME,
-    XP_COMPONENT_TYPE,
-} from '../common/constants';
+import {FRAGMENT_CONTENTTYPE_NAME, XP_COMPONENT_TYPE} from '../common/constants';
 import {parseComponentPath} from './parseComponentPath';
 import {getParentRegion} from './getParentRegion';
 
