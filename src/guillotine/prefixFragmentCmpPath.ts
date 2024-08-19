@@ -1,10 +1,7 @@
-import {
-    FRAGMENT_CONTENTTYPE_NAME,
-    FRAGMENT_DEFAULT_REGION_NAME,
-} from '../common/constants';
+import {FRAGMENT_CONTENTTYPE_NAME, FRAGMENT_DEFAULT_REGION_NAME} from '../common/constants';
 
 
-export function prefixLayoutPath(contentType: string, path: string): string {
+export function prefixFragmentCmpPath(contentType: string, path: string): string {
     if (contentType !== FRAGMENT_CONTENTTYPE_NAME) {
         return path;
     } else {
