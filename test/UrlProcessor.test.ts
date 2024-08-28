@@ -247,21 +247,36 @@ describe('UrlProcessor', () => {
                 });
             });
         });
-        it("should not cut out site name from url if siteKey is not set", () => {
+        it("should not cut out site name from absolute url if site differs from one from locale mapping", () => {
             import('../src').then(({UrlProcessor}) => {
-                expect(UrlProcessor.process('http://localhost:8080/site/homepage/simon', {
+                expect(UrlProcessor.process('http://localhost:8080/site/nettsteder/simon', {
                     ...META,
                     apiUrl: 'http://localhost:8080/site'
-                })).toEqual('/site/inline/enonic-homepage/draft/homepage/simon');
+                })).toEqual('/site/inline/enonic-homepage/draft/nettsteder/simon');
             });
         })
-        it("should cut out site name from url if siteKey is set", () => {
+        it("should cut out site name from absolute url if it equals one from locale mapping", () => {
             import('../src').then(({UrlProcessor}) => {
-                UrlProcessor.setSiteKey('homepage');
-                expect(UrlProcessor.process('http://localhost:8080/site/homepage/simon', {
+                expect(UrlProcessor.process('http://localhost:8080/site/nettsted/don/simon', {
                     ...META,
                     apiUrl: 'http://localhost:8080/site'
-                })).toEqual('/site/inline/enonic-homepage/draft/simon');
+                })).toEqual('/site/inline/enonic-homepage/draft/don/simon');
+            });
+        })
+        it("should cut out site name from relative url if it equals one from locale mapping", () => {
+            import('../src').then(({UrlProcessor}) => {
+                expect(UrlProcessor.process('/nettsted/don/simon', {
+                    ...META,
+                    apiUrl: 'http://localhost:8080/site'
+                })).toEqual('/site/inline/enonic-homepage/draft/don/simon');
+            });
+        })
+        it("should not cut out site name from relative url if it differs one from locale mapping", () => {
+            import('../src').then(({UrlProcessor}) => {
+                expect(UrlProcessor.process('/nettsteder/don/simon', {
+                    ...META,
+                    apiUrl: 'http://localhost:8080/site'
+                })).toEqual('/site/inline/enonic-homepage/draft/nettsteder/don/simon');
             });
         })
     }); // process
