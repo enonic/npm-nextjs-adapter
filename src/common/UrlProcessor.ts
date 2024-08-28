@@ -5,6 +5,7 @@ import {RENDER_MODE} from './constants';
 import {fixDoubleSlashes} from '../utils/fixDoubleSlashes';
 import {addBasePath} from 'next/dist/client/add-base-path';
 import {parseUrl} from 'next/dist/shared/lib/router/utils/parse-url';
+import {getLocaleMappingByLocale} from '../utils/getLocaleMappingByLocale';
 
 
 export class UrlProcessor {
@@ -22,8 +23,6 @@ export class UrlProcessor {
     private static startSlashPattern = /^\/+/;
     private static localhostPattern = /localhost/;
 
-    private static siteKey: string;
-
     public static process(url: string, meta: MetaData, serverSide = false, isResource = false): string {
         if (this.startsWithHash(url) || !meta || (this.isAttachmentUrl(url)) && meta.renderMode === RENDER_MODE.NEXT) {
             // do not process if:
@@ -35,10 +34,17 @@ export class UrlProcessor {
 
         let normalUrl: string;
         if (this.isRelative(url)) {
-            normalUrl = url;
+            const mapping = getLocaleMappingByLocale(meta.locale);
+            if (mapping.site?.length) {
+                // see if url starts with site name and remove it
+                const normalSite = mapping.site.replace(this.startSlashPattern, '').replace(this.endSlashPattern, '');
+                normalUrl = url.replace(new RegExp(`^/?${normalSite}(?=/|$)`), '');
+            } else {
+                normalUrl = url;
+            }
         } else {
             // url is absolute, try to make it relative by striping apiUrl
-            // NB: will fail if content api is not on the same domain as enonic xp
+            // NB: will fail to do so if content api is not on the same domain as enonic xp
             const apiUrl = this.getApiUrl(meta);
             normalUrl = this.stripApiUrl(url, apiUrl);
 
@@ -71,8 +77,11 @@ export class UrlProcessor {
         return fixDoubleSlashes(result);
     }
 
+    /*
+    * Deprecated
+    * */
     public static setSiteKey(key: string): void {
-        this.siteKey = key;
+        // TODO: remove in next major release
     }
 
     public static isMediaLink(ref: string, linkData: LinkData[]): boolean {
@@ -145,8 +154,9 @@ export class UrlProcessor {
 
     private static getApiUrl(meta: MetaData) {
         let combinedUrl = meta.apiUrl?.replace(this.endSlashPattern, '') || '';
-        if (this.siteKey?.length) {
-            combinedUrl += '/' + this.siteKey.replace(this.startSlashPattern, '');
+        const mapping = getLocaleMappingByLocale(meta.locale);
+        if (mapping.site?.length) {
+            combinedUrl += '/' + mapping.site.replace(this.startSlashPattern, '');
         }
         return combinedUrl;
     }
