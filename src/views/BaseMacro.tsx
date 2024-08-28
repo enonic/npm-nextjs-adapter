@@ -17,7 +17,7 @@ export const MACRO_EMBED = 'system:embed';
 const BaseMacro = (props: BaseMacroProps) => {
     const {data, meta, renderInEditMode} = props;
 
-    let config = data.config ? data.config[sanitizeGraphqlName(data.name)] : {};
+    let config = data.config?.[sanitizeGraphqlName(data.name)] ?? {};
     if (data.descriptor !== MACRO_DISABLE) {
         // do not do any processing for disable macro
         config = normalizeValue(config);
