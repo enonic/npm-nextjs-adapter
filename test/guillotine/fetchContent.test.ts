@@ -48,24 +48,25 @@ const PAGE_COMPONENT: RecursivePartial<Component> = {
     type: 'page',
     path: '/',
     page: {
-      descriptor: 'com.example.myproject:main',
-      configAsJson: {
-        'com-example-myproject': {
-          main: {}
-        }
-      },
-    //   template: null
+        descriptor: 'com.example.myproject:main',
+        configAsJson: {
+            'com-example-myproject': {
+                main: {}
+            }
+        },
+        //   template: null
     },
     // layout: null,
     // text: null,
     // part: null,
     // image: null
-  };
+};
 
 const GUILLOTINE_RESULT_META_FOR_ARTICLES: GuillotineResponseJson = {
     data: {
         guillotine: {
             get: {
+                _id: 'f5815ec2-26e0-4595-b37b-c2ba0d3c1e1c',
                 type: 'portal:site',
                 components: [PAGE_COMPONENT]
             }
@@ -87,75 +88,75 @@ const GUILLOTINE_RESULT_CONTENT_WITH_ARTICLES: GuillotineResponseJson = {
 
 const GUILLOTINE_RESULT_CONTENT: GuillotineResponseJson = {
     data: {
-      request0: {
-        get: {
-          displayName: 'HMDB',
-          _id: 'f5815ec2-26e0-4595-b37b-c2ba0d3c1e1c',
-          type: 'portal:site',
-          dataAsJson: {
-            siteConfig: [
-              {
-                applicationKey: 'com.example.myproject',
-                config: {}
-              },
-              {
-                applicationKey: 'com.enonic.app.nextxp',
-                config: {}
-              }
-            ]
-          },
-          xAsJson: {}
-        },
-        getSite: {
-          displayName: 'HMDB',
-          _path: '/hmdb'
-        }
-      },
-      request1: {
-        getSite: {
-          displayName: 'HMDB'
-        },
-        get: {
-          displayName: 'HMDB',
-          children: [
-            {
-              _path: 'articles',
-              _id: '401e72d0-6f15-4079-9d12-4f21d75e85f1',
-              displayName: 'Articles'
+        request0: {
+            get: {
+                displayName: 'HMDB',
+                _id: 'f5815ec2-26e0-4595-b37b-c2ba0d3c1e1c',
+                type: 'portal:site',
+                dataAsJson: {
+                    siteConfig: [
+                        {
+                            applicationKey: 'com.example.myproject',
+                            config: {}
+                        },
+                        {
+                            applicationKey: 'com.enonic.app.nextxp',
+                            config: {}
+                        }
+                    ]
+                },
+                xAsJson: {}
             },
-            {
-              _path: 'movies',
-              _id: '66281d64-089a-48d2-81e1-7838d2b9b903',
-              displayName: 'Movies'
-            },
-            {
-              _path: 'persons',
-              _id: 'ff9e01f1-9284-453e-9900-9178104d3258',
-              displayName: 'Persons'
-            },
-            {
-              _path: 'playlists',
-              _id: 'adb39d00-dcf8-4efb-82ba-45238a24965b',
-              displayName: 'Playlists'
-            },
-            {
-              _path: '_templates',
-              _id: '50523421-3bc1-42e0-9f23-7e9b0b86f43c',
-              displayName: 'Templates'
+            getSite: {
+                displayName: 'HMDB',
+                _path: '/hmdb'
             }
-          ]
+        },
+        request1: {
+            getSite: {
+                displayName: 'HMDB'
+            },
+            get: {
+                displayName: 'HMDB',
+                children: [
+                    {
+                        _path: 'articles',
+                        _id: '401e72d0-6f15-4079-9d12-4f21d75e85f1',
+                        displayName: 'Articles'
+                    },
+                    {
+                        _path: 'movies',
+                        _id: '66281d64-089a-48d2-81e1-7838d2b9b903',
+                        displayName: 'Movies'
+                    },
+                    {
+                        _path: 'persons',
+                        _id: 'ff9e01f1-9284-453e-9900-9178104d3258',
+                        displayName: 'Persons'
+                    },
+                    {
+                        _path: 'playlists',
+                        _id: 'adb39d00-dcf8-4efb-82ba-45238a24965b',
+                        displayName: 'Playlists'
+                    },
+                    {
+                        _path: '_templates',
+                        _id: '50523421-3bc1-42e0-9f23-7e9b0b86f43c',
+                        displayName: 'Templates'
+                    }
+                ]
+            }
         }
-      }
     }
-  };
+};
 
 const GUILLOTINE_RESULT_META_MINIMAL: GuillotineResponseJson = {
     data: {
         guillotine: {
             get: {
-                // _id: '_id',
+                _id: '_id',
                 // _name: '_name',
-                _path: '_path',
+                _path: '/path',
                 type: 'type',
             }
         }
@@ -172,118 +173,119 @@ const GUILLOTINE_RESULT_META_INCOMPLETE: GuillotineResponseJson = {
 
 const GUILLOTINE_RESULT_META: GuillotineResponseJson = {
     data: {
-      guillotine: {
-        get: {
-          _path: '/hmdb',
-          type: 'portal:site',
-          components: [
-            {
-              fragment: null,
-              type: 'page',
-              path: '/',
-              page: {
-                descriptor: 'com.example.myproject:main',
-                configAsJson: {
-                  'com-example-myproject': {
-                    main: {}
-                  }
-                },
-                template: null
-              },
-              layout: null,
-              text: null,
-              part: null,
-              image: null
-            },
-            {
-              fragment: null,
-              type: 'layout',
-              path: '/main/0',
-              page: null,
-              layout: {
-                descriptor: 'com.example.myproject:2-column',
-                configAsJson: null
-              },
-              text: null,
-              part: null,
-              image: null
-            },
-            {
-              fragment: null,
-              type: 'part',
-              path: '/main/0/left/0',
-              page: null,
-              layout: null,
-              text: null,
-              part: {
-                descriptor: 'com.example.myproject:heading',
-                configAsJson: {
-                  'com-example-myproject': {
-                    heading: {
-                      heading: 'Jalla2'
-                    }
-                  }
-                },
-                config: {
-                  com_example_myproject: {
-                    heading: {
-                      heading: 'Jalla2'
+        guillotine: {
+            get: {
+                _id: 'f5815ec2-26e0-4595-b37b-c2ba0d3c1e1c',
+                _path: '/hmdb',
+                type: 'portal:site',
+                components: [
+                    {
+                        fragment: null,
+                        type: 'page',
+                        path: '/',
+                        page: {
+                            descriptor: 'com.example.myproject:main',
+                            configAsJson: {
+                                'com-example-myproject': {
+                                    main: {}
+                                }
+                            },
+                            template: null
+                        },
+                        layout: null,
+                        text: null,
+                        part: null,
+                        image: null
                     },
-                    child_list: null
-                  }
-                }
-              },
-              image: null
-            },
-            {
-              fragment: null,
-              type: 'text',
-              path: '/main/0/left/1',
-              page: null,
-              layout: null,
-              text: {
-                value: {
-                  processedHtml: '<p>Bla bla</p>\n',
-                  macros: [],
-                  links: [],
-                  images: []
-                }
-              },
-              part: null,
-              image: null
-            },
-            {
-              fragment: null,
-              type: 'part',
-              path: '/main/0/right/0',
-              page: null,
-              layout: null,
-              text: null,
-              part: {
-                descriptor: 'com.example.myproject:child-list',
-                configAsJson: {
-                  'com-example-myproject': {
-                    'child-list': {
-                      sorting: 'displayName ASC'
+                    {
+                        fragment: null,
+                        type: 'layout',
+                        path: '/main/0',
+                        page: null,
+                        layout: {
+                            descriptor: 'com.example.myproject:2-column',
+                            configAsJson: null
+                        },
+                        text: null,
+                        part: null,
+                        image: null
+                    },
+                    {
+                        fragment: null,
+                        type: 'part',
+                        path: '/main/0/left/0',
+                        page: null,
+                        layout: null,
+                        text: null,
+                        part: {
+                            descriptor: 'com.example.myproject:heading',
+                            configAsJson: {
+                                'com-example-myproject': {
+                                    heading: {
+                                        heading: 'Jalla2'
+                                    }
+                                }
+                            },
+                            config: {
+                                com_example_myproject: {
+                                    heading: {
+                                        heading: 'Jalla2'
+                                    },
+                                    child_list: null
+                                }
+                            }
+                        },
+                        image: null
+                    },
+                    {
+                        fragment: null,
+                        type: 'text',
+                        path: '/main/0/left/1',
+                        page: null,
+                        layout: null,
+                        text: {
+                            value: {
+                                processedHtml: '<p>Bla bla</p>\n',
+                                macros: [],
+                                links: [],
+                                images: []
+                            }
+                        },
+                        part: null,
+                        image: null
+                    },
+                    {
+                        fragment: null,
+                        type: 'part',
+                        path: '/main/0/right/0',
+                        page: null,
+                        layout: null,
+                        text: null,
+                        part: {
+                            descriptor: 'com.example.myproject:child-list',
+                            configAsJson: {
+                                'com-example-myproject': {
+                                    'child-list': {
+                                        sorting: 'displayName ASC'
+                                    }
+                                }
+                            },
+                            config: {
+                                com_example_myproject: {
+                                    heading: null,
+                                    child_list: {
+                                        sorting: 'displayName ASC'
+                                    }
+                                }
+                            }
+                        },
+                        image: null
                     }
-                  }
-                },
-                config: {
-                  com_example_myproject: {
-                    heading: null,
-                    child_list: {
-                      sorting: 'displayName ASC'
-                    }
-                  }
-                }
-              },
-              image: null
+                ]
             }
-          ]
         }
-      }
     }
-  };
+};
 
 const GUILLOTINE_RESULT_WITH_ERROR: GuillotineResponseJson = {
     errors: [{
@@ -323,13 +325,13 @@ function mockHeadersImport(draft: boolean, mode: string) {
 }
 
 function mockFetch({
-    contentJson,
-    contentOk = true,
-    contentStatus = 200,
-    metaJson,
-    metaOk = true,
-    metaStatus = 200,
-}: {
+                       contentJson,
+                       contentOk = true,
+                       contentStatus = 200,
+                       metaJson,
+                       metaOk = true,
+                       metaStatus = 200,
+                   }: {
     contentJson: GuillotineResponseJson
     contentOk?: boolean
     contentStatus?: number
@@ -390,8 +392,9 @@ describe('guillotine', () => {
             'admin': 'draft',
             'next': 'master',
         };
-        Object.entries(TESTS).forEach(([mode, branch]) => {
-            it(`${mode}`, () => {
+        Object.entries(TESTS).forEach(async ([mode, branch]) => {
+
+            it(`${mode}`, async () => {
                 mockFetch({
                     contentJson: GUILLOTINE_RESULT_CONTENT,
                     metaJson: GUILLOTINE_RESULT_META_MINIMAL,
@@ -399,7 +402,7 @@ describe('guillotine', () => {
 
                 const headersImport = mockHeadersImport(true, mode);
 
-                import('../../src/server').then((moduleName) => {
+                await import('../../src/server').then(async (moduleName) => {
                     const context: Context = {
                         headers: {
                             get(name: string) {
@@ -422,8 +425,8 @@ describe('guillotine', () => {
                             }
                         },
                     } as Context;
-
-                    expect(moduleName.fetchContent(context)).resolves.toStrictEqual({
+                    const promise = await moduleName.fetchContent(context);
+                    expect(promise).toStrictEqual({
                         common: null,
                         data: null,
                         // error: {
@@ -433,6 +436,7 @@ describe('guillotine', () => {
                         //     message: "Cannot destructure property 'path' of 'variables' as it is undefined.",
                         // },
                         meta: {
+                            id: '_id',
                             apiUrl: `http://localhost:8080/site/prosjekt/${branch}`,
                             baseUrl: '/admin/SOMETHING',
                             canRender: false,
@@ -455,7 +459,7 @@ describe('guillotine', () => {
 
                 }); // import
             }); // it
-        }); // TESTS.forEach
+        }, []); // TESTS.forEach
 
         it('handles context without headers and does not headers in non-draft mode', () => {
             mockFetch({
@@ -478,6 +482,7 @@ describe('guillotine', () => {
                         catchAll: false,
                         defaultLocale: 'en',
                         locale: 'en',
+                        id: '_id',
                         path: '/content/path',
                         renderMode: 'next',
                         requestType: 'type',
@@ -499,7 +504,7 @@ describe('guillotine', () => {
                 metaJson: GUILLOTINE_RESULT_META_MINIMAL,
             });
             const context: Context = {
-                contentPath: '_/component/path',
+                contentPath: '/path/_/component/path',
             };
             import('../../src/guillotine/fetchContent').then(({fetchContent}) => {
                 const promise = fetchContent(context);
@@ -511,15 +516,16 @@ describe('guillotine', () => {
                         message: 'Component /path was not found',
                     },
                     meta: {
+                        id: '_id',
                         apiUrl: `http://localhost:8080/site/project/master`,
                         baseUrl: '/',
                         canRender: false,
                         catchAll: false,
                         defaultLocale: 'en',
                         locale: 'en',
-                        path: '_/component/path',
+                        path: '/path/_/component/path',
                         renderMode: 'next',
-                        requestType: 'type',
+                        requestType: 'component',
                         type: '',
                     },
                     page: null,
@@ -538,7 +544,7 @@ describe('guillotine', () => {
             });
             import('../../src/server').then(async ({fetchContent}) => {
                 const context: Context = {
-                    contentPath: '_/component/path',
+                    contentPath: '/path/_/component/path',
                 };
                 const promise = fetchContent(context);
                 expect(promise).resolves.toStrictEqual({
@@ -550,14 +556,15 @@ describe('guillotine', () => {
                     common: null,
                     data: null,
                     meta: {
+                        id: '',
                         apiUrl: 'http://localhost:8080/site/project/master',
                         baseUrl: '/',
                         canRender: false,
                         catchAll: false,
                         defaultLocale: 'en',
                         locale: 'en',
-                        path: '_/component/path',
-                        requestType: 'type',
+                        path: '/path/_/component/path',
+                        requestType: 'component',
                         renderMode: 'next',
                         type: '',
                     },
@@ -572,7 +579,7 @@ describe('guillotine', () => {
             });
             import('../../src/server').then(async ({fetchContent}) => {
                 const context: Context = {
-                    contentPath: '_/component/path',
+                    contentPath: '/path/_/component/path',
                 };
                 const promise = fetchContent(context);
                 expect(promise).resolves.toStrictEqual({
@@ -584,14 +591,15 @@ describe('guillotine', () => {
                     common: null,
                     data: null,
                     meta: {
+                        id: '',
                         apiUrl: 'http://localhost:8080/site/project/master',
                         baseUrl: '/',
                         canRender: false,
                         catchAll: false,
                         defaultLocale: 'en',
                         locale: 'en',
-                        path: '_/component/path',
-                        requestType: 'type',
+                        path: '/path/_/component/path',
+                        requestType: 'component',
                         renderMode: 'next',
                         type: '',
                     },
@@ -606,7 +614,7 @@ describe('guillotine', () => {
             });
             import('../../src/server').then(async ({fetchContent}) => {
                 const context: Context = {
-                    contentPath: '_/component/path',
+                    contentPath: '/path/_/component/path',
                 };
                 const promise = fetchContent(context);
                 // await promise;
@@ -619,14 +627,15 @@ describe('guillotine', () => {
                     common: null,
                     data: null,
                     meta: {
+                        id: '',
                         apiUrl: 'http://localhost:8080/site/project/master',
                         baseUrl: '/',
                         canRender: false,
                         catchAll: false,
                         defaultLocale: 'en',
                         locale: 'en',
-                        path: '_/component/path',
-                        requestType: 'type',
+                        path: '/path/_/component/path',
+                        requestType: 'component',
                         renderMode: 'next',
                         type: '',
                     },
@@ -641,7 +650,7 @@ describe('guillotine', () => {
                     data: {
                         guillotine: {
                             get: {
-                                _path: '_path',
+                                _path: '/path',
                                 type: FRAGMENT_CONTENTTYPE_NAME
                             }
                         }
@@ -650,7 +659,7 @@ describe('guillotine', () => {
             });
             import('../../src/server').then(async ({fetchContent}) => {
                 const context: Context = {
-                    contentPath: '_/component/path',
+                    contentPath: '/path/_/component/path',
                     headers: {
                         get(name: string) {
                             if (name === RENDER_MODE_HEADER) {
@@ -671,14 +680,15 @@ describe('guillotine', () => {
                     common: null,
                     data: null,
                     meta: {
+                        id: '',
                         apiUrl: 'http://localhost:8080/site/project/master',
                         baseUrl: '/',
                         canRender: false,
                         catchAll: false,
                         defaultLocale: 'en',
                         locale: 'en',
-                        path: '_/component/path',
-                        requestType: 'type',
+                        path: '/path/_/component/path',
+                        requestType: 'component',
                         renderMode: 'next',
                         type: '',
                     },
@@ -713,27 +723,37 @@ describe('guillotine', () => {
                 ComponentRegistry.addContentType(CATCH_ALL, {
                     configQuery: '{catchAll contentType configQuery}',
                     query: 'query { guillotine { catchAll } }',
-                    view: () => {return 'catchAll contentType';},
+                    view: () => {
+                        return 'catchAll contentType';
+                    },
                 });
                 ComponentRegistry.addLayout(CATCH_ALL, {
                     configQuery: '{catchAll layout configQuery}',
                     query: '{catchAll layout query}',
-                    view: () => {return 'catchAll layout';},
+                    view: () => {
+                        return 'catchAll layout';
+                    },
                 });
                 ComponentRegistry.addMacro(CATCH_ALL, {
                     configQuery: '{catchAll macro configQuery}',
                     query: '{catchAll macro query}',
-                    view: () => {return 'catchAll macro';},
+                    view: () => {
+                        return 'catchAll macro';
+                    },
                 });
                 ComponentRegistry.addPage(CATCH_ALL, {
                     configQuery: '{catchAll page configQuery}',
                     query: '{catchAll page query}',
-                    view: () => {return 'catchAll page';},
+                    view: () => {
+                        return 'catchAll page';
+                    },
                 });
                 ComponentRegistry.addPart(CATCH_ALL, {
                     configQuery: '{catchAll part configQuery}',
                     query: '{catchAll part query}',
-                    view: () => {return 'catchAll part';},
+                    view: () => {
+                        return 'catchAll part';
+                    },
                 });
                 const context: Context = {
                     contentPath: CONTENT_PATH, // Anything but _/component
@@ -761,12 +781,13 @@ describe('guillotine', () => {
                     common: {},
                     data: {
                         get: {
-                            children:[{
+                            children: [{
                                 _path: 'articles'
                             }],
                         },
                     },
                     meta: {
+                        id: 'f5815ec2-26e0-4595-b37b-c2ba0d3c1e1c',
                         apiUrl: 'http://localhost:8080/site/project/master',
                         baseUrl: BASE_URL,
                         canRender: true,
@@ -818,6 +839,7 @@ describe('guillotine', () => {
                         message: 'Server responded with 1 error(s), probably from guillotine - see log.',
                     },
                     meta: {
+                        id: 'f5815ec2-26e0-4595-b37b-c2ba0d3c1e1c',
                         apiUrl: `http://localhost:8080/site/prosjekt/master`,
                         baseUrl: BASE_URL,
                         canRender: false,

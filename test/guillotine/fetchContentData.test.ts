@@ -23,6 +23,7 @@ const FETCH_CONTENT_RESULT: FetchContentResult = {
         defaultLocale: 'defaultLocale',
         locale: 'locale',
         path: 'path',
+        id: 'id',
         renderMode: RENDER_MODE.NEXT,
         requestType: XP_REQUEST_TYPE.PAGE,
         type: 'type',

@@ -26,6 +26,7 @@ export function setupClientEnv(overrides: Record<string, string> = {}): void {
 }
 
 export const META: MetaData = {
+    id: 'd140bba7-0fa1-44c0-b777-ac6330becaff',
     type: 'base:shortcut',
     path: '/site/playground/2-column-test',
     requestType: XP_REQUEST_TYPE.PAGE,

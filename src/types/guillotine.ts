@@ -75,6 +75,7 @@ export type GuillotineResult = Result & Record<string, any>;
 
 export interface MetaResult extends Result {
     meta?: {
+        _id: string
         _path: string
         type: string
         pageAsJson?: PageData
