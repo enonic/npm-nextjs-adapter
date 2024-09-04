@@ -36,6 +36,7 @@ describe('guillotine', () => {
             it("should set catchAll and canRender to false, when componentRegistry is empty", () => {
                 const contentType = "wont match since componentRegistry is empty";
                 const contentPath = 'contentPath';
+                const contentId = 'contentId';
                 const requestType = XP_REQUEST_TYPE.PAGE; // EVERYTHING BUT COMPONENT
                 const renderMode = RENDER_MODE.NEXT;
                 const apiUrl = 'apiUrl';
@@ -46,7 +47,7 @@ describe('guillotine', () => {
                 const pageCmp: PageComponent|undefined = undefined;
                 const components: PageComponent[]|undefined = undefined;
                 expect(createMetaData({
-                    contentType, contentPath, requestType, renderMode, apiUrl,
+                    contentType, contentPath, contentId, requestType, renderMode, apiUrl,
                     baseUrl, locale, defaultLocale, requestedComponentPath, pageCmp,
                     components
                 })).toEqual({
@@ -56,6 +57,7 @@ describe('guillotine', () => {
                     catchAll: false,
                     defaultLocale,
                     locale,
+                    id: contentId,
                     path: contentPath,
                     renderMode,
                     requestType,
@@ -82,6 +84,7 @@ describe('guillotine', () => {
             it("should return defaults when pageCmp and components are undefined", () => {
                 const contentType = CONTENT_TYPE_NAME_WITHOUT_VIEW;
                 const contentPath = 'contentPath';
+                const contentId = 'contentId';
                 const requestType = XP_REQUEST_TYPE.PAGE; // EVERYTHING BUT COMPONENT
                 const renderMode = RENDER_MODE.NEXT;
                 const apiUrl = 'apiUrl';
@@ -92,7 +95,7 @@ describe('guillotine', () => {
                 const pageCmp: PageComponent|undefined = undefined;
                 const components: PageComponent[]|undefined = undefined;
                 expect(createMetaData({
-                    contentType, contentPath, requestType, renderMode, apiUrl,
+                    contentType, contentPath, contentId, requestType, renderMode, apiUrl,
                     baseUrl, locale, defaultLocale, requestedComponentPath, pageCmp,
                     components
                 })).toEqual({
@@ -102,6 +105,7 @@ describe('guillotine', () => {
                     catchAll: false,
                     defaultLocale,
                     locale,
+                    id: contentId,
                     path: contentPath,
                     renderMode,
                     requestType,
@@ -112,6 +116,7 @@ describe('guillotine', () => {
             it("should set requestedComponent when requestedComponentPath is found in components", () => {
                 const contentType = CONTENT_TYPE_NAME_WITHOUT_VIEW;
                 const contentPath = 'contentPath';
+                const contentId = 'contentId';
                 const requestType = XP_REQUEST_TYPE.PAGE; // EVERYTHING BUT COMPONENT
                 const renderMode = RENDER_MODE.NEXT;
                 const apiUrl = 'apiUrl';
@@ -122,7 +127,7 @@ describe('guillotine', () => {
                 const pageCmp: PageComponent|undefined = undefined;
                 const components: PageComponent[] = [PAGE_COMPONENT];
                 expect(createMetaData({
-                    contentType, contentPath, requestType, renderMode, apiUrl,
+                    contentType, contentPath, contentId, requestType, renderMode, apiUrl,
                     baseUrl, locale, defaultLocale, requestedComponentPath, pageCmp,
                     components
                 })).toEqual({
@@ -132,6 +137,7 @@ describe('guillotine', () => {
                     catchAll: false,
                     defaultLocale,
                     locale,
+                    id: contentId,
                     path: contentPath,
                     renderMode,
                     requestedComponent: PAGE_COMPONENT,
@@ -143,6 +149,7 @@ describe('guillotine', () => {
             it("should set canRender to true when contentType has view, but not catchAll", () => {
                 const contentType = CONTENT_TYPE_NAME_WITH_VIEW;
                 const contentPath = 'contentPath';
+                const contentId = 'contentId';
                 const requestType = XP_REQUEST_TYPE.PAGE;
                 const renderMode = RENDER_MODE.NEXT;
                 const apiUrl = 'apiUrl';
@@ -153,7 +160,7 @@ describe('guillotine', () => {
                 const pageCmp: PageComponent|undefined = undefined;
                 const components: PageComponent[] = [PAGE_COMPONENT];
                 expect(createMetaData({
-                    contentType, contentPath, requestType, renderMode, apiUrl,
+                    contentType, contentPath, contentId, requestType, renderMode, apiUrl,
                     baseUrl, locale, defaultLocale, requestedComponentPath, pageCmp,
                     components
                 })).toEqual({
@@ -163,6 +170,7 @@ describe('guillotine', () => {
                     catchAll: false,
                     defaultLocale,
                     locale,
+                    id: contentId,
                     path: contentPath,
                     renderMode,
                     requestType,
@@ -173,6 +181,7 @@ describe('guillotine', () => {
             it("should set canRender to true when requestType is component and !typeDef", () => {
                 const contentType = '';
                 const contentPath = 'contentPath';
+                const contentId = 'contentId';
                 const requestType = XP_REQUEST_TYPE.COMPONENT;
                 const renderMode = RENDER_MODE.NEXT;
                 const apiUrl = 'apiUrl';
@@ -183,7 +192,7 @@ describe('guillotine', () => {
                 const pageCmp: PageComponent|undefined = undefined;
                 const components: PageComponent[] = [PAGE_COMPONENT];
                 expect(createMetaData({
-                    contentType, contentPath, requestType, renderMode, apiUrl,
+                    contentType, contentPath, contentId, requestType, renderMode, apiUrl,
                     baseUrl, locale, defaultLocale, requestedComponentPath, pageCmp,
                     components
                 })).toEqual({
@@ -193,6 +202,7 @@ describe('guillotine', () => {
                     catchAll: false,
                     defaultLocale,
                     locale,
+                    id: contentId,
                     path: contentPath,
                     renderMode,
                     requestType,
@@ -203,6 +213,7 @@ describe('guillotine', () => {
             it("should set canRender to true when pageCmp.page.descriptor", () => {
                 const contentType = 'not registered, without view or with catchAll';
                 const contentPath = 'contentPath';
+                const contentId = 'contentId';
                 const requestType = XP_REQUEST_TYPE.PAGE; // EVERYTHING BUT COMPONENT
                 const renderMode = RENDER_MODE.NEXT;
                 const apiUrl = 'apiUrl';
@@ -213,7 +224,7 @@ describe('guillotine', () => {
                 const pageCmp: PageComponent = PAGE_COMPONENT;
                 const components: PageComponent[]|undefined = undefined;
                 expect(createMetaData({
-                    contentType, contentPath, requestType, renderMode, apiUrl,
+                    contentType, contentPath, contentId, requestType, renderMode, apiUrl,
                     baseUrl, locale, defaultLocale, requestedComponentPath, pageCmp,
                     components
                 })).toEqual({
@@ -223,6 +234,7 @@ describe('guillotine', () => {
                     catchAll: false,
                     defaultLocale,
                     locale,
+                    id: contentId,
                     path: contentPath,
                     renderMode,
                     requestType,
@@ -235,6 +247,7 @@ describe('guillotine', () => {
                 () => {
                     const contentType = 'not registered';
                     const contentPath = 'contentPath';
+                    const contentId = 'contentId';
                     const requestType = XP_REQUEST_TYPE.PAGE; // EVERYTHING BUT COMPONENT
                     const renderMode = RENDER_MODE.NEXT;
                     const apiUrl = 'apiUrl';
@@ -245,7 +258,7 @@ describe('guillotine', () => {
                     const pageCmp: PageComponent|undefined = undefined;
                     const components: PageComponent[]|undefined = undefined;
                     expect(createMetaData({
-                        contentType, contentPath, requestType, renderMode, apiUrl,
+                        contentType, contentPath, contentId, requestType, renderMode, apiUrl,
                         baseUrl, locale, defaultLocale, requestedComponentPath,
                         pageCmp, components
                     })).toEqual({
@@ -255,6 +268,7 @@ describe('guillotine', () => {
                         catchAll: true,
                         defaultLocale,
                         locale,
+                        id: contentId,
                         path: contentPath,
                         renderMode,
                         requestType,

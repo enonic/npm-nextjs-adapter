@@ -1,8 +1,4 @@
-import type {
-    ComponentDefinition,
-    MetaData,
-    PageComponent,
-} from '../types';
+import type {MetaData, PageComponent} from '../types';
 
 
 import {RENDER_MODE, XP_REQUEST_TYPE} from '../common/constants';
@@ -15,6 +11,7 @@ export function createMetaData({
     components = [], // Optional NOTE: Doesn't handle null
     contentPath,
     contentType,
+                                   contentId,
     defaultLocale,
     locale,
     pageCmp, // Optional
@@ -26,6 +23,7 @@ export function createMetaData({
     baseUrl: string
     components?: PageComponent[]
     contentPath: string
+    contentId: string
     contentType: string
     defaultLocale: string
     locale: string
@@ -44,6 +42,7 @@ export function createMetaData({
         catchAll: false, // catchAll only refers to content type catch-all
         defaultLocale,
         locale,
+        id: contentId,
         path: contentPath,
         renderMode: renderMode,
         requestType: requestType,

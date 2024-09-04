@@ -73,6 +73,7 @@ export interface MacroProps {
 }
 
 export interface MetaData {
+    id: string,
     type: string,
     path: string,
     requestType: XP_REQUEST_TYPE,

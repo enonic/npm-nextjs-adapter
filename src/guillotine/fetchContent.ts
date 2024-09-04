@@ -67,7 +67,6 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
     const renderMode = getRenderMode(context);
     let requestType = XP_REQUEST_TYPE.TYPE;
     const requestContentPath = getCleanContentPathArrayOrThrow400(context.contentPath);
-    const errorResponse = buildErrorResponse(requestType, renderMode, contentApiUrl, xpBaseUrl, locale, defaultLocale, requestContentPath);
 
     try {
         const [siteRelativeContentPath, componentPath] = getContentAndComponentPaths(requestContentPath);
@@ -80,8 +79,10 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
         const metaResult = await fetchMetaData(contentApiUrl, '${site}/' + siteRelativeContentPath, mapping, outHeaders);
         // ///////////////////////////////////////////////////////////////////////
 
-        const {_path, type} = metaResult.meta || {};
+        const {_id, _path, type} = metaResult.meta || {};
         const contentPath = _path || siteRelativeContentPath;
+
+        const errorResponse = buildErrorResponse(requestType, renderMode, contentApiUrl, xpBaseUrl, locale, defaultLocale, requestContentPath, _id);
 
         if (metaResult.error) {
             console.error(metaResult.error);
@@ -213,6 +214,7 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
             components,
             contentPath: siteRelativeContentPath,
             contentType: type,
+            contentId: _id,
             defaultLocale,
             locale,
             pageCmp: page,
@@ -239,6 +241,7 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
                 message: e.message,
             };
         }
+        const errorResponse = buildErrorResponse(requestType, renderMode, contentApiUrl, xpBaseUrl, locale, defaultLocale, requestContentPath);
         return errorResponse(error.code, error.message);
     }
 }
