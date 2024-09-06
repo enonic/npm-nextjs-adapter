@@ -6,19 +6,19 @@ import {ComponentRegistry} from '../common/ComponentRegistry';
 
 
 export function createMetaData({
-    apiUrl,
-    baseUrl,
-    components = [], // Optional NOTE: Doesn't handle null
-    contentPath,
-    contentType,
+                                   apiUrl,
+                                   baseUrl,
+                                   components = [], // Optional NOTE: Doesn't handle null
+                                   contentPath,
+                                   contentType,
                                    contentId,
-    defaultLocale,
-    locale,
-    pageCmp, // Optional
-    renderMode,
-    requestedComponentPath,
-    requestType,
-}: {
+                                   defaultLocale,
+                                   locale,
+                                   pageCmp, // Optional
+                                   renderMode,
+                                   requestedComponentPath,
+                                   requestType,
+                               }: {
     apiUrl: string
     baseUrl: string
     components?: PageComponent[]
