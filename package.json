@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.4",
-    "html-react-parser": "^5.1.15",
+    "html-react-parser": "^5.1.16",
     "negotiator": "^0.6.3",
     "next": "^14.2.8",
     "react": "18.3.1",
