@@ -13,6 +13,7 @@ describe('views', () => {
         let RichTextView;
 
         const meta = {
+            id: '123',
             type: 'landing-page',
             path: '/some/path',
             requestType: XP_REQUEST_TYPE.PAGE,
@@ -52,9 +53,8 @@ describe('views', () => {
             render(<RichTextView meta={meta} data={data}/>);
             const rootEl = document.getElementById('text-root');
             expect(rootEl.parentElement.innerHTML).toEqual(`<div id="text-root">
-                    <p><a href="/some/link" title="Some link"><img src="/some/image.jpg" alt="Some image"></a></p>
-                    <editor-macro data-macro-ref="some-macro">
-                    </editor-macro></div>`);
+                    <p><a href="/some/link" title="Some link"><div style="border: 1px dotted red; color: red;">Can't replace image, when there are no images in the data object!</div></a></p>
+                    <div style="border: 1px dotted red; color: red;">Can't replace macro, when there are no macros in the data object!</div></div>`);
 
         });
 
@@ -68,20 +68,23 @@ describe('views', () => {
                     </div>`,
                 links: [{
                     ref: "link-ref-1",
+                    uri: "/some/link",
                     media: {
                         content: {
                             id: 'content-id-1',
-                        }
+                        },
+                        intent: 'inline' as 'inline' | 'download'
                     }
                 },
                     {
                         ref: "link-ref-2",
+                        uri: "/some/image",
                         media: null
                     }],
                 macros: [{
                     ref: "macro-ref-1",
                     name: "Macro name",
-                    descriptor: "macro-descriptor",
+                    descriptor: "macro:descriptor" as `${string}:${string}`,
                     config: {}
                 }],
                 images: [{
@@ -104,7 +107,7 @@ describe('views', () => {
 
             expect(rootEl.parentElement.innerHTML).toEqual(`<div id="text-root">
                     <p>Some text before <a href="/base/url/no/some/link">the link</a> and some text after.</p>
-                    <figure><a href="/base/url/no/some/image"><img src="/base/url/no/some/image.jpg" alt="Some image" data-image-ref="image-ref-1"></a><figcaption>Some caption</figcaption></figure>
+                    <figure><a href="/base/url/no/some/image"><img src="/base/url/no/some/image.jpg" alt="Some image"></a><figcaption>Some caption</figcaption></figure>
                     <div>Macro view</div></div>`);
         });
     });

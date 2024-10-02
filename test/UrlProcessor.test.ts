@@ -94,10 +94,12 @@ describe('UrlProcessor', () => {
                 const ref = 'ref';
                 const linkData = [{
                     ref: 'ref',
+                    uri: 'uri',
                     media: {
                         content: {
                             id: 'id'
-                        }
+                        },
+                        intent: 'download' as 'download' | 'inline'
                     },
                 }];
                 expect(UrlProcessor.isMediaLink(ref, linkData)).toEqual(true);
@@ -108,10 +110,12 @@ describe('UrlProcessor', () => {
                 const ref = 'ref';
                 const linkData: LinkData[] = [{} as LinkData, {
                     ref: 'ref',
+                    uri: 'uri',
                     media: {
                         content: {
                             id: 'id'
-                        }
+                        },
+                        intent: 'download' as 'download' | 'inline'
                     },
                 }];
                 expect(UrlProcessor.isMediaLink(ref, linkData)).toEqual(true);
@@ -131,6 +135,7 @@ describe('UrlProcessor', () => {
                 const ref = 'ref';
                 const linkData = [{
                     ref: 'ref',
+                    uri: 'uri',
                     media: null,
                 }];
                 expect(UrlProcessor.isMediaLink(ref, linkData)).toEqual(false);
@@ -148,10 +153,12 @@ describe('UrlProcessor', () => {
                 const ref = 'ref';
                 const linkData = [{
                     ref: 'notref',
+                    uri: 'uri',
                     media: {
                         content: {
                             id: "doesn't matter"
-                        }
+                        },
+                        intent: 'download' as 'download' | 'inline'
                     },
                 }];
                 expect(UrlProcessor.isMediaLink(ref, linkData)).toEqual(false);

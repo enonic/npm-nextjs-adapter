@@ -1,5 +1,11 @@
 import type {XP_COMPONENT_TYPE} from '../common/constants';
 import type {Context} from './next';
+import type {
+    RichTextData as CompsRichTextData,
+    LinkData as CompsLinkData,
+    ImageData as CompsImageData,
+    MacroData as CompsMacroData,
+} from '@enonic/react-components';
 
 // Differs from ComponentDefinition to avoid storing catchAll on all components
 // catchAll is calculated in getType instead
@@ -30,7 +36,7 @@ export interface ComponentDescriptor {
     queryAndVariables?: QueryAndVariables;
 }
 
-export type ComponentDictionary = Record<string,ComponentDefinitionParams>;
+export type ComponentDictionary = Record<string, ComponentDefinitionParams>;
 
 // NB! Always return null or empty object from processor for next is unable to serialize undefined
 export type DataProcessor = (data: any, context?: Context, config?: any) => Promise<Record<string, any>>;
@@ -42,12 +48,7 @@ export interface FragmentData {
     }
 }
 
-export interface ImageData {
-    ref: string;
-    image: {
-        id: string,
-    } | null,
-}
+export type ImageData = CompsImageData;
 
 export interface LayoutData {
     descriptor: string;
@@ -56,23 +57,11 @@ export interface LayoutData {
     [customKeysFromQuery: string]: any;
 }
 
-export interface LinkData {
-    ref: string,
-    media: {
-        content: {
-            id: string,
-        }
-    } | null,
-}
+export type LinkData = CompsLinkData;
 
 export type MacroConfig = Record<string, any>;
 
-export interface MacroData {
-    ref: string
-    name: string
-    descriptor: string
-    config: Record<string, MacroConfig>
-}
+export type MacroData = CompsMacroData;
 
 export interface PageComponent {
     [key: string]: any; // keeps ts happy when accessing component data field by XP_COMPONENT_TYPE type
@@ -119,19 +108,14 @@ export type SelectedQueryMaybeVariablesFunc =
     | string
     | QueryGetter
     | {
-        query: string | QueryGetter
-        variables: VariablesGetter
-    }
+    query: string | QueryGetter
+    variables: VariablesGetter
+}
     | [string | QueryGetter, VariablesGetter];
 
 export type RegionTree = Record<string, PageRegion>;
 
-export interface RichTextData {
-    processedHtml: string
-    links: LinkData[]
-    macros: MacroData[]
-    images: ImageData[]
-}
+export type RichTextData = CompsRichTextData;
 
 export interface TextData {
     value: RichTextData;
