@@ -1,75 +1,60 @@
 /// <reference types="react" />
-import type {MetaData, Replacer, ReplacerResult, RichTextData, RichTextViewProps} from '../types';
+import type {MetaData, RichTextViewProps, Replacer as OldReplacer, MacroConfig, RichTextData} from '../types';
 
-
-import {getUrl, UrlProcessor} from '../common/UrlProcessor';
-import HTMLReactParser, {DOMNode, domToReact} from 'html-react-parser';
-import {ElementType} from 'domelementtype';
+import {getUrl} from '../common/UrlProcessor';
 import BaseMacro from './BaseMacro';
 import Link from 'next/link';
+import type {MacroComponentParams, LinkComponentParams, ImageComponentParams, Replacer as NewReplacer} from '@enonic/react-components';
+import {RichText} from '@enonic/react-components';
+import type {DOMNode} from 'html-react-parser';
 
-
-export function createReplacer(allData: RichTextData, meta: MetaData, renderMacroInEditMode = true, customReplacer?: Replacer): (domNode: DOMNode) => ReplacerResult {
-    // eslint-disable-next-line react/display-name
-    const replacerFn = (domNode: DOMNode): ReplacerResult => {
-        if (domNode.type !== ElementType.Tag) {
-            return domNode;
-        }
-
-        const el = domNode;
-        let ref: string;
-        switch (el.tagName) {
-            case UrlProcessor.IMG_TAG:
-                ref = el.attribs[UrlProcessor.IMG_ATTR];
-                if (ref) {
-                    if (UrlProcessor.isContentImage(ref, allData.images)) {
-                        const src = el.attribs['src'];
-                        if (src) {
-                            el.attribs['src'] = getUrl(src, meta);
-                        }
-
-                        const srcset = el.attribs['srcset'];
-                        if (srcset) {
-                            el.attribs['srcset'] = UrlProcessor.processSrcSet(srcset, meta);
-                        }
-                    }
-                }
-                break;
-            case UrlProcessor.LINK_TAG:
-                ref = el.attribs[UrlProcessor.LINK_ATTR];
-                const href = el.attribs['href'];
-
-                if (ref && href) {
-                    const domNodes = el.children as DOMNode[];
-                    return <Link href={getUrl(href, meta)}>{domToReact(domNodes, {replace: replacerFn})}</Link>;
-                }
-                break;
-            case UrlProcessor.MACRO_TAG:
-                ref = el.attribs[UrlProcessor.MACRO_ATTR];
-                const data = ref && allData.macros.find((d) => d.ref === ref);
-                if (data) {
-                    return <BaseMacro data={data} meta={meta} renderInEditMode={renderMacroInEditMode}/>;
-                }
-                break;
-            default:
-                if (customReplacer) {
-                    const result = customReplacer(domNode, allData, meta, renderMacroInEditMode);
-                    if (result) {
-                        return result;
-                    }
-                }
-                break;
-        }
-        return el;
-    };
-    return replacerFn;
+interface ExtraRichTextProps {
+    meta: MetaData;
+    renderInEditMode?: boolean;
 }
 
-const RichTextView = ({className, tag, data, meta, renderMacroInEditMode, customReplacer}: RichTextViewProps) => {
-    const CustomTag = tag as keyof JSX.IntrinsicElements || 'section';
-    return <CustomTag className={className}>
-        {data.processedHtml ? HTMLReactParser(data.processedHtml, {replace: createReplacer(data, meta, renderMacroInEditMode, customReplacer)}) : ''}
-    </CustomTag>;
+const RichTextView = (props: RichTextViewProps) => {
+    return <RichText<ExtraRichTextProps>
+        data={props.data}
+        meta={props.meta}
+        className={props.className}
+        tag={props.tag}
+        replacer={wrapReplacer(props.customReplacer, props.meta, props.renderMacroInEditMode)}
+        renderInEditMode={props.renderMacroInEditMode}
+        Macro={MacroAdapter}
+        Link={LinkAdapter}
+        Image={ImageAdapter}
+    />;
 };
+
+function wrapReplacer(oldReplacer: OldReplacer | undefined, meta: MetaData, renderMacroInEditMode: boolean): NewReplacer {
+    if (!oldReplacer) {
+        return null;
+    }
+    return (element: DOMNode, data: RichTextData) => {
+        return oldReplacer(element, data, meta, renderMacroInEditMode);
+    };
+}
+
+function MacroAdapter(props: MacroComponentParams<ExtraRichTextProps>) {
+    const name = props.descriptor.substring(props.descriptor.indexOf(':') + 1);
+    const data = {
+        name: name,
+        descriptor: props.descriptor,
+        config: {
+            [name]: props.config as Record<string, MacroConfig>,
+        },
+    };
+
+    return <BaseMacro data={data} meta={props.meta} renderInEditMode={props.renderInEditMode}/>;
+}
+
+function LinkAdapter(props: LinkComponentParams<ExtraRichTextProps>) {
+    return <Link href={getUrl(props.href, props.meta)}>{props.children}</Link>;
+}
+
+function ImageAdapter(props: ImageComponentParams<ExtraRichTextProps>) {
+    return <img src={getUrl(props.src, props.meta)} alt={props.alt} sizes={props.sizes} srcSet={props.srcSet}/>;
+}
 
 export default RichTextView;

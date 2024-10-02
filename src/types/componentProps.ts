@@ -29,7 +29,7 @@ export interface BaseLayoutProps {
 }
 
 export interface BaseMacroProps {
-    data: MacroData;
+    data: Omit<MacroData, 'ref'>;
     meta: MetaData;
     renderInEditMode?: boolean;
 }
