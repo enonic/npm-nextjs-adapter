@@ -54,7 +54,7 @@ function LinkAdapter(props: LinkComponentParams<ExtraRichTextProps>) {
 }
 
 function ImageAdapter(props: ImageComponentParams<ExtraRichTextProps>) {
-    const srcSet = UrlProcessor.processSrcSet(props.srcSet, props.meta);
+    const srcSet = props.srcSet?.length ? UrlProcessor.processSrcSet(props.srcSet, props.meta) : undefined;
     return <img src={getUrl(props.src, props.meta)} alt={props.alt} sizes={props.sizes} srcSet={srcSet}/>;
 }
 
