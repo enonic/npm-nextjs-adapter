@@ -1,7 +1,7 @@
 /// <reference types="react" />
 import type {MetaData, RichTextViewProps, Replacer as OldReplacer, MacroConfig, RichTextData} from '../types';
 
-import {getUrl} from '../common/UrlProcessor';
+import {getUrl, UrlProcessor} from '../common/UrlProcessor';
 import BaseMacro from './BaseMacro';
 import Link from 'next/link';
 import type {MacroComponentParams, LinkComponentParams, ImageComponentParams, Replacer as NewReplacer} from '@enonic/react-components';
@@ -54,7 +54,8 @@ function LinkAdapter(props: LinkComponentParams<ExtraRichTextProps>) {
 }
 
 function ImageAdapter(props: ImageComponentParams<ExtraRichTextProps>) {
-    return <img src={getUrl(props.src, props.meta)} alt={props.alt} sizes={props.sizes} srcSet={props.srcSet}/>;
+    const srcSet = UrlProcessor.processSrcSet(props.srcSet, props.meta);
+    return <img src={getUrl(props.src, props.meta)} alt={props.alt} sizes={props.sizes} srcSet={srcSet}/>;
 }
 
 export default RichTextView;
