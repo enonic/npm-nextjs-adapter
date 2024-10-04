@@ -15,11 +15,18 @@ const commonConfig = {
         'src/**/*.{ts,tsx}',
     ],
     injectGlobals: false,
+    transformIgnorePatterns: ["/node_modules/(?!gqlmin)"],
     transform: {
-        "^.+\\.(ts|js)x?$": [
+        "^.+\\.tsx?$": [
             'ts-jest',
             {
-                tsconfig: 'test/tsconfig.json'
+                tsconfig: './test/tsconfig.json'
+            }
+        ],
+        "^.+\\.jsx?$": [
+            "babel-jest",
+            {
+                "extends": "./test/babel.config.js",
             }
         ]
     }

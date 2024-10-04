@@ -1,5 +1,5 @@
 import type {FetchOptions, GuillotineResult, LocaleMapping} from '../types';
-
+import gqlmin from 'gqlmin';
 
 import {fetchFromApi} from './fetchFromApi';
 
@@ -18,6 +18,9 @@ export async function fetchGuillotine<Data = Record<string, unknown>>(
                 message: `Invalid or missing query. JSON.stringify(query) = ${JSON.stringify(body.query)}`,
             },
         };
+    } else {
+        // Minify the query to avoid hitting 200k space limit
+        body.query = gqlmin(body.query);
     }
 
     const path = body?.variables?.path;
