@@ -20,7 +20,7 @@ const RichTextView = (props: RichTextViewProps) => {
         className={props.className}
         tag={props.tag}
         replacer={wrapReplacer(props.customReplacer, props.meta, props.renderMacroInEditMode)}
-        renderInEditMode={props.renderMacroInEditMode === undefined ? true : props.renderMacroInEditMode}
+        renderInEditMode={props.renderMacroInEditMode ?? true}
         Macro={MacroAdapter}
         Link={LinkAdapter}
         Image={ImageAdapter}
