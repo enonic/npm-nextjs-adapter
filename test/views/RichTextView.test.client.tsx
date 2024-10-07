@@ -5,6 +5,7 @@ import * as React from 'react'
 import {XP_REQUEST_TYPE, RENDER_MODE} from '../../src/common/constants';
 import {setupClientEnv} from '../constants';
 import {ComponentRegistry} from '../../src/common/ComponentRegistry';
+import type {MacroProps} from '../../src/types';
 
 
 describe('views', () => {
@@ -23,7 +24,7 @@ describe('views', () => {
             apiUrl: 'http://localhost:8080/site/api',
             baseUrl: '/base/url',
             locale: 'no',
-            defaultLocale: 'en',
+            defaultLocale: 'en'
         };
 
         beforeAll(async () => {
@@ -64,14 +65,14 @@ describe('views', () => {
                 processedHtml: `<div id="text-root">
                     <p>Some text before <a href="/some/link" title="Some link" data-link-ref="link-ref-1">the link</a> and some text after.</p>
                     <figure><a href="/some/image" data-link-ref="link-ref-2"><img src="/some/image.jpg" alt="Some image" data-image-ref="image-ref-1" /></a><figcaption>Some caption</figcaption></figure>
-                    <editor-macro data-macro-ref="macro-ref-1" />
+                    <editor-macro data-macro-ref="macro-ref-1"><strong>Child content</strong> of the macro.</editor-macro>
                     </div>`,
                 links: [{
                     ref: "link-ref-1",
                     uri: "/some/link",
                     media: {
                         content: {
-                            id: 'content-id-1',
+                            id: 'content-id-1'
                         },
                         intent: 'inline' as 'inline' | 'download'
                     }
@@ -83,21 +84,32 @@ describe('views', () => {
                     }],
                 macros: [{
                     ref: "macro-ref-1",
-                    name: "Macro name",
-                    descriptor: "macro:descriptor" as `${string}:${string}`,
-                    config: {}
+                    name: "macroname",
+                    descriptor: "app:macroname" as `${string}:${string}`,
+                    config: {
+                        "macroname": {
+                            key1: "value1"
+                        }
+                    }
                 }],
                 images: [{
                     ref: "image-ref-1",
                     image: {
-                        id: "image-id-1",
-                    },
+                        id: "image-id-1"
+                    }
                 }]
             };
 
             jest.spyOn(ComponentRegistry, "getMacro").mockImplementation(() => {
                 return {
-                    view: () => <div>Macro view</div>
+                    view: (props: MacroProps) => {
+                        expect(props.config).toEqual(data.macros[0].config.macroname);
+                        expect(props.name).toEqual(data.macros[0].name);
+                        expect(props.meta).toEqual(meta);
+                        expect(props.children).toBeTruthy();
+
+                        return <div>{props.children}</div>
+                    }
                 };
             });
 
@@ -108,7 +120,8 @@ describe('views', () => {
             expect(rootEl.parentElement.innerHTML).toEqual(`<div id="text-root">
                     <p>Some text before <a href="/base/url/no/some/link">the link</a> and some text after.</p>
                     <figure><a href="/base/url/no/some/image"><img src="/base/url/no/some/image.jpg" alt="Some image"></a><figcaption>Some caption</figcaption></figure>
-                    <div>Macro view</div></div>`);
+                    <div><strong>Child content</strong> of the macro.</div>
+                    </div>`);
         });
     });
 });
