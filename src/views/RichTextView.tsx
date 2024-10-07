@@ -37,16 +37,17 @@ function wrapReplacer(oldReplacer: OldReplacer | undefined, meta: MetaData, rend
 }
 
 function MacroAdapter(props: MacroComponentParams<ExtraRichTextProps>) {
-    const name = props.descriptor.substring(props.descriptor.indexOf(':') + 1);
+    const {children, descriptor, config, meta, renderInEditMode} = props;
+    const name = descriptor.substring(descriptor.indexOf(':') + 1);
     const data = {
         name: name,
-        descriptor: props.descriptor,
+        descriptor: descriptor,
         config: {
-            [name]: props.config as Record<string, MacroConfig>,
+            [name]: config as Record<string, MacroConfig>,
         },
     };
 
-    return <BaseMacro data={data} meta={props.meta} renderInEditMode={props.renderInEditMode}/>;
+    return <BaseMacro data={data} meta={meta} renderInEditMode={renderInEditMode}>{children}</BaseMacro>;
 }
 
 function LinkAdapter(props: LinkComponentParams<ExtraRichTextProps>) {
