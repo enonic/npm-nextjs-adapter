@@ -15,7 +15,7 @@ export const MACRO_EMBED = 'system:embed';
 
 
 const BaseMacro = (props: BaseMacroProps) => {
-    const {data, meta, renderInEditMode} = props;
+    const {data, children, meta, renderInEditMode} = props;
 
     let config = data.config?.[sanitizeGraphqlName(data.name)] ?? {};
     if (data.descriptor !== MACRO_DISABLE) {
@@ -45,7 +45,7 @@ const BaseMacro = (props: BaseMacroProps) => {
     const macro = ComponentRegistry.getMacro(data.descriptor);
     const MacroView = macro?.view;
     if (MacroView) {
-        return <MacroView name={data.name} config={config} meta={meta}/>;
+        return <MacroView name={data.name} config={config} meta={meta}>{children}</MacroView>;
     } else if (data.descriptor) {
         console.warn(`BaseMacro: can not render macro '${data.descriptor}': no next view or catch-all defined`);
     }

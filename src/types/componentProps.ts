@@ -29,6 +29,7 @@ export interface BaseLayoutProps {
 }
 
 export interface BaseMacroProps {
+    children: string | React.ReactNode;
     data: Omit<MacroData, 'ref'>;
     meta: MetaData;
     renderInEditMode?: boolean;
@@ -68,6 +69,7 @@ export interface LayoutProps {
 
 export interface MacroProps {
     name: string;
+    children: string | React.ReactNode;
     config: MacroConfig;
     meta: MetaData;
 }
