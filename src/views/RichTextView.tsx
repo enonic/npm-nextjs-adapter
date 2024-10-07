@@ -56,7 +56,7 @@ function LinkAdapter(props: LinkComponentParams<ExtraRichTextProps>) {
 
 function ImageAdapter(props: ImageComponentParams<ExtraRichTextProps>) {
     const srcSet = props.srcSet?.length ? UrlProcessor.processSrcSet(props.srcSet, props.meta) : undefined;
-    return <img src={getUrl(props.src, props.meta)} alt={props.alt} sizes={props.sizes} srcSet={srcSet}/>;
+    return <img src={getUrl(props.src, props.meta)} style={props.style} alt={props.alt} sizes={props.sizes} srcSet={srcSet}/>;
 }
 
 export default RichTextView;
