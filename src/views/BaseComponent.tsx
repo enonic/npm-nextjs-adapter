@@ -67,7 +67,9 @@ export const MissingComponent = ({descriptor, type}: { descriptor?: string, type
             padding: '16px',
         }}>
             <h3 style={{margin: 0}}>Missing component</h3>
-            <p style={{marginBottom: 0, color: 'grey'}}>{`Missing ${type} with descriptor: ${descriptor}`}</p>
+            <p style={{marginBottom: 0, color: 'grey'}}>
+                Missing {type} with descriptor: <strong>{descriptor}</strong>. Did you forget to register it ?
+            </p>
         </div>
     );
 };

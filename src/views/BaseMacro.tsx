@@ -1,11 +1,11 @@
-/// <reference types="react" />
 import type {BaseMacroProps, MacroConfig} from '../types';
-
 
 import {ComponentRegistry} from '../common/ComponentRegistry';
 import {RENDER_MODE} from '../common/constants';
 import {sanitizeGraphqlName} from '../utils/sanitizeGraphqlName';
 import HTMLReactParser from 'html-react-parser';
+import {shouldShowMissingView, MissingComponent} from './BaseComponent';
+import React from 'react';
 
 
 const unescape = require('unescape');
@@ -56,6 +56,9 @@ const BaseMacro = (props: BaseMacroProps) => {
         return <MacroView name={data.name} config={config} meta={meta}>{children}</MacroView>;
     } else if (data.descriptor) {
         console.warn(`BaseMacro: can not render macro '${data.descriptor}': no next view or catch-all defined`);
+        if (shouldShowMissingView(meta)) {
+            return <MissingComponent type="macro" descriptor={data.descriptor}/>;
+        }
     }
     return null;
 };
