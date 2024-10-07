@@ -26,6 +26,8 @@ const BaseMacro = (props: BaseMacroProps) => {
     if (!renderInEditMode && meta?.renderMode === RENDER_MODE.EDIT) {
         const attrs = formatAttributes(config);
         if (config.body) {
+            // NB. config body takes precedence over children
+
             // do not parse system macros (embed, disable) in edit mode
             // but parse others because panel macros (for instance) wants its content to be html, not string
             // TODO: should we make this behavior configurable ?
@@ -33,6 +35,12 @@ const BaseMacro = (props: BaseMacroProps) => {
             return <>
                 {`[${data.name}${attrs}]`}
                 {bodyString}
+                {`[/${data.name}]`}
+            </>;
+        } else if (children) {
+            return <>
+                {`[${data.name}${attrs}]`}
+                {children}
                 {`[/${data.name}]`}
             </>;
         } else {
