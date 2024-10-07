@@ -1,6 +1,6 @@
 {
   "name": "@enonic/nextjs-adapter",
-  "version": "3.1.0-B4",
+  "version": "3.1.0-B5",
   "license": "Apache-2.0",
   "main": "index.js",
   "author": "Pavel Milkevich <pmi@enonic.com>",
