@@ -49,17 +49,23 @@ They are available at `@enonic/nextjs-adapter/server`
 Fetches the content/component by path with component queries optimization, page structure as well as runtime info calculation. This is the
 main method for querying content.
 
-| Argument  | Description       |
-|-----------|-------------------|
-| `path`    | Path to content   |
+| Argument | Description       |
+|----------|-------------------|
 | `context` | Execution context |
 
 Usage:
 
 ```tsx
 import {fetchContent} from '@enonic/nextjs-adapter/server';
+import {headers} from 'next/headers';
 
-const response = fetchContent('/path/to/content', context);
+const context = {
+    contentPath: '/current/content/path',
+    locale: 'en',
+    headers: headers(),
+};
+
+const response = fetchContent(context);
 ```
 
 Response type:
@@ -193,7 +199,7 @@ Loads all content paths for all locales. Generally used for static site generati
 
 | Argument | Description                                       |
 |----------|---------------------------------------------------|
-| `apiUrl` | Service API URL                                   |
+| `path`   | Root content path                                 |
 | `query`  | Request and Next.js config options _(Optional)_ * |
 | `count`  | Max result count _(Optional, defaults to 999)_    |
 
@@ -212,7 +218,7 @@ Usage:
 ```tsx
 import {fetchContentPathsForAllLocales} from '@enonic/nextjs-adapter/server';
 
-const contentPaths = fetchContentPathsForLocale('/', 'custom graphql query', 1001);
+const contentPaths = fetchContentPathsForLocale('/site-name', 'custom graphql query', 1001);
 ```
 
 <br/>
@@ -224,7 +230,7 @@ Used by [fetchContentPathsForAllLocales()](#fetch-paths-for-all-locales)
 
 | Argument  | Description                                                                                         |
 |-----------|-----------------------------------------------------------------------------------------------------|
-| `apiUrl`  | Service API URL                                                                                     |
+| `path`    | Root content path                                                                                   |
 | `mapping` | [Mapping](#locale-mapping-type) locale to project                                                   |
 | `query`   | Request and Next.js config options _(Optional, [default value here](#fetch-paths-for-all-locales))_ |
 | `count`   | Max result count _(Optional, defaults to 999)_                                                      |
@@ -290,8 +296,14 @@ Usage:
 import {useLocaleContext} from '@enonic/nextjs-adapter/client';
 
 export default function ClientSideComponent() {
-    const {locale, localize} = useLocaleContext();
+    const {locale, localize, setLocale} = useLocaleContext();
+    console.log(`Current locale: ${locale}`);
+    
     const localizedText = localize('text.key');
+    
+    setLocale('en').then((dict) => {
+        console.log(`New locale: ${locale}`);
+    });
     // ...
 }
 ```
@@ -329,8 +341,7 @@ const urlRelativeToViewer = getUrl('/some/content/url', meta);
 
 #### <a id="get-asset"></a>`getAsset(url: string, meta: MetaData) => string`
 
-Converts a local asset URL to relative one for current viewer (Next.js/Enonic XP). It doesn't append locales unlike [getUrl()]
-(#get-url).
+Converts a local asset URL to relative one for current viewer (Next.js/Enonic XP). It doesn't append locales unlike the [getUrl()](#get-url).
 
 > **INFO:** For your URLs to work both in Enonic XP and Next.js you need to:
 > 1. Use relative URL to local asset
@@ -380,7 +391,7 @@ const query = `query($path:ID!){
 
 #### `validateData(props: FetchContentResult) => void`
 
-Validates data returned by [fetchContent()](#fetch-content) method. Throws an error or notFound() if data is invalid.
+Utility method to validate data returned by [fetchContent()](#fetch-content) method. Throws an error or notFound() if data is invalid. Also prevents shortcut content types from being rendered in preview/edit modes.
 
 | Argument | Description                 |
 |----------|-----------------------------|
@@ -638,10 +649,9 @@ const url = UrlProcessor.processSrcSet('<srcset value>', meta);
 
 #### `static setSiteKey(key: string): void`
 
-Sets the site key value that is needed for correct absolute URL processing. It is automatically done by `nextjs-adapter` so you don't
-have to do it.
+> **DEPRECATED:** It is automatically done by `nextjs-adapter` now and have no effect.
 
-> **WARNING:** Overriding this value may result in wrong URL processing !
+Sets the site key value that is needed for correct absolute URL processing.
 
 | Argument | Description |
 |----------|-------------|
@@ -944,9 +954,6 @@ enum XP_COMPONENT_TYPE {    // Enum for XP component types
 // Sanitizes text according to graphql naming spec http://spec.graphql.org/October2021/#sec-Names
 const sanitizeGraphqlName = (text: string) => string;
 
-// Returns common part of 2 strings
-const commonChars = (s1?: string, s2?: string) => string;
-
 // Returns full content api URL with current project and branch appended
 const getContentApiUrl = (context: Context) => string;
 ```
@@ -959,8 +966,7 @@ They are located in `@enonic/nextjs-adapter/views` folder. Each view is a defaul
 
 #### `<MainView common="common" data="data" page="page" meta="meta">`
 
-The main view of the application. It accepts the result of [fetchContent](#fetch-content) method.
-Should be default export from your [next.js route](https://nextjs.org/docs/routing/introduction)
+The main view of the application. It accepts the result of [fetchContent](#fetch-content) method and is intended to be used as a view for your [next.js route](https://nextjs.org/docs/routing/introduction)
 
 | Argument | Type                              | Description                 |
 |----------|-----------------------------------|-----------------------------|
@@ -1050,25 +1056,4 @@ Usage:
 import StaticContent from '@enonic/nextjs-adapter/views/StaticContent';
 
 <StaticContent condition={true} tag="div"> ...child elements... </StaticContent>
-```
-
-## Known problems
-
-
-In some cases, when using in NextJS application, a build errors related to the JSX may appear, that state the following:
-
-```
-You may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders
-```
-
-To prevent these errors, it is necessary to transpile the library using something
-like [`next-transpile-modules`](https://www.npmjs.com/package/next-transpile-modules).
-Install it as dev dependency and call it explicitly from you NextJS config:
-
-`next.config.js`
-
-```js
-const withTM = require('next-transpile-modules')(['@enonic/nextjs-adapter']);
-
-module.exports = withTM({});
 ```
