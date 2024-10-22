@@ -3,7 +3,6 @@ import type {ComponentDescriptor, Context, FetchContentResult} from '../types';
 import {draftMode, headers} from 'next/headers';
 import {ComponentRegistry} from '../common/ComponentRegistry';
 import {
-    FRAGMENT_CONTENTTYPE_NAME,
     PAGE_TEMPLATE_CONTENTTYPE_NAME,
     PAGE_TEMPLATE_FOLDER,
     RENDER_MODE,
@@ -98,7 +97,6 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
             renderMode === RENDER_MODE.NEXT
             && !IS_DEV_MODE
             && (
-                type === FRAGMENT_CONTENTTYPE_NAME ||
                 type === PAGE_TEMPLATE_CONTENTTYPE_NAME ||
                 type === PAGE_TEMPLATE_FOLDER
             )) {

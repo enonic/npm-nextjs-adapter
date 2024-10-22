@@ -33,13 +33,32 @@ globalThis.console = {
 } as Console;
 
 
-const GUILLOTINE_RESULT_MINIMAL: GuillotineResponseJson = {
+const GUILLOTINE_RESULT_FRAGMENT: GuillotineResponseJson = {
     data: {
-        guillotine: {
-            query: [{
-                valid: true
-            }]
-        }
+        request0: {
+            get: {
+                displayName: 'HMDB',
+                _id: 'f5815ec2-26e0-4595-b37b-c2ba0d3c1e1c',
+                type: 'portal:fragment',
+                dataAsJson: {
+                    siteConfig: [
+                        {
+                            applicationKey: 'com.example.myproject',
+                            config: {}
+                        },
+                        {
+                            applicationKey: 'com.enonic.app.nextxp',
+                            config: {}
+                        }
+                    ]
+                },
+                xAsJson: {}
+            },
+            getSite: {
+                displayName: 'HMDB',
+                _path: '/hmdb'
+            }
+        },
     }
 };
 
@@ -643,14 +662,15 @@ describe('guillotine', () => {
             });
         }); // it handles metaResult.meta without type
 
-        it('handles content type that is not accessible in render mode next ', () => {
+        it('renders fragments in render mode next ', () => {
             mockFetch({
-                contentJson: GUILLOTINE_RESULT_WITH_ERROR, // Throws before this is used
+                contentJson: GUILLOTINE_RESULT_FRAGMENT,
                 metaJson: {
                     data: {
                         guillotine: {
                             get: {
-                                _path: '/path',
+                                _id: 'f5815ec2-26e0-4595-b37b-c2ba0d3c1e1c',
+                                _path: '/fragment/path',
                                 type: FRAGMENT_CONTENTTYPE_NAME
                             }
                         }
@@ -659,7 +679,7 @@ describe('guillotine', () => {
             });
             import('../../src/server').then(async ({fetchContent}) => {
                 const context: Context = {
-                    contentPath: '/path/_/component/path',
+                    contentPath: '/fragment/path',
                     headers: {
                         get(name: string) {
                             if (name === RENDER_MODE_HEADER) {
@@ -672,25 +692,25 @@ describe('guillotine', () => {
                 };
                 const promise = fetchContent(context);
                 expect(promise).resolves.toStrictEqual({
-                    error: {
-                        code: '404',
-                        message: `Content type [${FRAGMENT_CONTENTTYPE_NAME}] is not accessible in ${RENDER_MODE.NEXT} mode`,
+                    page: {
+                        path: "/",
+                        regions: {},
+                        type: "page",
                     },
-                    page: null,
                     common: null,
                     data: null,
                     meta: {
-                        id: '',
+                        id: 'f5815ec2-26e0-4595-b37b-c2ba0d3c1e1c',
                         apiUrl: 'http://localhost:8080/site/project/master',
                         baseUrl: '/',
                         canRender: false,
                         catchAll: false,
                         defaultLocale: 'en',
                         locale: 'en',
-                        path: '/path/_/component/path',
-                        requestType: 'component',
+                        path: '/fragment/path',
+                        requestType: 'type',
                         renderMode: 'next',
-                        type: '',
+                        type: 'portal:fragment',
                     },
                 }); // expect
             }); // import
