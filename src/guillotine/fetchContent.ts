@@ -41,7 +41,7 @@ import {createMetaData} from './createMetaData';
  */
 export async function fetchContent(context: Context): Promise<FetchContentResult> {
     const {locale, locales, defaultLocale} = getRequestLocaleInfo(context);
-    const { isEnabled } = await draftMode();
+    const {isEnabled} = await draftMode();
 
     // we only want to read headers in draft mode, because they bail out static generation
     if (isEnabled) {

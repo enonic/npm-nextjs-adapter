@@ -7,6 +7,7 @@ import Link from 'next/link';
 import type {MacroComponentParams, LinkComponentParams, ImageComponentParams, Replacer as NewReplacer} from '@enonic/react-components';
 import {RichText} from '@enonic/react-components';
 import type {DOMNode} from 'html-react-parser';
+import {sanitizeGraphqlName} from '../utils/sanitizeGraphqlName';
 
 interface ExtraRichTextProps {
     meta: MetaData;
@@ -43,7 +44,7 @@ function MacroAdapter(props: MacroComponentParams<ExtraRichTextProps>) {
         name: name,
         descriptor: descriptor,
         config: {
-            [name]: config as Record<string, MacroConfig>,
+            [sanitizeGraphqlName(name)]: config as Record<string, MacroConfig>,
         },
     };
 
