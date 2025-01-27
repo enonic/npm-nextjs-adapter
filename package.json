@@ -61,7 +61,7 @@
     "unescape": "^1.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.0",
+    "@babel/core": "^7.26.7",
     "@babel/preset-env": "^7.26.0",
     "@edge-runtime/jest-environment": "^4.0.0",
     "@enonic-types/core": "^7.14.4",
