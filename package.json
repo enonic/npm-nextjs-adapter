@@ -64,7 +64,7 @@
     "@babel/core": "^7.26.10",
     "@babel/preset-env": "^7.26.9",
     "@edge-runtime/jest-environment": "^4.0.0",
-    "@enonic-types/core": "^7.15.0",
+    "@enonic-types/core": "^7.15.1",
     "@enonic/eslint-config": "^1.2.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
