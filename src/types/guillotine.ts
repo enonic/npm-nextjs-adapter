@@ -65,6 +65,7 @@ export interface FetchContentResult extends Result {
 // Seems like NodeJS.fetch lowercases all headers, so we need to lowercase the
 // header names here.
 export interface GuillotineRequestHeaders {
+    [key: string]: string;
     Cookie?: string
     locale: string
     locales: string
@@ -384,8 +385,8 @@ interface XData_base_ApplicationConfig {
 
 interface XData_base_gpsInfo_DataConfig {
     geoPoint: GeoPoint
-    altitude: String
-    direction: String
+    altitude: string
+    direction: string
 }
 
 interface XData_media_ApplicationConfig {

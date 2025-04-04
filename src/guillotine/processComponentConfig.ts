@@ -16,7 +16,7 @@ export function processComponentConfig(
             return;
         }
         let config;
-        const configArray: Object[] = [];
+        const configArray: object[] = [];
         if ('configAsJson' in cmpData && cmpData.configAsJson && cmpData.configAsJson[myAppNameDashed]) {
             config = cmpData.configAsJson[myAppNameDashed][cmpName];
             if (config) {

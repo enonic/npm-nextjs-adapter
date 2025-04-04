@@ -10,11 +10,13 @@ export type * from './util';
 
 // Shape of content base-data API body
 export interface ContentApiBaseBody {
-    query?: string,                 // Override the default base-data query
-    variables?: {                   // GraphQL variables inserted into the query
-        path?: string,              // Full content item _path
-        [key: string]: string | number | undefined,
-    }
+    query?: string,                             // Override the default base-data query
+    variables?: ContentApiBaseBodyVariables     // GraphQL variables inserted into the query
+}
+
+export interface ContentApiBaseBodyVariables {
+    path?: string,              // Full content item _path
+    [key: string]: string | number | undefined,
 }
 
 export interface ContentPathItem {

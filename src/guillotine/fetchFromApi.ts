@@ -66,11 +66,11 @@ function mergeHeaders(mapping: LocaleMapping, headers?: HeadersInit): Headers {
         'Content-Type': 'application/json',
     });
     if (headers) {
-        for (const headersKey in headers) {
+        Object.keys(headers).forEach((headersKey) => {
             newHeaders.set(headersKey, headers[headersKey]);
-        }
-        // append last to make sure it is not overwritten
+        });
     }
+    // append last to make sure it is not overwritten
     newHeaders.set('X-Guillotine-SiteKey', mapping.site);
     return newHeaders;
 }

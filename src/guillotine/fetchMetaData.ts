@@ -1,4 +1,4 @@
-import type {ContentApiBaseBody, MetaResult, LocaleMapping} from '../types';
+import type {ContentApiBaseBody, MetaResult, LocaleMapping, GuillotineRequestHeaders} from '../types';
 
 
 import {getMetaQuery, pageFragmentQuery} from './getMetaData';
@@ -9,7 +9,7 @@ export const fetchMetaData = async (
     contentApiUrl: string,
     xpContentPath: string,
     mapping: LocaleMapping,
-    headers?: {},
+    headers?: GuillotineRequestHeaders,
 ): Promise<MetaResult> => {
     const body: ContentApiBaseBody = {
         query: getMetaQuery(pageFragmentQuery()),

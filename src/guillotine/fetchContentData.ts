@@ -1,5 +1,10 @@
-import type {ContentApiBaseBody, ContentResult, LocaleMapping} from '../types';
-
+import type {
+    ContentApiBaseBody,
+    ContentApiBaseBodyVariables,
+    ContentResult,
+    LocaleMapping,
+    GuillotineRequestHeaders,
+} from '../types';
 
 import {fetchGuillotine} from './fetchGuillotine';
 
@@ -9,8 +14,8 @@ export const fetchContentData = async <Content = Record<string, unknown>>(
     xpContentPath: string,
     mapping: LocaleMapping,
     query: string,
-    variables?: {},
-    headers?: {},
+    variables?: ContentApiBaseBodyVariables,
+    headers?: GuillotineRequestHeaders,
 ): Promise<ContentResult> => {
     const body: ContentApiBaseBody = {query};
     if (variables && Object.keys(variables).length > 0) {

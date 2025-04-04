@@ -30,7 +30,7 @@ export function getParentRegion(
                 };
                 currentTree[regionName] = currentRegion;
             } else {
-                throw `Region [${regionName}] was not found`;
+                throw new Error(`Region [${regionName}] was not found`);
             }
         }
 
@@ -41,7 +41,7 @@ export function getParentRegion(
                 return cmp.type === XP_COMPONENT_TYPE.LAYOUT && prefixFragmentCmpPath(contentType, cmp.path) === parentPath;
             });
             if (!layout) {
-                throw `Layout [${parentPath}] not found among components, but needed for component [${JSON.stringify(cmpPath, null, 2)}]`;
+                throw new Error(`Layout [${parentPath}] not found among components, but needed for component [${JSON.stringify(cmpPath, null, 2)}]`);
             }
             if (!layout.regions) {
                 layout.regions = {};

@@ -87,3 +87,5 @@ yarn-error.log*
 
 # No permanent docs yet, only temporary used by madge
 /docs/
+
+.eslintcache
