@@ -1,11 +1,11 @@
-name: Test & Lint
+name: Build & Test
 
 on: push
 
 jobs:
 
   build:
-    name: test & lint
+    name: build & test
     runs-on: ubuntu-latest
 
     steps:
@@ -14,5 +14,6 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
+      - run: npm run build
       - run: npm run lint --if-present
       - run: npm test --if-present
