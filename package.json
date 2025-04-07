@@ -79,7 +79,7 @@
     "cpy-cli": "^5.0.0",
     "del-cli": "^6.0.0",
     "eslint": "^9.16.0",
-    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react": "^7.37.5",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "madge": "^8.0.0",
