@@ -221,6 +221,31 @@ describe('guillotine', () => {
             });
         });
 
+        it('returns an error when path variable contains XP error URL pattern', async () => {
+            const [contentApiUrl, mapping, options] = FETCH_GUILLOTINE_PARAMS_VALID;
+
+            const opts = {
+                ...options,
+                body: {
+                    query: QUERY,
+                    variables: {
+                        path: '/master/_/error/777'
+                    }
+                }
+            };
+
+            await import('../../src/server').then((moduleName) => {
+                moduleName.fetchGuillotine(contentApiUrl, mapping, opts).then((result) => {
+                    expect(result).toEqual({
+                        error: {
+                            code: '777',
+                            message: 'XP error URL detected'
+                        }
+                    });
+                });
+            });
+        });
+
         it('ensures json.errors is always an array', async () => {
             jest.spyOn(globalThis, 'fetch').mockImplementation((input, init = {}) => {
                 const json = {
