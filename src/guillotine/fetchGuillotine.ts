@@ -3,6 +3,7 @@ import gqlmin from 'gqlmin';
 
 import {fetchFromApi} from './fetchFromApi';
 
+const XP_ERROR_PATTERN = '/_/error/';
 
 /** Guillotine-specialized fetch, using the generic fetch above */
 export async function fetchGuillotine<Data = Record<string, unknown>>(
@@ -11,6 +12,8 @@ export async function fetchGuillotine<Data = Record<string, unknown>>(
     options?: FetchOptions,
 ): Promise<GuillotineResult> {
     const body = options?.body;
+    const path = body?.variables?.path;
+
     if (typeof body.query !== 'string' || !body.query.trim()) {
         return {
             error: {
@@ -19,11 +22,21 @@ export async function fetchGuillotine<Data = Record<string, unknown>>(
             },
         };
     } else {
-        // Minify the query to avoid hitting 200k space limit
-        body.query = gqlmin(body.query);
+        // special case for not sending XP generated error paths to guillotine
+        const pathArr = path?.split(XP_ERROR_PATTERN);
+        if (pathArr?.length === 2) {
+            return {
+                error: {
+                    code: pathArr[1],
+                    message: `XP error URL detected`,
+                },
+            }
+        } else {
+            // Minify the query to avoid hitting 200k space limit
+            body.query = gqlmin(body.query);
+        }
     }
 
-    const path = body?.variables?.path;
     const pathMessage = path ? JSON.stringify(path) : '';
     return await fetchFromApi<Data>(
         contentApiUrl,
