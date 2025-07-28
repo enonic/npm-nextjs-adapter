@@ -1,23 +1,38 @@
 /// <reference types="react" />
-import type {MetaData, RichTextViewProps, Replacer as OldReplacer, MacroConfig, RichTextData} from '../types';
+import type {MetaData, RichTextViewProps, Replacer as NextReplacer, RichTextData, MacroData} from '../types';
 
 import {getUrl, UrlProcessor} from '../common/UrlProcessor';
 import BaseMacro from './BaseMacro';
 import Link from 'next/link';
-import type {MacroComponentParams, LinkComponentParams, ImageComponentParams, Replacer as NewReplacer} from '@enonic/react-components';
-import {RichText} from '@enonic/react-components';
+import type {
+    MacroComponentParams,
+    LinkComponentParams,
+    ImageComponentParams,
+    Replacer as ComponentsReplacer,
+    ExtendedRichTextData,
+    ComponentDataAndProps,
+    MacroComponentData
+} from '@enonic/react-components';
+import {RichText, RichTextMetaData} from '@enonic/react-components';
 import type {DOMNode} from 'html-react-parser';
-import {sanitizeGraphqlName} from '../utils/sanitizeGraphqlName';
+import {LiteralUnion, TextComponent} from '@enonic-types/core';
 
 interface ExtraRichTextProps {
-    meta: MetaData;
+    nextMeta: MetaData;
     renderInEditMode?: boolean;
 }
 
 const RichTextView = (props: RichTextViewProps) => {
+    const component: TextComponent = {
+        type: 'text',
+        path: props.meta.path,
+        text: props.data.processedHtml
+    }
     return <RichText<ExtraRichTextProps>
-        data={props.data}
-        meta={props.meta}
+        data={wrapData(props.data)}
+        meta={toRichTextMetaData(props.meta)}
+        nextMeta={props.meta}
+        component={component}
         className={props.className}
         tag={props.tag}
         replacer={wrapReplacer(props.customReplacer, props.meta, props.renderMacroInEditMode)}
@@ -28,36 +43,63 @@ const RichTextView = (props: RichTextViewProps) => {
     />;
 };
 
-function wrapReplacer(oldReplacer: OldReplacer | undefined, meta: MetaData, renderMacroInEditMode: boolean): NewReplacer {
-    if (!oldReplacer) {
+function wrapReplacer(nextReplacer: NextReplacer | undefined, meta: MetaData,
+    renderMacroInEditMode: boolean): ComponentsReplacer<ExtraRichTextProps> {
+    if (!nextReplacer) {
         return null;
     }
-    return (element: DOMNode, data: RichTextData) => {
-        return oldReplacer(element, data, meta, renderMacroInEditMode);
+    return ({el, data}: { el: DOMNode, data: RichTextData, mode?: LiteralUnion<RequestMode> }) => {
+        return nextReplacer(el, data, meta, renderMacroInEditMode);
+    };
+}
+
+function wrapData(data: RichTextData): ExtendedRichTextData {
+    if (!data.macros || !data.macros.length) {
+        return data as ExtendedRichTextData;
+    }
+    const macroComponents = data.macros.map(macroData => {
+        return {
+            component: {
+                type: 'macro',
+                ref: macroData.ref,
+                name: macroData.name,
+                descriptor: macroData.descriptor
+            },
+            data: {
+                name: macroData.name,
+                descriptor: macroData.descriptor,
+                config: macroData.config || {}
+            }
+        } as ComponentDataAndProps<MacroComponentData>;
+    });
+    return {
+        ...data,
+        macroComponents
     };
 }
 
 function MacroAdapter(props: MacroComponentParams<ExtraRichTextProps>) {
-    const {children, descriptor, config, meta, renderInEditMode} = props;
-    const name = descriptor.substring(descriptor.indexOf(':') + 1);
-    const data = {
-        name: name,
-        descriptor: descriptor,
-        config: {
-            [sanitizeGraphqlName(name)]: config as Record<string, MacroConfig>,
-        },
-    };
+    const {children, component, data, common, meta, nextMeta, renderInEditMode} = props;
 
-    return <BaseMacro data={data} meta={meta} renderInEditMode={renderInEditMode}>{children}</BaseMacro>;
+    return <BaseMacro data={data as Omit<MacroData, 'ref'>} meta={nextMeta} renderInEditMode={renderInEditMode}>{children}</BaseMacro>;
 }
 
 function LinkAdapter(props: LinkComponentParams<ExtraRichTextProps>) {
-    return <Link href={getUrl(props.href, props.meta)}>{props.children}</Link>;
+    return <Link href={getUrl(props.href, props.nextMeta)}>{props.children}</Link>;
 }
 
 function ImageAdapter(props: ImageComponentParams<ExtraRichTextProps>) {
-    const srcSet = props.srcSet?.length ? UrlProcessor.processSrcSet(props.srcSet, props.meta) : undefined;
-    return <img src={getUrl(props.src, props.meta)} style={props.style} alt={props.alt} sizes={props.sizes} srcSet={srcSet}/>;
+    const srcSet = props.srcSet?.length ? UrlProcessor.processSrcSet(props.srcSet, props.nextMeta) : undefined;
+    return <img src={getUrl(props.src, props.nextMeta)} style={props.style} alt={props.alt} sizes={props.sizes} srcSet={srcSet}/>;
+}
+
+function toRichTextMetaData(meta: MetaData): RichTextMetaData {
+    return {
+        type: meta.type,
+        mode: meta.renderMode,
+        path: meta.path,
+        id: meta.id
+    }
 }
 
 export default RichTextView;
