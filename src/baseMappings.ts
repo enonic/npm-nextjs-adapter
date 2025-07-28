@@ -13,41 +13,41 @@ import {getShortcutQuery} from './query/Shortcut';
 // Base Content Types
 
 ComponentRegistry.addContentType(FRAGMENT_CONTENTTYPE_NAME, {
-    view: FragmentView,
+    view: FragmentView
 });
 
 ComponentRegistry.addContentType('base:shortcut', {
-    query: getShortcutQuery,
+    query: getShortcutQuery
 });
 
 // Base Components
 
 ComponentRegistry.addComponent(XP_COMPONENT_TYPE.PAGE, {
-    view: BasePage,
+    view: BasePage
 });
 
 ComponentRegistry.addComponent(XP_COMPONENT_TYPE.PART, {
-    view: BasePart,
+    view: BasePart
 });
 
 ComponentRegistry.addComponent(XP_COMPONENT_TYPE.LAYOUT, {
-    view: BaseLayout,
+    view: BaseLayout
 });
 
 ComponentRegistry.addComponent(XP_COMPONENT_TYPE.FRAGMENT, {
-    view: FragmentView,
+    view: FragmentView
 });
 
 ComponentRegistry.addComponent(XP_COMPONENT_TYPE.TEXT, {
-    view: TextView,
+    view: TextView
 });
 
 // Macro mappings
 ComponentRegistry.addMacro('system:embed', {
     view: DefaultMacro,
-    configQuery: '{body}',
+    configQuery: '{body}'
 });
 ComponentRegistry.addMacro('system:disable', {
     view: DisableMacro,
-    configQuery: '{body}',
+    configQuery: '{body}'
 });

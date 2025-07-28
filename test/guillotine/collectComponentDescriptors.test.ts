@@ -5,7 +5,7 @@ globalThis.console = {
     warn: jest.fn(),
     log: jest.fn(),
     info: jest.fn(),
-    // debug: jest.fn(),
+    // debug: jest.fn()
 } as Console;
 
 
@@ -24,8 +24,8 @@ const PART_COMPONENT: PageComponent = {
     path: '/',
     part: {
         config: {},
-        descriptor: PART_NAME_HEADING,
-    },
+        descriptor: PART_NAME_HEADING
+    }
 };
 const PART_CATCH_ALL = false;
 const PART_CONFIG_QUERY = '{heading}';
@@ -37,14 +37,14 @@ const FRAGMENT_COMPONENT: PageComponent = {
     fragment: {
         id: 'fragmentId',
         fragment: {
-            components: [PART_COMPONENT],
+            components: [PART_COMPONENT]
         }
-    },
+    }
 };
 
 const FRAGMENT_COMPONENT_BROKEN: PageComponent = {
     type: XP_COMPONENT_TYPE.FRAGMENT,
-    path: '/main/0',
+    path: '/main/0'
 };
 
 beforeAll(() => {
@@ -55,7 +55,7 @@ beforeAll(() => {
         configQuery: PART_CONFIG_QUERY,
         query: PART_QUERY
         // processor
-        // view: Heading,
+        // view: Heading
     });
 });
 
@@ -66,7 +66,7 @@ describe('guillotine', () => {
             const components: PageComponent[] = [];
             const xpContentPath = '';
             const context: Context = {
-                contentPath: '/contextContentPath',
+                contentPath: '/contextContentPath'
             }
             import('../../src/guillotine/collectComponentDescriptors').then((moduleName) => {
                 expect(moduleName.collectComponentDescriptors({
@@ -79,7 +79,7 @@ describe('guillotine', () => {
             const components: PageComponent[] = [PART_COMPONENT];
             const xpContentPath = '/xpContentPath';
             const context: Context = {
-                contentPath: '/contextContentPath',
+                contentPath: '/contextContentPath'
             }
             import('../../src/guillotine/collectComponentDescriptors').then((moduleName) => {
                 expect(moduleName.collectComponentDescriptors({
@@ -89,7 +89,7 @@ describe('guillotine', () => {
                     queryAndVariables: {
                         query: PART_QUERY,
                         variables: {
-                            path: xpContentPath,
+                            path: xpContentPath
                         }
                     },
                     type: {
@@ -105,7 +105,7 @@ describe('guillotine', () => {
             const components: PageComponent[] = [FRAGMENT_COMPONENT];
             const xpContentPath = '/xpContentPath';
             const context: Context = {
-                contentPath: '/contextContentPath',
+                contentPath: '/contextContentPath'
             }
 
             import('../../src/guillotine/collectComponentDescriptors').then((moduleName) => {
@@ -116,7 +116,7 @@ describe('guillotine', () => {
                     queryAndVariables: {
                         query: PART_QUERY,
                         variables: {
-                            path: xpContentPath,
+                            path: xpContentPath
                         }
                     },
                     type: {
@@ -132,7 +132,7 @@ describe('guillotine', () => {
             const components: PageComponent[] = [FRAGMENT_COMPONENT_BROKEN];
             const xpContentPath = '/xpContentPath';
             const context: Context = {
-                contentPath: '/contextContentPath',
+                contentPath: '/contextContentPath'
             }
             import('../../src/guillotine/collectComponentDescriptors').then((moduleName) => {
                 expect(moduleName.collectComponentDescriptors({

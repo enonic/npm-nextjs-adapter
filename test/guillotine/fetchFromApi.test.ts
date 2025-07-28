@@ -12,7 +12,7 @@ globalThis.console = {
     warn: jest.fn(),
     log: jest.fn(),
     info: jest.fn(),
-    debug: jest.fn(),
+    debug: jest.fn()
 } as unknown as Console;
 
 
@@ -21,14 +21,14 @@ const ENONIC_APP_NAME = 'com.enonic.web.enonic.com';
 const FETCH_FROM_API_PARAMS_VALID: [
     string,
     LocaleMapping,
-    { body: ContentApiBaseBody, }
+    { body: ContentApiBaseBody }
 ] = [
     'http://localhost:8080/site/enonic-homepage/master',
     {
         default: true,
         project: 'enonic-homepage',
         site: 'enonic-homepage',
-        locale: 'en',
+        locale: 'en'
     },
     {
         body: {
@@ -41,8 +41,8 @@ const FETCH_FROM_API_PARAMS_VALID: [
                     }`,
             variables: {
                 // key: 'value'
-            },
-        },
+            }
+        }
     },
 ];
 

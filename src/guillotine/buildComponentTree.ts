@@ -9,7 +9,7 @@ import {getParentRegion} from './getParentRegion';
 export function buildComponentTree(
     comps: PageComponent[],
     rootComp: PageComponent,
-    contentType?: string,
+    contentType?: string
 ): PageComponent {
     const rootTree: RegionTree = {};
     const isFragmentType = contentType === FRAGMENT_CONTENTTYPE_NAME;
