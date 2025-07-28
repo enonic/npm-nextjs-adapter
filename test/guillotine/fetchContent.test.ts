@@ -1,4 +1,4 @@
-import type {Component, Context, GuillotineResponseJson, RecursivePartial,} from '../../src/types';
+import type {Component, Context, GuillotineResponseJson, RecursivePartial} from '../../src/types';
 
 
 import {
@@ -17,7 +17,7 @@ import {
     RENDER_MODE,
     RENDER_MODE_HEADER,
     XP_BASE_URL_HEADER,
-    XP_REQUEST_TYPE,
+    XP_REQUEST_TYPE
 } from '../../src/common/constants';
 import {setupServerEnv} from '../constants';
 // import {ws} from '../testUtils';
@@ -29,7 +29,7 @@ globalThis.console = {
     // warn: jest.fn(),
     log: jest.fn(),
     info: jest.fn(),
-    // debug: jest.fn(),
+    // debug: jest.fn()
 } as Console;
 
 
@@ -58,7 +58,7 @@ const GUILLOTINE_RESULT_FRAGMENT: GuillotineResponseJson = {
                 displayName: 'HMDB',
                 _path: '/hmdb'
             }
-        },
+        }
     }
 };
 
@@ -98,7 +98,7 @@ const GUILLOTINE_RESULT_CONTENT_WITH_ARTICLES: GuillotineResponseJson = {
         guillotine: {
             get: {
                 children: [{
-                    _path: 'articles',
+                    _path: 'articles'
                 }]
             }
         }
@@ -176,7 +176,7 @@ const GUILLOTINE_RESULT_META_MINIMAL: GuillotineResponseJson = {
                 _id: '_id',
                 // _name: '_name',
                 _path: '/path',
-                type: 'type',
+                type: 'type'
             }
         }
     }
@@ -311,10 +311,10 @@ const GUILLOTINE_RESULT_WITH_ERROR: GuillotineResponseJson = {
         errorType: 'ValidationError',
         locations: [{
             column: 0,
-            line: 0,
+            line: 0
         }],
         message: 'message',
-        validationErrorType: 'FieldUndefined',
+        validationErrorType: 'FieldUndefined'
     }]
 };
 
@@ -324,11 +324,11 @@ function mockHeadersImport(draft: boolean, mode: string) {
         draftMode: () => {
             console.info('read draft mode', draft)
             return {
-                isEnabled: draft,
+                isEnabled: draft
             }
         },
         headers: jest.fn(() => new Headers(draft ? {
-            'content-studio-mode': mode,
+            'content-studio-mode': mode
         } : undefined))
     }
 
@@ -349,7 +349,7 @@ function mockFetch({
                        contentStatus = 200,
                        metaJson,
                        metaOk = true,
-                       metaStatus = 200,
+    metaStatus = 200
                    }: {
     contentJson: GuillotineResponseJson
     contentOk?: boolean
@@ -409,14 +409,14 @@ describe('guillotine', () => {
             'preview': 'draft',
             'live': 'master',
             'admin': 'draft',
-            'next': 'master',
+            'next': 'master'
         };
         Object.entries(TESTS).forEach(async ([mode, branch]) => {
 
             it(`${mode}`, async () => {
                 mockFetch({
                     contentJson: GUILLOTINE_RESULT_CONTENT,
-                    metaJson: GUILLOTINE_RESULT_META_MINIMAL,
+                    metaJson: GUILLOTINE_RESULT_META_MINIMAL
                 });
 
                 const headersImport = mockHeadersImport(true, mode);
@@ -442,7 +442,7 @@ describe('guillotine', () => {
                             set(name: string, value: string) {
                                 console.info('headers set name', name, value);
                             }
-                        },
+                        }
                     } as Context;
                     const promise = await moduleName.fetchContent(context);
                     expect(promise).toStrictEqual({
@@ -465,12 +465,12 @@ describe('guillotine', () => {
                             path: '',
                             renderMode: mode,
                             requestType: 'type',
-                            type: 'type',
+                            type: 'type'
                         },
                         page: {
                             path: '/',
-                            type: 'page',
-                        },
+                            type: 'page'
+                        }
                     }); // expect
 
                     // should go after fetchContent
@@ -483,7 +483,7 @@ describe('guillotine', () => {
         it('handles context without headers and does not headers in non-draft mode', () => {
             mockFetch({
                 contentJson: GUILLOTINE_RESULT_CONTENT,
-                metaJson: GUILLOTINE_RESULT_META_MINIMAL,
+                metaJson: GUILLOTINE_RESULT_META_MINIMAL
             });
             const context: Context = {
                 contentPath: '/content/path',
@@ -505,12 +505,12 @@ describe('guillotine', () => {
                         path: '/content/path',
                         renderMode: 'next',
                         requestType: 'type',
-                        type: 'type',
+                        type: 'type'
                     },
                     page: {
                         path: '/',
-                        type: 'page',
-                    },
+                        type: 'page'
+                    }
                 });
 
                 expect(headersImport.headers.mock.calls.length).toBe(0);
@@ -520,10 +520,10 @@ describe('guillotine', () => {
         it('handles component paths', () => {
             mockFetch({
                 contentJson: GUILLOTINE_RESULT_CONTENT,
-                metaJson: GUILLOTINE_RESULT_META_MINIMAL,
+                metaJson: GUILLOTINE_RESULT_META_MINIMAL
             });
             const context: Context = {
-                contentPath: '/path/_/component/path',
+                contentPath: '/path/_/component/path'
             };
             import('../../src/guillotine/fetchContent').then(({fetchContent}) => {
                 const promise = fetchContent(context);
@@ -532,7 +532,7 @@ describe('guillotine', () => {
                     data: null,
                     error: {
                         code: '404',
-                        message: 'Component /path was not found',
+                        message: 'Component /path was not found'
                     },
                     meta: {
                         id: '_id',
@@ -545,9 +545,9 @@ describe('guillotine', () => {
                         path: '/path/_/component/path',
                         renderMode: 'next',
                         requestType: 'component',
-                        type: '',
+                        type: ''
                     },
-                    page: null,
+                    page: null
                 });
             });
         }); // it handles component paths
@@ -559,17 +559,17 @@ describe('guillotine', () => {
                     data: {
                         guillotine: {}
                     }
-                },
+                }
             });
             import('../../src/server').then(async ({fetchContent}) => {
                 const context: Context = {
-                    contentPath: '/path/_/component/path',
+                    contentPath: '/path/_/component/path'
                 };
                 const promise = fetchContent(context);
                 expect(promise).resolves.toStrictEqual({
                     error: {
                         code: '404',
-                        message: 'No meta data found for content, most likely content does not exist',
+                        message: 'No meta data found for content, most likely content does not exist'
                     },
                     page: null,
                     common: null,
@@ -585,8 +585,8 @@ describe('guillotine', () => {
                         path: '/path/_/component/path',
                         requestType: 'component',
                         renderMode: 'next',
-                        type: '',
-                    },
+                        type: ''
+                    }
                 });
             });
         }); // it handles metaResult without results
@@ -594,17 +594,17 @@ describe('guillotine', () => {
         it('handles metaResult with an error', () => {
             mockFetch({
                 contentJson: GUILLOTINE_RESULT_WITH_ERROR, // Throws before this is used
-                metaJson: GUILLOTINE_RESULT_WITH_ERROR,
+                metaJson: GUILLOTINE_RESULT_WITH_ERROR
             });
             import('../../src/server').then(async ({fetchContent}) => {
                 const context: Context = {
-                    contentPath: '/path/_/component/path',
+                    contentPath: '/path/_/component/path'
                 };
                 const promise = fetchContent(context);
                 expect(promise).resolves.toStrictEqual({
                     error: {
                         code: '500',
-                        message: 'Server responded with 1 error(s), probably from guillotine - see log.',
+                        message: 'Server responded with 1 error(s), probably from guillotine - see log.'
                     },
                     page: null,
                     common: null,
@@ -620,8 +620,8 @@ describe('guillotine', () => {
                         path: '/path/_/component/path',
                         requestType: 'component',
                         renderMode: 'next',
-                        type: '',
-                    },
+                        type: ''
+                    }
                 });
             });
         }); // it handles metaResult with an error
@@ -629,18 +629,18 @@ describe('guillotine', () => {
         it('handles metaResult.meta without type', () => {
             mockFetch({
                 contentJson: GUILLOTINE_RESULT_WITH_ERROR, // Throws before this is used
-                metaJson: GUILLOTINE_RESULT_META_INCOMPLETE,
+                metaJson: GUILLOTINE_RESULT_META_INCOMPLETE
             });
             import('../../src/server').then(async ({fetchContent}) => {
                 const context: Context = {
-                    contentPath: '/path/_/component/path',
+                    contentPath: '/path/_/component/path'
                 };
                 const promise = fetchContent(context);
                 // await promise;
                 expect(promise).resolves.toStrictEqual({
                     error: {
                         code: '500',
-                        message: "Server responded with incomplete meta data: missing content 'type' attribute.",
+                        message: "Server responded with incomplete meta data: missing content 'type' attribute."
                     },
                     page: null,
                     common: null,
@@ -656,8 +656,8 @@ describe('guillotine', () => {
                         path: '/path/_/component/path',
                         requestType: 'component',
                         renderMode: 'next',
-                        type: '',
-                    },
+                        type: ''
+                    }
                 });
             });
         }); // it handles metaResult.meta without type
@@ -675,7 +675,7 @@ describe('guillotine', () => {
                             }
                         }
                     }
-                },
+                }
             });
             import('../../src/server').then(async ({fetchContent}) => {
                 const context: Context = {
@@ -688,14 +688,14 @@ describe('guillotine', () => {
                             // console.debug('headers get name', name);
                             return '';
                         }
-                    } as Context['headers'],
+                    } as Context['headers']
                 };
                 const promise = fetchContent(context);
                 expect(promise).resolves.toStrictEqual({
                     page: {
                         path: "/",
                         regions: {},
-                        type: "page",
+                        type: "page"
                     },
                     common: null,
                     data: null,
@@ -710,8 +710,8 @@ describe('guillotine', () => {
                         path: '/fragment/path',
                         requestType: 'type',
                         renderMode: 'next',
-                        type: 'portal:fragment',
-                    },
+                        type: 'portal:fragment'
+                    }
                 }); // expect
             }); // import
         }); // it
@@ -745,35 +745,35 @@ describe('guillotine', () => {
                     query: 'query { guillotine { catchAll } }',
                     view: () => {
                         return 'catchAll contentType';
-                    },
+                    }
                 });
                 ComponentRegistry.addLayout(CATCH_ALL, {
                     configQuery: '{catchAll layout configQuery}',
                     query: '{catchAll layout query}',
                     view: () => {
                         return 'catchAll layout';
-                    },
+                    }
                 });
                 ComponentRegistry.addMacro(CATCH_ALL, {
                     configQuery: '{catchAll macro configQuery}',
                     query: '{catchAll macro query}',
                     view: () => {
                         return 'catchAll macro';
-                    },
+                    }
                 });
                 ComponentRegistry.addPage(CATCH_ALL, {
                     configQuery: '{catchAll page configQuery}',
                     query: '{catchAll page query}',
                     view: () => {
                         return 'catchAll page';
-                    },
+                    }
                 });
                 ComponentRegistry.addPart(CATCH_ALL, {
                     configQuery: '{catchAll part configQuery}',
                     query: '{catchAll part query}',
                     view: () => {
                         return 'catchAll part';
-                    },
+                    }
                 });
                 const context: Context = {
                     contentPath: CONTENT_PATH, // Anything but _/component
@@ -794,7 +794,7 @@ describe('guillotine', () => {
                             console.debug('headers get name', name);
                             return '';
                         }
-                    } as Context['headers'],
+                    } as Context['headers']
                 };
                 const promise = fetchContent(context);
                 expect(promise).resolves.toStrictEqual({
@@ -803,8 +803,8 @@ describe('guillotine', () => {
                         get: {
                             children: [{
                                 _path: 'articles'
-                            }],
-                        },
+                            }]
+                        }
                     },
                     meta: {
                         id: 'f5815ec2-26e0-4595-b37b-c2ba0d3c1e1c',
@@ -817,9 +817,9 @@ describe('guillotine', () => {
                         path: CONTENT_PATH,
                         requestType: XP_REQUEST_TYPE.PAGE, // Changed internally from type to page
                         renderMode: 'next',
-                        type: 'portal:site',
+                        type: 'portal:site'
                     },
-                    page: PAGE_COMPONENT,
+                    page: PAGE_COMPONENT
                 }); // expect
             }); // import
         }); // it
@@ -827,7 +827,7 @@ describe('guillotine', () => {
         it('handles fetchContent with an error', () => {
             mockFetch({
                 contentJson: GUILLOTINE_RESULT_WITH_ERROR,
-                metaJson: GUILLOTINE_RESULT_META,
+                metaJson: GUILLOTINE_RESULT_META
             });
             const BASE_URL = '/base/url';
             import('../../src/server').then((moduleName) => {
@@ -848,7 +848,7 @@ describe('guillotine', () => {
                             }
                             console.error('headers get name', name);
                         }
-                    },
+                    }
                 } as Context;
                 const promise = moduleName.fetchContent(context);
                 expect(promise).resolves.toStrictEqual({
@@ -856,7 +856,7 @@ describe('guillotine', () => {
                     data: null,
                     error: {
                         code: '500',
-                        message: 'Server responded with 1 error(s), probably from guillotine - see log.',
+                        message: 'Server responded with 1 error(s), probably from guillotine - see log.'
                     },
                     meta: {
                         id: 'f5815ec2-26e0-4595-b37b-c2ba0d3c1e1c',
@@ -869,9 +869,9 @@ describe('guillotine', () => {
                         path: '',
                         renderMode: 'next',
                         requestType: 'type',
-                        type: '',
+                        type: ''
                     },
-                    page: null,
+                    page: null
                 }); // expect
             }); // import
         }); // it

@@ -10,7 +10,7 @@ export function getParentRegion(
     contentType: string,
     cmpPath: PathFragment[],
     components: PageComponent[] = [],
-    createMissing ? : boolean,
+    createMissing ?: boolean
 ): PageRegion | undefined {
     let currentTree: RegionTree = source;
     let currentRegion: PageRegion | undefined;
@@ -26,7 +26,7 @@ export function getParentRegion(
             if (createMissing) {
                 currentRegion = {
                     name: regionName,
-                    components: [],
+                    components: []
                 };
                 currentTree[regionName] = currentRegion;
             } else {

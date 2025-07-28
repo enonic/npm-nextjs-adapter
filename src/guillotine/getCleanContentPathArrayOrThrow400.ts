@@ -10,7 +10,7 @@ export const getCleanContentPathArrayOrThrow400 = (contentPath: string | string[
             throw Error(JSON.stringify({
                 code: 400,
                 message: `Unexpected target content _path: contentPath must be a string or pure string array (contentPath=${JSON.stringify(
-                    contentPath)})`,
+                    contentPath)})`
             }));
         }
 

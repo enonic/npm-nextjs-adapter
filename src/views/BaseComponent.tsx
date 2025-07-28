@@ -64,7 +64,7 @@ export const MissingComponent = ({descriptor, type}: { descriptor?: string, type
     return (
         <div style={{
             border: '2px dashed lightgrey',
-            padding: '16px',
+            padding: '16px'
         }}>
             <h3 style={{margin: 0}}>Missing component</h3>
             <p style={{marginBottom: 0, color: 'grey'}}>
@@ -96,7 +96,7 @@ export const ErrorComponent = ({type, descriptor, reason}: { type?: string, desc
     return (
         <div style={{
             border: '2px solid red',
-            padding: '16px',
+            padding: '16px'
         }}>
             <h3 style={{margin: 0, textTransform: 'capitalize'}}>{reason ? reason : 'Unknown error'}</h3>
             {descriptor && <p style={{color: 'grey'}}>{`${type}: ${descriptor}`}</p>}
@@ -110,7 +110,7 @@ export function shouldShowErrorView(meta: MetaData): boolean {
 
 function createEditorAttrs(type: XP_COMPONENT_TYPE): Record<string,string> {
     return {
-        [PORTAL_COMPONENT_ATTRIBUTE]: type,
+        [PORTAL_COMPONENT_ATTRIBUTE]: type
     };
 }
 
@@ -120,7 +120,7 @@ function createComponentAttrs(component: PageComponent, meta: MetaData, common?:
         component: component[type],
         path: component.path,
         meta,
-        common,
+        common
     };
 
     if (data) {
@@ -142,7 +142,7 @@ export const PlaceholderComponent = ({type, descriptor}: { type?: string, descri
     return (
         <div style={{
             border: '2px solid lightgrey',
-            padding: '16px',
+            padding: '16px'
         }}>
             <h3 style={{margin: 0, textTransform: 'capitalize'}}>Empty output</h3>
             {descriptor && <p style={{color: 'grey'}}>{`${type} '${descriptor}' output is empty`}</p>}

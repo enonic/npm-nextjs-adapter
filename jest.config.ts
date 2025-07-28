@@ -4,7 +4,7 @@ import nextJest from 'next/jest'
 
 const createJestConfig = nextJest({
     // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
-    dir: './test',
+    dir: './test'
 });
 
 // const jestConfig = await createJestConfig({});
@@ -26,7 +26,7 @@ const commonConfig = {
         "^.+\\.jsx?$": [
             "babel-jest",
             {
-                "extends": "./test/babel.config.js",
+                "extends": "./test/babel.config.js"
             }
         ]
     }
@@ -49,7 +49,7 @@ const customJestConfig = {
             '<rootDir>/test/**/*.(spec|test).client.{ts,tsx}'
         ]
     }],
-    silent: false,
+    silent: false
 }
 
 const jestConfig = createJestConfig(customJestConfig as Config.InitialProjectOptions);

@@ -12,7 +12,7 @@ globalThis.console = {
     warn: jest.fn(),
     log: jest.fn(),
     info: jest.fn(),
-    debug: jest.fn(),
+    debug: jest.fn()
 } as unknown as Console;
 
 
@@ -58,7 +58,7 @@ describe('guillotine', () => {
                     apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
                     baseUrl: 'http://localhost:8080/site',
                     locale: 'no',
-                    defaultLocale: 'en',
+                    defaultLocale: 'en'
                 },
                 page: null
             };
@@ -89,7 +89,7 @@ describe('guillotine', () => {
                     apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
                     baseUrl: 'http://localhost:8080/site',
                     locale: 'no',
-                    defaultLocale: 'en',
+                    defaultLocale: 'en'
                 },
                 page: null
             };
@@ -120,7 +120,7 @@ describe('guillotine', () => {
                     apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
                     baseUrl: 'http://localhost:8080/site',
                     locale: 'no',
-                    defaultLocale: 'en',
+                    defaultLocale: 'en'
                 },
                 page: null
             };
@@ -159,7 +159,7 @@ describe('guillotine', () => {
                     apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
                     baseUrl: 'http://localhost:8080/site',
                     locale: 'no',
-                    defaultLocale: 'en',
+                    defaultLocale: 'en'
                 },
                 page: pageComponent
             };
@@ -187,15 +187,15 @@ describe('guillotine', () => {
                             parameters: [
                                 {
                                     name: 'intValue',
-                                    value: 1,
+                                    value: 1
                                 },
                                 {
                                     name: 'boolValue',
-                                    value: true,
+                                    value: true
                                 },
                                 {
                                     name: 'strValue',
-                                    value: 'string',
+                                    value: 'string'
                                 }
                             ]
                         }
@@ -214,7 +214,7 @@ describe('guillotine', () => {
                     apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
                     baseUrl: 'http://localhost:8080/site',
                     locale: 'no',
-                    defaultLocale: 'en',
+                    defaultLocale: 'en'
                 },
                 page: pageComponent
             };
@@ -255,7 +255,7 @@ describe('guillotine', () => {
                     apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
                     baseUrl: 'http://localhost:8080/site',
                     locale: 'no',
-                    defaultLocale: 'en',
+                    defaultLocale: 'en'
                 },
                 page: pageComponent
             };
@@ -296,7 +296,7 @@ describe('guillotine', () => {
                     apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
                     baseUrl: 'http://localhost:8080/site',
                     locale: 'no',
-                    defaultLocale: 'en',
+                    defaultLocale: 'en'
                 },
                 page: pageComponent
             };

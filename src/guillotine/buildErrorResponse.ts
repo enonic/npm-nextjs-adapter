@@ -12,7 +12,7 @@ export function buildErrorResponse(requestType: XP_REQUEST_TYPE, renderMode: REN
         return {
             error: {
                 code,
-                message,
+                message
             },
             page: null,
             common: null,
@@ -28,8 +28,8 @@ export function buildErrorResponse(requestType: XP_REQUEST_TYPE, renderMode: REN
                 apiUrl,
                 baseUrl,
                 locale,
-                defaultLocale,
-            },
+                defaultLocale
+            }
         };
     };
 }

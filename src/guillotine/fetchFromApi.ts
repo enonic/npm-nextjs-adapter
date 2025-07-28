@@ -4,7 +4,7 @@ import type {FetchOptions, GuillotineResponse, GuillotineResponseJson, LocaleMap
 export async function fetchFromApi<Data = Record<string, unknown>>(
     apiUrl: string,
     mapping: LocaleMapping,
-    options?: FetchOptions,
+    options?: FetchOptions
 ): Promise<GuillotineResponseJson> {
 
     const opts = {
@@ -12,7 +12,7 @@ export async function fetchFromApi<Data = Record<string, unknown>>(
         body: options?.body ? JSON.stringify(options?.body) : null,
         headers: mergeHeaders(mapping, options?.headers),
         next: options?.next,
-        cache: options?.cache,
+        cache: options?.cache
     };
 
     let res: GuillotineResponse<Data>;
@@ -22,14 +22,14 @@ export async function fetchFromApi<Data = Record<string, unknown>>(
         console.warn(apiUrl, e);
         throw new Error(JSON.stringify({
             code: 'API',
-            message: e.message,
+            message: e.message
         }));
     }
 
     if (!res.ok) {
         throw new Error(JSON.stringify({
             code: res.status,
-            message: `Data fetching failed (message: '${await res.text()}')`,
+            message: `Data fetching failed (message: '${await res.text()}')`
         }));
     }
 
@@ -39,21 +39,21 @@ export async function fetchFromApi<Data = Record<string, unknown>>(
     } catch (e) {
         throw new Error(JSON.stringify({
             code: 500,
-            message: `API call completed but with non-JSON data: ${JSON.stringify(await res.text())}`,
+            message: `API call completed but with non-JSON data: ${JSON.stringify(await res.text())}`
         }));
     }
 
     if (!json) {
         throw new Error(JSON.stringify({
             code: 500,
-            message: `API call completed but with unexpectedly empty data: ${JSON.stringify(await res.text())}`,
+            message: `API call completed but with unexpectedly empty data: ${JSON.stringify(await res.text())}`
         }));
     }
 
     if (Array.isArray(json)) {
         throw new Error(JSON.stringify({
             code: 500,
-            message: `API call completed but with unexpected array data: ${JSON.stringify(json)}`,
+            message: `API call completed but with unexpected array data: ${JSON.stringify(json)}`
         }));
     }
 
@@ -63,7 +63,7 @@ export async function fetchFromApi<Data = Record<string, unknown>>(
 function mergeHeaders(mapping: LocaleMapping, headers?: HeadersInit): Headers {
     const newHeaders = new Headers({
         'Accept': 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
     });
     if (headers) {
         Object.keys(headers).forEach((headersKey) => {

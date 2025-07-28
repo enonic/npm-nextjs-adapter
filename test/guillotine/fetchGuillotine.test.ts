@@ -13,7 +13,7 @@ globalThis.console = {
     warn: jest.fn(),
     log: jest.fn(),
     info: jest.fn(),
-    debug: jest.fn(),
+    debug: jest.fn()
 } as unknown as Console;
 
 
@@ -41,17 +41,17 @@ const FETCH_GUILLOTINE_PARAMS_VALID: [
         cache: 'no-store',
         next: {
             revalidate: false,
-            tags: ['tag1', 'tag2'],
+            tags: ['tag1', 'tag2']
         },
         headers: {
-            'test-header': 'test-value',
+            'test-header': 'test-value'
         },
         body: {
             query: QUERY,
             variables: {
                 // key: 'value'
             }
-        },
+        }
     }
 ];
 
@@ -183,7 +183,7 @@ describe('guillotine', () => {
                 ...options,
                 body: {
                     query: true as unknown as string,
-                    variables: {},
+                    variables: {}
                 }
             };
 
@@ -206,7 +206,7 @@ describe('guillotine', () => {
                 ...options,
                 body: {
                     query: '',
-                    variables: {},
+                    variables: {}
                 }
             };
 
@@ -356,7 +356,7 @@ describe('guillotine', () => {
                     expect(opts.cache).toEqual('no-store');
                     expect((opts as FetchOptions).next).toEqual({
                         revalidate: false,
-                        tags: ['tag1', 'tag2'],
+                        tags: ['tag1', 'tag2']
                     })
                     const headers = opts.headers as Headers;
                     expect(headers).toBeTruthy();
@@ -377,7 +377,7 @@ describe('guillotine', () => {
                 headers: {
                     'X-Guillotine-SiteKey': 'should-not-be-applied',
                     'Content-Type': 'text/plain',
-                    'Accept': 'text/plain',
+                    'Accept': 'text/plain'
                 }
             };
 

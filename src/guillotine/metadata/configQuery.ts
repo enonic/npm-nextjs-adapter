@@ -7,7 +7,7 @@ import {sanitizeGraphqlName} from '../../utils/sanitizeGraphqlName';
 export const configQuery = (
     list: [string, ComponentDefinition][],
     includeAppName = true,
-    canUseConfigAsJson = true,
+    canUseConfigAsJson = true
 ): string => {
     const hasQueryList = list?.filter(([key, def]) => def.configQuery) || [];
     if (hasQueryList.length === 0) {

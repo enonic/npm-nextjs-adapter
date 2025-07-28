@@ -1,3 +1,3 @@
 export function fixDoubleSlashes(str: string) {
-    return str.replace(/(^|[^:/])\/{2,}/g, '$1/');
+    return str.replace(/(^|[^:/])\/{2}/g, '$1/');
 }

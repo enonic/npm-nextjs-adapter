@@ -29,7 +29,7 @@ export function getLocaleMappings(): LocaleMappings {
             default: index === 0,
             project,
             site,
-            locale: lang,
+            locale: lang
         };
         return config;
     }, {});

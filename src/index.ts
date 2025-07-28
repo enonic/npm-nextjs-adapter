@@ -2,7 +2,7 @@ export {
     APP_NAME,
     APP_NAME_DASHED,
     APP_NAME_UNDERSCORED,
-    IS_DEV_MODE,
+    IS_DEV_MODE
 } from './common/env';
 
 export type * from './types';
@@ -19,7 +19,7 @@ export {
     RENDER_MODE_HEADER,
     XP_BASE_URL_HEADER,
     XP_COMPONENT_TYPE,
-    XP_REQUEST_TYPE,
+    XP_REQUEST_TYPE
 } from './common/constants';
 
 
@@ -38,5 +38,5 @@ export {sanitizeGraphqlName} from './utils/sanitizeGraphqlName';
 export {
     UrlProcessor,
     getAsset,
-    getUrl,
+    getUrl
 } from './common/UrlProcessor';
