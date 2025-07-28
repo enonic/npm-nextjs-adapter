@@ -31,7 +31,7 @@ const BaseMacro = (props: BaseMacroProps) => {
             // do not parse system macros (embed, disable) in edit mode
             // but parse others because panel macros (for instance) wants its content to be html, not string
             // TODO: should we make this behavior configurable ?
-            const bodyString = !data.descriptor.startsWith('system:') ? HTMLReactParser(config.body) : config.body;
+            const bodyString = !data.descriptor.startsWith('system:') ? HTMLReactParser(config.body as string) : config.body;
             return <>
                 {`[${data.name}${attrs}]`}
                 {bodyString}
