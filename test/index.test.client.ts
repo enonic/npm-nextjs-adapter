@@ -8,7 +8,7 @@ globalThis.console = {
     warn: jest.fn(),
     log: jest.fn(),
     info: jest.fn(),
-    debug: jest.fn(),
+    debug: jest.fn()
 } as unknown as Console;
 
 
@@ -30,7 +30,7 @@ describe('index (CLIENT)', () => {
     it('throws when process.env.NEXT_PUBLIC_ENONIC_APP_NAME is missing (CLIENT)', () => {
 
         setupClientEnv({
-            NEXT_PUBLIC_ENONIC_APP_NAME: undefined,
+            NEXT_PUBLIC_ENONIC_APP_NAME: undefined
             });
 
             expect(import('../src'))
@@ -41,7 +41,7 @@ describe('index (CLIENT)', () => {
     it('throws when process.env.NEXT_PUBLIC_ENONIC_API is missing (CLIENT)', () => {
 
         setupClientEnv({
-            NEXT_PUBLIC_ENONIC_API: undefined,
+            NEXT_PUBLIC_ENONIC_API: undefined
         });
 
             expect(import('../src'))

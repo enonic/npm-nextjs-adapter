@@ -17,7 +17,7 @@ export function createMetaData({
                                    pageCmp, // Optional
                                    renderMode,
                                    requestedComponentPath,
-                                   requestType,
+    requestType
                                }: {
     apiUrl: string
     baseUrl: string
@@ -46,7 +46,7 @@ export function createMetaData({
         path: contentPath,
         renderMode: renderMode,
         requestType: requestType,
-        type: contentType,
+        type: contentType
     };
 
     if (requestedComponentPath) {

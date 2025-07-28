@@ -1,8 +1,4 @@
-import {
-    describe,
-    expect,
-    test as it
-} from '@jest/globals';
+import {describe, expect, test as it} from '@jest/globals';
 import {buildPage} from '../../src/guillotine/buildPage';
 import {XP_COMPONENT_TYPE} from '../../src/common/constants';
 
@@ -13,7 +9,7 @@ describe('guillotine', () => {
             const contentType = '';
             expect(buildPage(contentType)).toEqual({
                 path: '/',
-                type: XP_COMPONENT_TYPE.PAGE,
+                type: XP_COMPONENT_TYPE.PAGE
             });
         });
     });

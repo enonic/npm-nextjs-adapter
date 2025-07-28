@@ -1,7 +1,4 @@
-import type {
-    ComponentDescriptor,
-    QueryAndVariables,
-} from '../types';
+import type {ComponentDescriptor, QueryAndVariables} from '../types';
 
 
 const ALIAS_PREFIX = 'request';
@@ -70,6 +67,6 @@ export function combineMultipleQueries(queriesWithVars: ComponentDescriptor[]): 
 
     return {
         query: superQuery,
-        variables: superVars,
+        variables: superVars
     };
 }

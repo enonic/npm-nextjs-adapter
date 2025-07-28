@@ -2,13 +2,7 @@ import type {ComponentDescriptor, Context, FetchContentResult} from '../types';
 
 import {draftMode, headers} from 'next/headers';
 import {ComponentRegistry} from '../common/ComponentRegistry';
-import {
-    PAGE_TEMPLATE_CONTENTTYPE_NAME,
-    PAGE_TEMPLATE_FOLDER,
-    RENDER_MODE,
-    XP_COMPONENT_TYPE,
-    XP_REQUEST_TYPE,
-} from '../common/constants';
+import {PAGE_TEMPLATE_CONTENTTYPE_NAME, PAGE_TEMPLATE_FOLDER, RENDER_MODE, XP_COMPONENT_TYPE, XP_REQUEST_TYPE} from '../common/constants';
 import {APP_NAME, APP_NAME_DASHED, IS_DEV_MODE} from '../common/env';
 import {getContentApiUrl} from '../utils/getContentApiUrl';
 import {getLocaleMapping} from '../utils/getLocaleMapping';
@@ -59,7 +53,7 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
         context,
         defaultLocale,
         locale,
-        locales,
+        locales
     });
     const xpBaseUrl = getXpBaseUrl(context);
     const contentApiUrl = getContentApiUrl(context);
@@ -129,7 +123,7 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
         if (contentQueryAndVars) {
             allDescriptors.push({
                 type: contentTypeDef,
-                queryAndVariables: contentQueryAndVars,
+                queryAndVariables: contentQueryAndVars
             });
         }
 
@@ -138,7 +132,7 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
         if (commonQueryAndVars) {
             allDescriptors.push({
                 type: contentTypeDef,
-                queryAndVariables: commonQueryAndVars,
+                queryAndVariables: commonQueryAndVars
             });
         }
 
@@ -150,7 +144,7 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
             const componentDescriptors = collectComponentDescriptors({
                 components,
                 xpContentPath: contentPath,
-                context,
+                context
             });
             if (componentDescriptors.length) {
                 allDescriptors.push(...componentDescriptors);
@@ -219,14 +213,14 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
             pageCmp: page,
             renderMode,
             requestedComponentPath: componentPath,
-            requestType,
+            requestType
         });
 
         return {
             data: contentData,
             common,
             meta,
-            page,
+            page
         };
     } catch (e: any) {
         console.error(e);
@@ -237,7 +231,7 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
         } catch (e2) {
             error = {
                 code: 'Local',
-                message: e.message,
+                message: e.message
             };
         }
         const errorResponse = buildErrorResponse(requestType, renderMode, contentApiUrl, xpBaseUrl, locale, defaultLocale, requestContentPath);

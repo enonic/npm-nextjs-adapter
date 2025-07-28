@@ -40,6 +40,7 @@ module.exports = [
             'no-plusplus': 'off',
             'no-case-declarations': 'off',
             'spaced-comment': ['error', 'always', { markers: ['/'] }],
+            'comma-dangle': ['error', 'never'],
             '@typescript-eslint/no-var-requires': 'off',
             '@typescript-eslint/no-use-before-define': 'off',
             '@typescript-eslint/no-explicit-any': 'off',
