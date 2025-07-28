@@ -10,7 +10,7 @@ const FETCH_CONTENT_RESULT: FetchContentResult = {
     data: {
         guillotine: {
             get: {
-                _path: '/site/site-name',
+                _path: '/site/site-name'
             }
         }
     },
@@ -26,7 +26,7 @@ const FETCH_CONTENT_RESULT: FetchContentResult = {
         id: 'id',
         renderMode: RENDER_MODE.NEXT,
         requestType: XP_REQUEST_TYPE.PAGE,
-        type: 'type',
+        type: 'type'
     },
     page: null
 };
@@ -55,7 +55,7 @@ describe('guillotine', () => {
                 default: true,
                 project: 'project',
                 site: 'site',
-                locale: 'locale',
+                locale: 'locale'
             };
             const query = '';
             // const variables = undefined;
@@ -77,7 +77,7 @@ describe('guillotine', () => {
                 default: true,
                 project: 'project',
                 site: 'site-name',
-                locale: 'locale',
+                locale: 'locale'
             };
             const query = 'query($path:ID!) { guillotine { get(key:$path) { _path } } }';
             const variables = {

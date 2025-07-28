@@ -1,11 +1,7 @@
 import type {PageComponent} from '../../src/types';
 
 
-import {
-    describe,
-    expect,
-    test as it
-} from '@jest/globals';
+import {describe, expect, test as it} from '@jest/globals';
 import {processComponentConfig} from '../../src/guillotine/processComponentConfig';
 import {XP_COMPONENT_TYPE} from '../../src/common/constants';
 
@@ -74,7 +70,7 @@ describe('guillotine', () => {
                                 key: 'value'
                             }
                         }
-                    },
+                    }
                 }
             };
             const dereffedCmp = JSON.parse(JSON.stringify(cmp));

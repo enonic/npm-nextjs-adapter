@@ -1,8 +1,4 @@
-import {
-    describe,
-    expect,
-    test as it
-} from '@jest/globals';
+import {describe, expect, test as it} from '@jest/globals';
 import {parseComponentPath} from '../../src/guillotine/parseComponentPath';
 import {FRAGMENT_CONTENTTYPE_NAME} from '../../src/common/constants';
 
@@ -12,7 +8,7 @@ describe('guillotine', () => {
         it('should handle contenttype fragment', () => {
             expect(parseComponentPath(FRAGMENT_CONTENTTYPE_NAME, '')).toEqual([{
                 index: 0,
-                region: 'fragment',
+                region: 'fragment'
             }]);
         });
 
@@ -23,10 +19,10 @@ describe('guillotine', () => {
         it('should return an Array of Objects with index and region properties', () => {
             expect(parseComponentPath('ignored unless portal:fragment', 'a/0/b/1')).toEqual([{
                 index: 0,
-                region: 'a',
+                region: 'a'
             }, {
                 index: 1,
-                region: 'b',
+                region: 'b'
             }]);
         });
     });

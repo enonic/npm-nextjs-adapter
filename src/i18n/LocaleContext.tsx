@@ -9,14 +9,14 @@ const LocaleContext = createContext<LocaleContextType>({
     dictionary: {},
     locale: '',
     localize: (key: string, ...args: any[]) => key,
-    setLocale: (locale: string) => Promise.resolve({}),
+    setLocale: (locale: string) => Promise.resolve({})
 });
 
 export const useLocaleContext = () => useContext(LocaleContext);
 
 export const LocaleContextProvider = ({
     children,
-    locale: localeProps = '',
+    locale: localeProps = ''
 }: {
     children: any
     locale?: string
@@ -51,7 +51,7 @@ export const LocaleContextProvider = ({
             setLocale,
             locale: currentLocale,
             dictionary,
-            localize,
+            localize
         }}>
             {children}
         </LocaleContext.Provider>

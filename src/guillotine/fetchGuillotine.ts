@@ -9,7 +9,7 @@ const XP_ERROR_PATTERN = '/_/error/';
 export async function fetchGuillotine<Data = Record<string, unknown>>(
     contentApiUrl: string,
     mapping: LocaleMapping,
-    options?: FetchOptions,
+    options?: FetchOptions
 ): Promise<GuillotineResult> {
     const body = options?.body;
     const path = body?.variables?.path;
@@ -18,8 +18,8 @@ export async function fetchGuillotine<Data = Record<string, unknown>>(
         return {
             error: {
                 code: '400',
-                message: `Invalid or missing query. JSON.stringify(query) = ${JSON.stringify(body.query)}`,
-            },
+                message: `Invalid or missing query. JSON.stringify(query) = ${JSON.stringify(body.query)}`
+            }
         };
     } else {
         // special case for not sending XP generated error paths to guillotine
@@ -28,8 +28,8 @@ export async function fetchGuillotine<Data = Record<string, unknown>>(
             return {
                 error: {
                     code: pathArr[1],
-                    message: `XP error URL detected`,
-                },
+                    message: `XP error URL detected`
+                }
             }
         } else {
             // Minify the query to avoid hitting 200k space limit
@@ -41,7 +41,7 @@ export async function fetchGuillotine<Data = Record<string, unknown>>(
     return await fetchFromApi<Data>(
         contentApiUrl,
         mapping,
-        options,
+        options
     )
         .then(json => {
             let errors: any[] = json.errors; // fetchFromApi ensures json is an object
@@ -58,8 +58,8 @@ export async function fetchGuillotine<Data = Record<string, unknown>>(
                 return {
                     error: {
                         code: '500',
-                        message: `Server responded with ${errors.length} error(s), probably from guillotine - see log.`,
-                    },
+                        message: `Server responded with ${errors.length} error(s), probably from guillotine - see log.`
+                    }
                 };
             }
 

@@ -4,7 +4,7 @@ import type {
     RichTextData as CompsRichTextData,
     LinkData as CompsLinkData,
     ImageData as CompsImageData,
-    MacroData as CompsMacroData,
+    MacroData as CompsMacroData
 } from '@enonic/react-components';
 
 // Differs from ComponentDefinition to avoid storing catchAll on all components

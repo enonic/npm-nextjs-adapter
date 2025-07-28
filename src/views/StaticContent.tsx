@@ -28,7 +28,7 @@ export default function StaticContent({children, element = 'div', condition = tr
             ...props,
             ref,
             suppressHydrationWarning: true,
-            dangerouslySetInnerHTML: {__html: ''},
+            dangerouslySetInnerHTML: {__html: ''}
         });
     }
 

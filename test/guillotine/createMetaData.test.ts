@@ -15,16 +15,16 @@ globalThis.console = {
     warn: jest.fn(),
     log: jest.fn(),
     info: jest.fn(),
-    // debug: jest.fn(),
+    // debug: jest.fn()
 } as Console;
 
 
 const PAGE_COMPONENT: PageComponent = {
     type: XP_COMPONENT_TYPE.PAGE,
     page: {
-        descriptor: `${ENONIC_APP_NAME}:mainPage`,
+        descriptor: `${ENONIC_APP_NAME}:mainPage`
     },
-    path: '/',
+    path: '/'
 };
 const CONTENT_TYPE_NAME_WITH_VIEW = `${ENONIC_APP_NAME}:withView`;
 const CONTENT_TYPE_NAME_WITHOUT_VIEW = `${ENONIC_APP_NAME}:withOutView`;
@@ -61,7 +61,7 @@ describe('guillotine', () => {
                     path: contentPath,
                     renderMode,
                     requestType,
-                    type: contentType,
+                    type: contentType
                 });
             });
         });
@@ -69,14 +69,18 @@ describe('guillotine', () => {
             beforeAllTestsInThisDecsribe((done) => {
                 ComponentRegistry.addContentType(CONTENT_TYPE_NAME_WITH_VIEW, {
                     query: 'query { guillotine { withView } }',
-                    view: () => {return 'theView';},
+                    view: () => {
+                        return 'theView';
+                    }
                 });
                 ComponentRegistry.addContentType(CONTENT_TYPE_NAME_WITHOUT_VIEW, {
-                    query: 'query { guillotine { withOutView } }',
+                    query: 'query { guillotine { withOutView } }'
                 });
                 ComponentRegistry.addContentType(CATCH_ALL, {
                     query: 'query { guillotine { catchAll } }',
-                    view: () => {return 'catchAll';},
+                    view: () => {
+                        return 'catchAll';
+                    }
                 });
                 done();
             });
@@ -109,7 +113,7 @@ describe('guillotine', () => {
                     path: contentPath,
                     renderMode,
                     requestType,
-                    type: contentType,
+                    type: contentType
                 });
             });
 
@@ -142,7 +146,7 @@ describe('guillotine', () => {
                     renderMode,
                     requestedComponent: PAGE_COMPONENT,
                     requestType,
-                    type: contentType,
+                    type: contentType
                 });
             });
 
@@ -174,7 +178,7 @@ describe('guillotine', () => {
                     path: contentPath,
                     renderMode,
                     requestType,
-                    type: contentType,
+                    type: contentType
                 });
             });
 
@@ -206,7 +210,7 @@ describe('guillotine', () => {
                     path: contentPath,
                     renderMode,
                     requestType,
-                    type: contentType,
+                    type: contentType
                 });
             });
 
@@ -238,7 +242,7 @@ describe('guillotine', () => {
                     path: contentPath,
                     renderMode,
                     requestType,
-                    type: contentType,
+                    type: contentType
                 });
             });
 
@@ -272,7 +276,7 @@ describe('guillotine', () => {
                         path: contentPath,
                         renderMode,
                         requestType,
-                        type: contentType,
+                        type: contentType
                     });
                 }
             );
