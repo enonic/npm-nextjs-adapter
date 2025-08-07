@@ -20,8 +20,7 @@
     "isolatedModules": true,
 
     "jsx": "preserve",
-
-    "outDir": ".",
+    "outDir": "dist",
     "declaration": true,
     "sourceMap": true
 
