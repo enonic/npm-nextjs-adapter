@@ -65,7 +65,7 @@ export interface FetchContentResult extends Result {
 // Seems like NodeJS.fetch lowercases all headers, so we need to lowercase the
 // header names here.
 export interface GuillotineRequestHeaders {
-    [key: string]: string;
+    [key: string]: string | undefined;
     Cookie?: string
     locale: string
     locales: string
