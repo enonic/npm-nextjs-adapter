@@ -25,6 +25,23 @@
     "utils",
     "views"
   ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./views/*": {
+      "types": "./dist/views/*.d.ts",
+      "import": "./dist/views/*.jsx",
+      "require": "./dist/views/*.jsx"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "require": "./dist/*.js"
+    }
+  },
   "keywords": [
     "enonic",
     "nextjs",
@@ -36,8 +53,8 @@
     "access": "public"
   },
   "scripts": {
-    "clean": "del-cli *.d.ts *.js.map baseMappings.* client.* server.* common coverage index.* enonic-nextjs-adapter-*.tgz guillotine i18n query types utils views dist server client",
     "build": "tsc",
+    "clean": "del-cli dist/ *.tgz",
     "check:types": "tsc --noEmit",
     "madge": "madge -i docs/madge.png -x '(constants|env)\\.ts' src/index.ts",
     "lint": "eslint --quiet --cache src",
