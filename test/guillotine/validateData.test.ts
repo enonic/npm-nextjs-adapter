@@ -125,7 +125,7 @@ describe('guillotine', () => {
                 page: null
             };
             import('../../src').then((moduleName) => {
-                expect(() => moduleName.validateData(fetchContentResult)).toThrowError('Error message');
+                expect(() => moduleName.validateData(fetchContentResult)).toThrow('Error message');
                 expect(notFound).not.toHaveBeenCalled();
                 expect(redirect).not.toHaveBeenCalled();
             });
