@@ -14,7 +14,7 @@ globalThis.console = {
     log: jest.fn(),
     info: jest.fn(),
     debug: console.debug,
-    // debug: jest.fn(),
+    // debug: jest.fn()
 } as unknown as Console;
 
 describe('UrlProcessor', () => {
@@ -31,7 +31,7 @@ describe('UrlProcessor', () => {
                     ref: 'ref',
                     image: {
                         id: 'id'
-                    },
+                    }
                 }];
                 expect(UrlProcessor.isContentImage(ref, imageData)).toEqual(true);
             });
@@ -43,7 +43,7 @@ describe('UrlProcessor', () => {
                     ref: 'ref',
                     image: {
                         id: 'id'
-                    },
+                    }
                 }];
                 expect(UrlProcessor.isContentImage(ref, imageData)).toEqual(true);
             });
@@ -62,7 +62,7 @@ describe('UrlProcessor', () => {
                 const ref = 'ref';
                 const imageData = [{
                     ref: 'ref',
-                    image: null,
+                    image: null
                 }];
                 expect(UrlProcessor.isContentImage(ref, imageData)).toEqual(false);
             });
@@ -81,7 +81,7 @@ describe('UrlProcessor', () => {
                     ref: 'notref',
                     image: {
                         id: "doesn't matter"
-                    },
+                    }
                 }];
                 expect(UrlProcessor.isContentImage(ref, imageData)).toEqual(false);
             });
@@ -100,7 +100,7 @@ describe('UrlProcessor', () => {
                             id: 'id'
                         },
                         intent: 'download' as 'download' | 'inline'
-                    },
+                    }
                 }];
                 expect(UrlProcessor.isMediaLink(ref, linkData)).toEqual(true);
             });
@@ -116,7 +116,7 @@ describe('UrlProcessor', () => {
                             id: 'id'
                         },
                         intent: 'download' as 'download' | 'inline'
-                    },
+                    }
                 }];
                 expect(UrlProcessor.isMediaLink(ref, linkData)).toEqual(true);
             });
@@ -136,7 +136,7 @@ describe('UrlProcessor', () => {
                 const linkData = [{
                     ref: 'ref',
                     uri: 'uri',
-                    media: null,
+                    media: null
                 }];
                 expect(UrlProcessor.isMediaLink(ref, linkData)).toEqual(false);
             });
@@ -159,7 +159,7 @@ describe('UrlProcessor', () => {
                             id: "doesn't matter"
                         },
                         intent: 'download' as 'download' | 'inline'
-                    },
+                    }
                 }];
                 expect(UrlProcessor.isMediaLink(ref, linkData)).toEqual(false);
             });
@@ -192,24 +192,24 @@ describe('UrlProcessor', () => {
         [{
             url: '#hash',
             expected: '#hash',
-            meta: META,
+            meta: META
         }, {
             url: 'http://localhost:8080/site/path',
             expected: 'http://localhost:8080/site/path',
-            meta: false as unknown as MetaData,
+            meta: false as unknown as MetaData
         }, {
             url: 'http://localhost:8080/site/_/image/1234',
             expected: 'http://localhost:8080/site/_/image/1234',
             meta: {
                 ...META,
-                renderMode: RENDER_MODE.NEXT,
+                renderMode: RENDER_MODE.NEXT
             }
         }, {
             url: 'http://localhost:8080/site/_/attachment/1234',
             expected: 'http://localhost:8080/site/_/attachment/1234',
             meta: {
                 ...META,
-                renderMode: RENDER_MODE.NEXT,
+                renderMode: RENDER_MODE.NEXT
             }
         }, {
             // isRelative
@@ -217,35 +217,35 @@ describe('UrlProcessor', () => {
             expected: '/site/inline/enonic-homepage/draft/no/path',
             meta: {
                 ...META,
-                renderMode: RENDER_MODE.NEXT,
+                renderMode: RENDER_MODE.NEXT
             }
         }, {
             url: 'http://localhost:8080/site/path',
             expected: '/site/inline/enonic-homepage/draft/no/path',
             meta: {
                 ...META,
-                renderMode: RENDER_MODE.NEXT,
+                renderMode: RENDER_MODE.NEXT
             }
         }, {
             url: 'http://localhost:8080/site/path',
             expected: '/site/inline/enonic-homepage/draft/path',
             meta: {
                 ...META,
-                apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
+                apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query'
             }
         }, {
             url: 'http://localhost:8080/simon',
             expected: '/site/inline/enonic-homepage/draft/simon',
             meta: {
                 ...META,
-                apiUrl: 'https://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
+                apiUrl: 'https://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query'
             }
         }, {
             url: 'https://google.com',
             expected: 'https://google.com',
             meta: {
                 ...META,
-                apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
+                apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query'
             }
         }].forEach(({url, expected, meta}) => {
             it(`should return ${expected} when url is ${url}`, () => {

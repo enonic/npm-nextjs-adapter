@@ -11,7 +11,7 @@ globalThis.console = {
     warn: jest.fn(),
     log: jest.fn(),
     info: jest.fn(),
-    debug: jest.fn(),
+    debug: jest.fn()
 } as unknown as Console;
 
 
@@ -47,7 +47,7 @@ describe('utils', () => {
             'preview': 'draft',
             'live': 'master',
             'admin': 'draft',
-            'next': 'master',
+            'next': 'master'
         };
         Object.entries(TESTS).forEach(([mode, branch]) => {
             it(`returns correct url with branch ${branch} when mode is ${mode}`, () => {
@@ -64,7 +64,7 @@ describe('utils', () => {
                                 }
                                 console.error('headers get name', name);
                             }
-                        },
+                        }
                     } as Context;
                     expect(moduleName.getContentApiUrl(context)).toEqual(`http://localhost:8080/site/film-db/${branch}`);
                 });
@@ -88,13 +88,13 @@ describe('utils', () => {
                             console.error('headers get name', name);
                         }
                     },
-                    // contentPath: '/omraade',
+                    // contentPath: '/omraade'
                 } as Context;
                 expect(moduleName.getLocaleMapping(context)).toEqual({
                     default: false,
                     locale: 'no',
                     project: 'film-db',
-                    site: '/omraade',
+                    site: '/omraade'
                 });
             });
         });
@@ -117,13 +117,13 @@ describe('utils', () => {
                             console.error('headers get name', name);
                         }
                     },
-                    // contentPath: '/omraade',
+                    // contentPath: '/omraade'
                 } as Context;
                 expect(moduleName.getLocaleMapping(context)).toEqual({
                     default: true,
                     locale: 'en',
                     project: 'moviedb',
-                    site: '/site',
+                    site: '/site'
                 });
             });
         });
@@ -137,7 +137,7 @@ describe('utils', () => {
                     default: false,
                     locale: 'no',
                     project: 'film-db',
-                    site: '/omraade',
+                    site: '/omraade'
                 });
             });
         });
@@ -152,7 +152,7 @@ describe('utils', () => {
                     default: true,
                     locale: 'en',
                     project: 'moviedb',
-                    site: '/site',
+                    site: '/site'
                 });
             });
         });
@@ -166,7 +166,7 @@ describe('utils', () => {
                     default: false,
                     locale: 'no',
                     project: 'film-db',
-                    site: '/omraade',
+                    site: '/omraade'
                 });
             });
         });
@@ -208,13 +208,13 @@ describe('utils', () => {
                         default: true,
                         locale: 'en',
                         project: 'project',
-                        site: '/site',
+                        site: '/site'
                     },
                     no: {
                         default: false,
                         locale: 'no',
                         project: 'prosjekt',
-                        site: '/omraade',
+                        site: '/omraade'
                     }
                 });
             });
@@ -248,7 +248,7 @@ describe('utils', () => {
                         }
                     },
                     // locale: 'en',
-                    // contentPath: '/content/path',
+                    // contentPath: '/content/path'
                 } as unknown as Context;
                 expect(moduleName.getRenderMode(context)).toEqual('next');
             });
@@ -270,7 +270,7 @@ describe('utils', () => {
                                 }
                                 console.error('headers get name', name);
                             }
-                        },
+                        }
                     } as Context;
                     expect(moduleName.getRenderMode(context)).toEqual(mode);
                 });
@@ -300,7 +300,7 @@ describe('utils', () => {
                         }
                     },
                     locale: 'da',
-                    contentPath: '/content/path',
+                    contentPath: '/content/path'
                 } as Context;
                 expect(moduleName.getRequestLocaleInfo(context)).toEqual({
                     locale: 'no',
@@ -330,7 +330,7 @@ describe('utils', () => {
                         }
                     },
                     locale: 'da',
-                    contentPath: '/content/path',
+                    contentPath: '/content/path'
                 } as Context;
                 expect(moduleName.getRequestLocaleInfo(context)).toEqual({
                     locale: 'da',
@@ -360,7 +360,7 @@ describe('utils', () => {
                         }
                     },
                     // locale: 'da',
-                    contentPath: '/content/path',
+                    contentPath: '/content/path'
                 } as Context;
                 expect(moduleName.getRequestLocaleInfo(context)).toEqual({
                     locale: 'en',
@@ -389,7 +389,7 @@ describe('utils', () => {
                             console.error('headers get name', name);
                         }
                     },
-                    contentPath: '/content/path',
+                    contentPath: '/content/path'
                 } as Context;
                 expect(moduleName.getRequestLocaleInfo(context)).toEqual({
                     locale: 'en',

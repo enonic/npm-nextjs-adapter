@@ -4,7 +4,7 @@ export enum ENV_VARS {
     MAPPINGS = 'ENONIC_MAPPINGS',
     API_URL = 'ENONIC_API',
     APP_NAME = 'ENONIC_APP_NAME',
-    LOG = 'ENONIC_LOGGING',
+    LOG = 'ENONIC_LOGGING'
 }
 
 export const FRAGMENT_CONTENTTYPE_NAME = 'portal:fragment';
@@ -49,7 +49,7 @@ export enum GUILLOTINE_REQUEST_HEADERS {
     COOKIE = 'Cookie',
     LOCALE = 'locale',
     LOCALES = 'locales',
-    DEFAULT_LOCALE = 'default-locale',
+    DEFAULT_LOCALE = 'default-locale'
 }
 
 export const JSESSIONID_HEADER = 'jsessionid';
@@ -82,11 +82,11 @@ export enum XP_COMPONENT_TYPE {
     LAYOUT = 'layout',
     TEXT = 'text',
     FRAGMENT = 'fragment',
-    PAGE = 'page',
+    PAGE = 'page'
 }
 
 export enum XP_REQUEST_TYPE {
     COMPONENT = 'component',
     TYPE = 'type',
-    PAGE = 'page',
+    PAGE = 'page'
 }

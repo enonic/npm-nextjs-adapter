@@ -9,7 +9,7 @@ import type {
     PageData,
     PartData,
     RichTextData,
-    RegionTree,
+    RegionTree
 } from './component';
 
 
@@ -86,7 +86,7 @@ export interface MetaData {
     apiUrl: string,
     baseUrl: string,
     locale: string,
-    defaultLocale: string,
+    defaultLocale: string
 }
 
 export interface PageProps {

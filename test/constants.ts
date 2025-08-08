@@ -12,7 +12,7 @@ export function setupServerEnv(overrides: Record<string, string> = {}): void {
         [ENV_VARS.API_URL]: ENONIC_API,
         [ENV_VARS.APP_NAME]: ENONIC_APP_NAME,
         [ENV_VARS.MAPPINGS]: ENONIC_MAPPINGS,
-        ...overrides,
+        ...overrides
     });
 }
 
@@ -21,7 +21,7 @@ export function setupClientEnv(overrides: Record<string, string> = {}): void {
         NEXT_PUBLIC_ENONIC_API: ENONIC_API,
         NEXT_PUBLIC_ENONIC_MAPPINGS: ENONIC_MAPPINGS,
         NEXT_PUBLIC_ENONIC_APP_NAME: ENONIC_APP_NAME,
-        ...overrides,
+        ...overrides
     });
 }
 
@@ -40,5 +40,5 @@ export const META: MetaData = {
     apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
     baseUrl: '/site/inline/enonic-homepage/draft',
     locale: 'no',
-    defaultLocale: 'en',
+    defaultLocale: 'en'
 };

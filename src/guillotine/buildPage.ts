@@ -8,7 +8,7 @@ import {buildComponentTree} from './buildComponentTree';
 export function buildPage(contentType: string, comps: PageComponent[] = []): PageComponent {
     const page: PageComponent = {
         type: XP_COMPONENT_TYPE.PAGE,
-        path: '/',
+        path: '/'
     };
 
     return buildComponentTree(comps, page, contentType);

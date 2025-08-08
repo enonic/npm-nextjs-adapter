@@ -1,14 +1,7 @@
 import type {PageComponent, PathFragment, RegionTree} from '../../src/types';
 
 
-import {
-    // afterEach,
-    // beforeEach,
-    describe,
-    expect,
-    // jest,
-    test as it
-} from '@jest/globals';
+import {describe, expect, test as it} from '@jest/globals';
 import {getParentRegion} from '../../src/guillotine/getParentRegion';
 import {XP_COMPONENT_TYPE} from '../../src/common/constants';
 
@@ -29,7 +22,7 @@ describe('guillotine', () => {
             const contentType = '';
             const cmpPath: PathFragment[] = [{
                 index: 0,
-                region: 'main',
+                region: 'main'
             }];
             const components: PageComponent[] = [];
             const createMissing = false;
@@ -41,7 +34,7 @@ describe('guillotine', () => {
             const contentType = '';
             const cmpPath: PathFragment[] = [{
                 index: 0,
-                region: 'main',
+                region: 'main'
             }];
             const components: PageComponent[] = [];
             const createMissing = true;
@@ -52,13 +45,13 @@ describe('guillotine', () => {
             const source: RegionTree = {
                 main: {
                     name: 'main',
-                    components: [],
+                    components: []
                 }
             };
             const contentType = '';
             const cmpPath: PathFragment[] = [{
                 index: 0,
-                region: 'main',
+                region: 'main'
             }];
             const components: PageComponent[] = [];
             const createMissing = false;
@@ -69,16 +62,16 @@ describe('guillotine', () => {
             const source: RegionTree = {
                 main: {
                     name: 'main',
-                    components: [],
+                    components: []
                 }
             };
             const contentType = '';
             const cmpPath: PathFragment[] = [{
                 index: 0,
-                region: 'main',
+                region: 'main'
             },{
                 index: 0,
-                region: 'twoColumn',
+                region: 'twoColumn'
             }];
             const components: PageComponent[] = [];
             const createMissing = false;
@@ -99,16 +92,16 @@ describe('guillotine', () => {
             const source: RegionTree = {
                 main: {
                     name: 'main',
-                    components: [],
+                    components: []
                 }
             };
             const contentType = '';
             const cmpPath: PathFragment[] = [{
                 index: 0,
-                region: 'main',
+                region: 'main'
             },{
                 index: 0,
-                region: 'twoColumn',
+                region: 'twoColumn'
             }];
             const components: PageComponent[] = [{
                 type: XP_COMPONENT_TYPE.LAYOUT,
@@ -116,7 +109,7 @@ describe('guillotine', () => {
                 regions: {
                     twoColumn: {
                         name: 'twoColumn',
-                        components: [],
+                        components: []
                     }
                 }
             }];

@@ -1,12 +1,6 @@
 import type {Context} from '../../src/types';
 
-import {
-    afterAll,
-    describe,
-    expect,
-    jest,
-    test as it
-} from '@jest/globals';
+import {afterAll, describe, expect, jest, test as it} from '@jest/globals';
 import {ENONIC_APP_NAME} from '../constants';
 
 
@@ -34,7 +28,7 @@ describe('utils', () => {
                             }
                             console.error('headers get name', name);
                         }
-                    },
+                    }
                 } as Context;
                 expect(moduleName.buildGuillotineRequestHeaders({
                     context,
@@ -66,7 +60,7 @@ describe('utils', () => {
                             }
                             console.error('headers get name', name);
                         }
-                    },
+                    }
                 } as Context;
                 expect(moduleName.buildGuillotineRequestHeaders({
                     context,

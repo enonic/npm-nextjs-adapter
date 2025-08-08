@@ -1,16 +1,9 @@
-import type {
-    ComponentDescriptor,
-    Context,
-    PageComponent,
-} from '../types';
+import type {ComponentDescriptor, Context, PageComponent} from '../types';
 
 
 import {ComponentRegistry} from '../common/ComponentRegistry';
 import {XP_COMPONENT_TYPE} from '../common/constants';
-import {
-    APP_NAME,
-    APP_NAME_DASHED,
-} from '../common/env';
+import {APP_NAME, APP_NAME_DASHED} from '../common/env';
 import {processComponentConfig} from './processComponentConfig';
 import {getComponentConfig} from './getComponentConfig';
 import {getQueryAndVariables} from './getQueryAndVariables';
@@ -19,7 +12,7 @@ import {getQueryAndVariables} from './getQueryAndVariables';
 export function collectComponentDescriptors({
     components,
     xpContentPath,
-    context,
+    context
 }: {
     components: PageComponent[]
     xpContentPath: string
@@ -42,7 +35,7 @@ export function collectComponentDescriptors({
                     descriptors.push({
                         component: cmp,
                         type: cmpDef,
-                        queryAndVariables: queryAndVariables,
+                        queryAndVariables: queryAndVariables
                     });
                 }
             }
@@ -51,7 +44,7 @@ export function collectComponentDescriptors({
             const fragPartDescs = collectComponentDescriptors({
                 components: cmp.fragment?.fragment?.components,
                 xpContentPath,
-                context,
+                context
             });
             if (fragPartDescs.length) {
                 descriptors.push(...fragPartDescs);

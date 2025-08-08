@@ -1,10 +1,4 @@
-import type {
-    ContentApiBaseBody,
-    ContentApiBaseBodyVariables,
-    ContentResult,
-    LocaleMapping,
-    GuillotineRequestHeaders,
-} from '../types';
+import type {ContentApiBaseBody, ContentApiBaseBodyVariables, ContentResult, LocaleMapping, GuillotineRequestHeaders} from '../types';
 
 import {fetchGuillotine} from './fetchGuillotine';
 
@@ -15,7 +9,7 @@ export const fetchContentData = async <Content = Record<string, unknown>>(
     mapping: LocaleMapping,
     query: string,
     variables?: ContentApiBaseBodyVariables,
-    headers?: GuillotineRequestHeaders,
+    headers?: GuillotineRequestHeaders
 ): Promise<ContentResult> => {
     const body: ContentApiBaseBody = {query};
     if (variables && Object.keys(variables).length > 0) {
@@ -23,7 +17,7 @@ export const fetchContentData = async <Content = Record<string, unknown>>(
     }
     const contentResults = await fetchGuillotine<ContentResult<Content>>(contentApiUrl, mapping, {
         body,
-        headers,
+        headers
     });
 
     if (contentResults.error) {
@@ -31,7 +25,7 @@ export const fetchContentData = async <Content = Record<string, unknown>>(
     } else {
         return {
             // omit the aliases and return values
-            contents: Object.values(contentResults),
+            contents: Object.values(contentResults)
         };
     }
 };

@@ -8,7 +8,7 @@ globalThis.console = {
     warn: jest.fn(),
     log: jest.fn(),
     info: jest.fn(),
-    debug: jest.fn(),
+    debug: jest.fn()
 } as unknown as Console;
 
 
