@@ -30,7 +30,7 @@ const DataDump = ({label, data}: Props) => (
                     fontSize: '.8em',
                     width: '100%',
                     whiteSpace: 'pre-wrap',
-                    wordWrap: 'break-word',
+                    wordWrap: 'break-word'
                 }}>{JSON.stringify(data, null, 2)}</pre>
             </>
         )

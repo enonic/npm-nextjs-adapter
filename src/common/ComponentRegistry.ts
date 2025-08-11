@@ -4,14 +4,11 @@ import type {
     ComponentDictionary,
     PageComponent,
     SelectedQueryMaybeVariablesFunc,
-    SelectorName,
+    SelectorName
 } from '../types';
 
 
-import {
-    CATCH_ALL,
-    XP_COMPONENT_TYPE,
-} from './constants';
+import {CATCH_ALL, XP_COMPONENT_TYPE} from './constants';
 
 
 function toSelectorName(type: XP_COMPONENT_TYPE): SelectorName | undefined {

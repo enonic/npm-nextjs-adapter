@@ -4,7 +4,7 @@ import type {ComponentDefinitionParams, PageComponent} from '../src/types';
 import {beforeAll, describe, expect, jest, test as it} from '@jest/globals';
 import DefaultMacro from '../src/views/macros/DefaultMacro';
 import PropsView from '../src/views/PropsView';
-import {ENONIC_APP_NAME, ENONIC_APP_NAME_UNDERSCORED, setupServerEnv,} from './constants'
+import {ENONIC_APP_NAME, ENONIC_APP_NAME_UNDERSCORED, setupServerEnv} from './constants'
 import {CATCH_ALL, XP_COMPONENT_TYPE} from '../src/common/constants';
 
 
@@ -14,7 +14,7 @@ globalThis.console = {
     warn: jest.fn(),
     log: jest.fn(),
     info: jest.fn(),
-    debug: jest.fn(),
+    debug: jest.fn()
 } as unknown as Console;
 
 
@@ -73,16 +73,16 @@ const LAYOUT_COMPONENT: PageComponent = {
     type: XP_COMPONENT_TYPE.LAYOUT,
     path: 'test',
     layout: {
-        descriptor: LAYOUT_NAME_2_COLUMN,
-    },
+        descriptor: LAYOUT_NAME_2_COLUMN
+    }
 };
 
 const PAGE_COMPONENT: PageComponent = {
     type: XP_COMPONENT_TYPE.PAGE,
     path: 'test',
     page: {
-        descriptor: PAGE_NAME_MAIN,
-    },
+        descriptor: PAGE_NAME_MAIN
+    }
 };
 
 const PART_COMPONENT: PageComponent = {
@@ -90,12 +90,12 @@ const PART_COMPONENT: PageComponent = {
     path: 'test',
     part: {
         config: {},
-        descriptor: PART_NAME_HEADING,
-    },
+        descriptor: PART_NAME_HEADING
+    }
 }
 
 const REGISTERED_LAYOUT_COMPONENT: ComponentDefinitionParams = {
-    // view: TwoColumnLayout,
+    // view: TwoColumnLayout
 };
 
 const REGISTERED_MACRO_COMPONENT: ComponentDefinitionParams = {
@@ -104,25 +104,25 @@ const REGISTERED_MACRO_COMPONENT: ComponentDefinitionParams = {
 }
 
 const REGISTERED_PAGE_COMPONENT: ComponentDefinitionParams = {
-    // view: MainPage,
+    // view: MainPage
 };
 
 const REGISTERED_PART_COMPONENT: ComponentDefinitionParams = {
     configQuery: '{heading}'
     // query: ,
-    // view: Heading,
+    // view: Heading
 }
 
 const REGISTERED_TEXT_COMPONENT: ComponentDefinitionParams = {
-    // view: CustomTextView,
+    // view: CustomTextView
 };
 
 const REGISTERED_CONTENT_TYPE_PERSON: ComponentDefinitionParams = {
-    query: QUERY_GET_PERSON,
+    query: QUERY_GET_PERSON
 };
 
 const REGISTERED_CONTENT_TYPE_CATCH_ALL: ComponentDefinitionParams = {
-    view: PropsView,
+    view: PropsView
 };
 
 let ComponentRegistry;
@@ -142,7 +142,7 @@ describe('ComponentRegistry', () => {
     describe('addComponent, getComponent & getComponents', () => {
         it('adds a component', () => {
             expect(ComponentRegistry.addComponent(COMPONENT_NAME_TEXT, {
-                // view: CustomTextView,
+                // view: CustomTextView
             })).toBeUndefined();
             expect(ComponentRegistry.getComponent(COMPONENT_NAME_TEXT))
                 .toStrictEqual({
@@ -162,7 +162,7 @@ describe('ComponentRegistry', () => {
         it('adds a content type', () => {
             expect(ComponentRegistry.addContentType(CONTENT_TYPE_NAME_PERSON, {
                 query: QUERY_GET_PERSON,
-                // view: Person,
+                // view: Person
             })).toBeUndefined();
             expect(ComponentRegistry.getContentType(CONTENT_TYPE_NAME_PERSON))
                 .toStrictEqual({
@@ -170,7 +170,7 @@ describe('ComponentRegistry', () => {
                     catchAll: false
                 });
             expect(ComponentRegistry.addContentType(CATCH_ALL, {
-                view: PropsView,
+                view: PropsView
             })).toBeUndefined();
             expect(ComponentRegistry.getContentType(CATCH_ALL))
                 .toStrictEqual({
@@ -193,7 +193,7 @@ describe('ComponentRegistry', () => {
     describe('addLayout, getLayout & getLayouts', () => {
         it('adds a layout', () => {
             expect(ComponentRegistry.addLayout(LAYOUT_NAME_2_COLUMN, {
-                // view: TwoColumnLayout,
+                // view: TwoColumnLayout
             })).toBeUndefined();
             expect(ComponentRegistry.getLayout(LAYOUT_NAME_2_COLUMN))
                 .toStrictEqual({
@@ -236,7 +236,7 @@ describe('ComponentRegistry', () => {
     describe('addPage, getPage & getPages', () => {
         it('adds a page', () => {
             expect(ComponentRegistry.addPage(PAGE_NAME_MAIN, {
-                // view: MainPage,
+                // view: MainPage
             })).toBeUndefined();
             expect(ComponentRegistry.getPage(PAGE_NAME_MAIN))
                 .toStrictEqual({
@@ -312,7 +312,7 @@ describe('ComponentRegistry', () => {
             expect(ComponentRegistry.getType('contentType', 'non-existent'))
                 .toStrictEqual({
                     ...REGISTERED_CONTENT_TYPE_CATCH_ALL,
-                    catchAll: true,
+                    catchAll: true
                 });
         });
     });

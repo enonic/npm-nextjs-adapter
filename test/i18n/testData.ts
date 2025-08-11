@@ -3,7 +3,7 @@ export const PHRASES_EN = {
     "back": "Back",
     "built-with": "Built with",
     "powered-by": "Powered by",
-    "template": "Template {} {2} {1} {0} {0}",
+    "template": "Template {} {2} {1} {0} {0}"
 };
 
 export const PHRASES_NO = {
@@ -11,5 +11,5 @@ export const PHRASES_NO = {
     "back": "Tilbake",
     "built-with": "Laget med",
     "powered-by": "Drevet av",
-    "template": "Mal {} {2} {1} {0} {0}",
+    "template": "Mal {} {2} {1} {0} {0}"
 };

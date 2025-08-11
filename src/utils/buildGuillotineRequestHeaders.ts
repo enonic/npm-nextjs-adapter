@@ -1,17 +1,14 @@
 import type {Context, GuillotineRequestHeaders} from '../types';
 
 
-import {
-    GUILLOTINE_REQUEST_HEADERS,
-    JSESSIONID_HEADER,
-} from '../common/constants';
+import {GUILLOTINE_REQUEST_HEADERS, JSESSIONID_HEADER} from '../common/constants';
 
 
 export function buildGuillotineRequestHeaders({
     context,
     defaultLocale,
     locale,
-    locales,
+    locales
 }: {
     context: Context
     defaultLocale: string
@@ -21,7 +18,7 @@ export function buildGuillotineRequestHeaders({
     const guillotineRequestHeaders: GuillotineRequestHeaders = {
         [GUILLOTINE_REQUEST_HEADERS.DEFAULT_LOCALE]: defaultLocale,
         [GUILLOTINE_REQUEST_HEADERS.LOCALE]: locale,
-        [GUILLOTINE_REQUEST_HEADERS.LOCALES]: JSON.stringify(locales),
+        [GUILLOTINE_REQUEST_HEADERS.LOCALES]: JSON.stringify(locales)
     };
     const jsessionid = context.headers?.get(JSESSIONID_HEADER);
     if (jsessionid) {

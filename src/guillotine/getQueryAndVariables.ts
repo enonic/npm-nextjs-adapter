@@ -1,8 +1,4 @@
-import type {
-    Context,
-    QueryAndVariables,
-    SelectedQueryMaybeVariablesFunc,
-} from '../types';
+import type {Context, QueryAndVariables, SelectedQueryMaybeVariablesFunc} from '../types';
 
 
 export function getQueryAndVariables(
@@ -10,7 +6,7 @@ export function getQueryAndVariables(
     path: string,
     context: Context,
     selectedQuery?: SelectedQueryMaybeVariablesFunc,
-    config?: any,
+    config?: any
 ): QueryAndVariables | undefined {
 
     let query, getVariables;
@@ -45,8 +41,8 @@ export function getQueryAndVariables(
         return {
             query,
             variables: getVariables ? getVariables(path, context, config) : {
-                path,
-            },
+                path
+            }
         };
     }
 }

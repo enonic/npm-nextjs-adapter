@@ -25,6 +25,23 @@
     "utils",
     "views"
   ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./views/*": {
+      "types": "./dist/views/*.d.ts",
+      "import": "./dist/views/*.jsx",
+      "require": "./dist/views/*.jsx"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "require": "./dist/*.js"
+    }
+  },
   "keywords": [
     "enonic",
     "nextjs",
@@ -36,8 +53,8 @@
     "access": "public"
   },
   "scripts": {
-    "clean": "del-cli *.d.ts *.js.map baseMappings.* client.* server.* common coverage index.* enonic-nextjs-adapter-*.tgz guillotine i18n query types utils views dist server client",
     "build": "tsc",
+    "clean": "del-cli dist/ *.tgz",
     "check:types": "tsc --noEmit",
     "madge": "madge -i docs/madge.png -x '(constants|env)\\.ts' src/index.ts",
     "lint": "eslint --quiet --cache src",
@@ -50,14 +67,10 @@
     "test": "jest --no-cache --coverage"
   },
   "dependencies": {
-    "@enonic/react-components": "^5.0.1",
+    "@enonic/react-components": "^6.0.0-RC5",
     "@formatjs/intl-localematcher": "^0.6.1",
     "gqlmin": "^0.2.2",
-    "html-react-parser": "^5.2.6",
     "negotiator": "^1.0.0",
-    "next": "^15.4.5",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
     "unescape": "^1.0.1"
   },
   "devDependencies": {
@@ -88,5 +101,11 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
-  "types": "index.d.ts"
+  "types": "index.d.ts",
+  "peerDependencies": {
+    "html-react-parser": "^5.2.6",
+    "next": "^15.4.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
 }

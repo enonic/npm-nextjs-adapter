@@ -1,11 +1,7 @@
 import type {PageComponent} from '../../src/types';
 
 
-import {
-    describe,
-    expect,
-    test as it
-} from '@jest/globals';
+import {describe, expect, test as it} from '@jest/globals';
 import {getComponentConfig} from '../../src/guillotine/getComponentConfig';
 import {XP_COMPONENT_TYPE} from '../../src/common/constants';
 
@@ -31,7 +27,7 @@ describe('guillotine', () => {
         it("should return undefined when cmp[type] doesn't exit", () => {
             const cmp: PageComponent = {
                 type: XP_COMPONENT_TYPE.PART,
-                path: 'main/0',
+                path: 'main/0'
             };
             expect(getComponentConfig(cmp)).toEqual(undefined);
         });

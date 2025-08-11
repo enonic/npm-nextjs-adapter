@@ -1,10 +1,7 @@
 import type {Context} from '../types';
 
 
-import {
-    RENDER_MODE,
-    RENDER_MODE_HEADER,
-} from '../common/constants';
+import {RENDER_MODE, RENDER_MODE_HEADER} from '../common/constants';
 
 
 export const getRenderMode = (context: Context): RENDER_MODE => {

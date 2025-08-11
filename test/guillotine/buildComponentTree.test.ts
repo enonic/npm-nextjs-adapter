@@ -1,16 +1,9 @@
 import type {PageComponent} from '../../src/types';
 
 
-import {
-    describe,
-    expect,
-    test as it
-} from '@jest/globals';
+import {describe, expect, test as it} from '@jest/globals';
 import {buildComponentTree} from '../../src/guillotine/buildComponentTree';
-import {
-    FRAGMENT_CONTENTTYPE_NAME,
-    XP_COMPONENT_TYPE
-} from '../../src/common/constants';
+import {FRAGMENT_CONTENTTYPE_NAME, XP_COMPONENT_TYPE} from '../../src/common/constants';
 
 
 describe('guillotine', () => {
@@ -21,8 +14,8 @@ describe('guillotine', () => {
                 type: XP_COMPONENT_TYPE.PAGE,
                 path: '/',
                 page: {
-                    descriptor: 'pageDescriptor',
-                },
+                    descriptor: 'pageDescriptor'
+                }
             };
             expect(buildComponentTree(comps, rootComp)).toEqual(rootComp);
         });
@@ -31,7 +24,7 @@ describe('guillotine', () => {
             const comps: PageComponent[] = [];
             const rootComp: PageComponent = {
                 type: XP_COMPONENT_TYPE.PAGE, // Doesn't matter
-                path: '/',
+                path: '/'
             };
             const deferredRootComp = JSON.parse(JSON.stringify(rootComp));
             const contentType = FRAGMENT_CONTENTTYPE_NAME;
@@ -47,13 +40,13 @@ describe('guillotine', () => {
                 part: {
                     descriptor: 'partDescriptor',
                     config: {
-                        key: 'value',
+                        key: 'value'
                     }
                 }
             }];
             const rootComp: PageComponent = {
                 type: XP_COMPONENT_TYPE.PAGE,
-                path: '/',
+                path: '/'
             };
             const deferredRootComp = JSON.parse(JSON.stringify(rootComp));
             const contentType = 'contentType';
@@ -68,7 +61,7 @@ describe('guillotine', () => {
                 page: {
                     descriptor: 'pageDescriptor1',
                     config: {
-                        key1: 'value1',
+                        key1: 'value1'
                     }
                 }
             };
@@ -79,7 +72,7 @@ describe('guillotine', () => {
                 page: {
                     descriptor: 'pageDescriptor2',
                     config: {
-                        key2: 'value2',
+                        key2: 'value2'
                     }
                 }
             };
@@ -97,7 +90,7 @@ describe('guillotine', () => {
                 layout: {
                     descriptor: 'layoutDescriptor',
                     config: {
-                        key1: 'value1',
+                        key1: 'value1'
                     }
                 }
             };
@@ -108,7 +101,7 @@ describe('guillotine', () => {
                 fragment: {
                     id: 'fragmentId',
                     fragment: {
-                        components: [],
+                        components: []
                     }
                 }
             };
@@ -125,7 +118,7 @@ describe('guillotine', () => {
                 part: {
                     descriptor: 'partDescriptor',
                     config: {
-                        key2: 'value2',
+                        key2: 'value2'
                     }
                 }
             };
@@ -135,12 +128,12 @@ describe('guillotine', () => {
                 layout: {
                     descriptor: 'layoutDescriptor',
                     config: {
-                        key1: 'value1',
+                        key1: 'value1'
                     },
                     regions: {
                         left: {
                             name: 'left',
-                            components: [part],
+                            components: [part]
                         }
                     }
                 }
@@ -151,7 +144,7 @@ describe('guillotine', () => {
                 fragment: {
                     id: 'fragmentId',
                     fragment: {
-                        components: [layout],
+                        components: [layout]
                     }
                 }
             };
@@ -162,12 +155,12 @@ describe('guillotine', () => {
                 page: {
                     descriptor: 'pageDescriptor',
                     config: {
-                        key3: 'value3',
+                        key3: 'value3'
                     },
                     regions: {
                         main: {
                             name: 'main',
-                            components: [fragment],
+                            components: [fragment]
                         }
                     }
                 }

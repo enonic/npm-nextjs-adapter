@@ -28,7 +28,7 @@ export const MAPPINGS = isServer ? process.env[ENV_VARS.MAPPINGS] : process.env[
 const requiredConstants = {
     [ENV_VARS.APP_NAME]: APP_NAME,
     [ENV_VARS.API_URL]: API_URL,
-    [ENV_VARS.MAPPINGS]: MAPPINGS,
+    [ENV_VARS.MAPPINGS]: MAPPINGS
 };
 
 // Verify required values on server-side only

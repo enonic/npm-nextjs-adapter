@@ -26,7 +26,7 @@ const BaseContent = (props: FetchContentResult) => {
             component: pageData,
             path: page?.path,
             meta,
-            common,
+            common
         };
         if (page?.data) {
             pageAttrs.data = page.data;

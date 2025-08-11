@@ -1,10 +1,9 @@
 import type {ComponentDefinition, PageComponent} from '../../src/types';
-import {
-    describe,
-    expect,
-    jest,
-    test as it
-} from '@jest/globals';
+import {describe, expect, jest, test as it} from '@jest/globals';
+import {combineMultipleQueries} from '../../src/guillotine/combineMultipleQueries';
+import {XP_COMPONENT_TYPE} from '../../src/common/constants';
+import {ENONIC_APP_NAME} from '../constants';
+import {ws} from '../testUtils';
 
 
 // This must come before the imports to suppress logging.
@@ -14,12 +13,8 @@ globalThis.console = {
     warn: jest.fn(),
     log: jest.fn(),
     info: jest.fn(),
-    // debug: jest.fn(),
+    // debug: jest.fn()
 } as Console;
-import {combineMultipleQueries} from '../../src/guillotine/combineMultipleQueries';
-import {XP_COMPONENT_TYPE} from '../../src/common/constants';
-import {ENONIC_APP_NAME} from '../constants';
-import {ws} from '../testUtils';
 
 
 const PART_DESCRIPTOR = `${ENONIC_APP_NAME}:heading`;
@@ -28,8 +23,8 @@ const PART_COMPONENT: PageComponent = {
     path: '/',
     part: {
         config: {},
-        descriptor: PART_DESCRIPTOR,
-    },
+        descriptor: PART_DESCRIPTOR
+    }
 };
 const REGISTERED_PART: ComponentDefinition = {
     catchAll: false,
@@ -56,7 +51,7 @@ describe('guillotine', () => {
                 variables
             } = combineMultipleQueries([{
                 type: REGISTERED_PART,
-                component: PART_COMPONENT,
+                component: PART_COMPONENT
             }]);
             expect(ws(query)).toEqual('query { }');
             expect(variables).toEqual({});
@@ -72,24 +67,24 @@ describe('guillotine', () => {
                 queryAndVariables: { 
                     query: 'fragment x on y {z}',
                     variables: {
-                        key1: 'value1',
-                    },
-                },
+                        key1: 'value1'
+                    }
+                }
             },{
                 type: REGISTERED_PART,
                 component: PART_COMPONENT,
                 queryAndVariables: { 
                     query: 'query{guillotine{x}}'
-                },
+                }
             },{
                 type: REGISTERED_PART,
                 component: PART_COMPONENT,
                 queryAndVariables: { 
                     query: 'query(someVar:$key3){guillotine{x}}',
                     variables: {
-                        key3: 'value3',
-                    },
-                },
+                        key3: 'value3'
+                    }
+                }
             }]);
             expect(ws(query)).toEqual('query ($request2_omeVar:$key3) { request1:guillotine {x} request2:guillotine {x} } fragment x on y {z}');
             expect(variables).toEqual({

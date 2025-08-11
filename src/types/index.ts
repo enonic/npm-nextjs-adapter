@@ -16,12 +16,12 @@ export interface ContentApiBaseBody {
 
 export interface ContentApiBaseBodyVariables {
     path?: string,              // Full content item _path
-    [key: string]: string | number | undefined,
+    [key: string]: string | number | undefined
 }
 
 export interface ContentPathItem {
     contentPath: string[]
-    locale: string,
+    locale: string
 }
 
 export interface PathFragment {
@@ -51,7 +51,7 @@ export type FetchOptions = Omit<RequestInit, 'body'> & {
     body?: ContentApiBaseBody,
     next?: {
         revalidate?: boolean | number,
-        tags?: string[],
+        tags?: string[]
     }
 };
 

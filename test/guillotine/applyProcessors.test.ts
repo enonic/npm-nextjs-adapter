@@ -1,11 +1,7 @@
 import type {ComponentDescriptor, ContentResult, Context} from '../../src/types';
 
 
-import {
-    describe,
-    expect,
-    test as it
-} from '@jest/globals';
+import {describe, expect, test as it} from '@jest/globals';
 import {applyProcessors} from '../../src/guillotine/applyProcessors';
 import {XP_COMPONENT_TYPE} from '../../src/common/constants';
 
@@ -18,7 +14,7 @@ describe('guillotine', () => {
                 // contents: []
             };
             const context: Context = {
-                contentPath: 'contentPath',
+                contentPath: 'contentPath'
             };
             expect(applyProcessors(componentDescriptors, contentResults, context)).resolves.toEqual([]);
         });
@@ -26,7 +22,7 @@ describe('guillotine', () => {
         it("should resolve to  when componentDescriptors contains a single ComponentDescriptor without queryAndVariables", () => {
             const componentDescriptors: ComponentDescriptor[] = [{
                 type: {
-                    processor: async (props: any) => await props ?? {},
+                    processor: async (props: any) => await props ?? {}
                 },
                 component: {
                     type: XP_COMPONENT_TYPE.PART,
@@ -35,16 +31,16 @@ describe('guillotine', () => {
                         name: 'partName',
                         descriptor: 'partDescriptor',
                         config: {
-                            key1: 'value1',
-                        },
-                    },
-                },
+                            key1: 'value1'
+                        }
+                    }
+                }
             }];
             const contentResults: ContentResult = {
                 // contents: []
             };
             const context: Context = {
-                contentPath: 'contentPath',
+                contentPath: 'contentPath'
             };
             expect(applyProcessors(componentDescriptors, contentResults, context)).resolves.toEqual([{
                 status: 'fulfilled',
@@ -55,7 +51,7 @@ describe('guillotine', () => {
         it("should resolve to rejected when contentResults has no contents", () => {
             const componentDescriptors: ComponentDescriptor[] = [{
                 type: {
-                    processor: async (props: any) => await props ?? {},
+                    processor: async (props: any) => await props ?? {}
                 },
                 component: {
                     type: XP_COMPONENT_TYPE.PART,
@@ -64,22 +60,22 @@ describe('guillotine', () => {
                         name: 'partName',
                         descriptor: 'partDescriptor',
                         config: {
-                            key1: 'value1',
-                        },
-                    },
+                            key1: 'value1'
+                        }
+                    }
                 },
                 queryAndVariables: {
                     query: 'query',
                     variables: {
-                        key2: 'value2',
-                    },
-                },
+                        key2: 'value2'
+                    }
+                }
             }];
             const contentResults: ContentResult = {
                 // contents: []
             };
             const context: Context = {
-                contentPath: 'contentPath',
+                contentPath: 'contentPath'
             };
             expect(applyProcessors(componentDescriptors, contentResults, context)).resolves.toEqual([{
                 status: 'rejected',
@@ -103,29 +99,29 @@ describe('guillotine', () => {
                         name: 'partName',
                         descriptor: 'partDescriptor',
                         config: {
-                            key1: 'value1',
-                        },
-                    },
+                            key1: 'value1'
+                        }
+                    }
                 },
                 queryAndVariables: {
                     query: 'query',
                     variables: {
-                        key2: 'value2',
-                    },
-                },
+                        key2: 'value2'
+                    }
+                }
             }];
             const contentResults: ContentResult = {
                 contents: [{
-                    key3: 'value3',
+                    key3: 'value3'
                 }]
             };
             const context: Context = {
-                contentPath: 'contentPath',
+                contentPath: 'contentPath'
             };
             expect(applyProcessors(componentDescriptors, contentResults, context)).resolves.toEqual([{
                 status: 'fulfilled',
                 value: {
-                    key3: 'changedValue',
+                    key3: 'changedValue'
                 }
             }]);
         });
@@ -139,29 +135,29 @@ describe('guillotine', () => {
                         name: 'partName',
                         descriptor: 'partDescriptor',
                         config: {
-                            key1: 'value1',
-                        },
-                    },
+                            key1: 'value1'
+                        }
+                    }
                 },
                 queryAndVariables: {
                     query: 'query',
                     variables: {
-                        key2: 'value2',
-                    },
-                },
+                        key2: 'value2'
+                    }
+                }
             }];
             const contentResults: ContentResult = {
                 contents: [{
-                    key3: 'value3',
+                    key3: 'value3'
                 }]
             };
             const context: Context = {
-                contentPath: 'contentPath',
+                contentPath: 'contentPath'
             };
             expect(applyProcessors(componentDescriptors, contentResults, context)).resolves.toEqual([{
                 status: 'fulfilled',
                 value: {
-                    key3: 'value3',
+                    key3: 'value3'
                 }
             }]);
         });
