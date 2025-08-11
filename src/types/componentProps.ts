@@ -11,6 +11,7 @@ import type {
     RichTextData,
     RegionTree
 } from './component';
+import type {ReactNode} from 'react';
 
 
 export interface BaseComponentProps {
@@ -29,7 +30,7 @@ export interface BaseLayoutProps {
 }
 
 export interface BaseMacroProps {
-    children: string | React.ReactNode;
+    children: ReactNode;
     data: Omit<MacroData, 'ref'>;
     meta: MetaData;
     renderInEditMode?: boolean;

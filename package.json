@@ -97,14 +97,14 @@
     "jest-environment-jsdom": "^29.7.0",
     "madge": "^8.0.0",
     "mkdirp": "^3.0.1",
-    "ts-jest": "^29.4.0",
+    "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
   "types": "index.d.ts",
   "peerDependencies": {
     "html-react-parser": "^5.2.6",
-    "next": "^15.4.3",
+    "next": "^15.4.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   }

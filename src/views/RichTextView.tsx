@@ -1,9 +1,9 @@
-/// <reference types="react" />
 import type {MetaData, RichTextViewProps, Replacer as NextReplacer, RichTextData, MacroData} from '../types';
 
 import {getUrl, UrlProcessor} from '../common/UrlProcessor';
 import BaseMacro from './BaseMacro';
 import Link from 'next/link';
+import {useMemo} from 'react';
 import type {
     MacroComponentParams,
     LinkComponentParams,
@@ -23,11 +23,12 @@ interface ExtraRichTextProps {
 }
 
 const RichTextView = (props: RichTextViewProps) => {
-    const component: TextComponent = {
+    const component: TextComponent = useMemo(() => ({
         type: 'text',
         path: props.meta.path,
         text: props.data.processedHtml
-    }
+    }), [props.meta.path, props.data.processedHtml]);
+
     return <RichText<ExtraRichTextProps>
         data={wrapData(props.data)}
         meta={toRichTextMetaData(props.meta)}
