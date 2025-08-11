@@ -25,7 +25,7 @@ describe('views', () => {
             });
             const bodyEl = screen.queryAllByText('')[0];
             expect(bodyEl).toContainHTML(
-                `<body><div><div class="debug" style="margin: 10px; padding: 10px; border: 2px solid lightgrey;"><h5 style="margin-top: 0px; margin-bottom: 0px;">Page:</h5><pre style="font-size: .8em; width: 100%; white-space: pre-wrap; word-wrap: break-word;">{\n  "key": "value"\n}</pre></div></div></body>`);
+                `<body><div><div class="debug" style="margin: 10px; padding: 10px; border: 2px solid lightgrey;"><h5 style="margin-top: 0px; margin-bottom: 0px;">Page:</h5><pre style="font-size: 0.8em; width: 100%; white-space: pre-wrap; word-wrap: break-word;">{\n  "key": "value"\n}</pre></div></div></body>`);
         });
     });
 });
