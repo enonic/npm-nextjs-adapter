@@ -2,28 +2,16 @@
   "name": "@enonic/nextjs-adapter",
   "version": "0.0.0",
   "license": "Apache-2.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "author": "Pavel Milkevich <pmi@enonic.com>",
   "contributors": [
     "Christian Westgaard <cwe@enonic.com>"
   ],
   "files": [
-    "*.d.ts",
-    "*.map",
-    "baseMappings*",
-    "client.js",
-    "server.js",
-    "common",
-    "client",
-    "server",
-    "guillotine",
-    "index*",
-    "i18n",
-    "query",
-    "src",
-    "types",
-    "utils",
-    "views"
+    "dist",
+    "LICENSE",
+    "package.json",
+    "README.md"
   ],
   "exports": {
     ".": {
@@ -54,7 +42,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "clean": "del-cli dist/ *.tgz",
+    "clean": "del-cli dist/ enonic-nextjs-adapter-*.tgz",
     "check:types": "tsc --noEmit",
     "madge": "madge -i docs/madge.png -x '(constants|env)\\.ts' src/index.ts",
     "lint": "eslint --quiet --cache src",
@@ -104,7 +92,7 @@
   "types": "index.d.ts",
   "peerDependencies": {
     "html-react-parser": "^5.2.6",
-    "next": "^15.4.5",
+    "next": "^14.2.32",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   }
