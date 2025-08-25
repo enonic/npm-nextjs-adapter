@@ -79,7 +79,7 @@
     "concurrently": "^9.2.0",
     "cpy-cli": "^6.0.0",
     "del-cli": "^6.0.0",
-    "eslint": "^9.33.0",
+    "eslint": "^9.34.0",
     "eslint-plugin-react": "^7.37.5",
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
