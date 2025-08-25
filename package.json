@@ -57,7 +57,7 @@
   "dependencies": {
     "@enonic/react-components": "^6.0.0",
     "@formatjs/intl-localematcher": "^0.6.1",
-    "gqlmin": "^0.2.2",
+    "gqlmin": "^0.3.1",
     "negotiator": "^1.0.0",
     "unescape": "^1.0.1"
   },
