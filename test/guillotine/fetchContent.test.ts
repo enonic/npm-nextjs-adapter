@@ -28,7 +28,7 @@ globalThis.console = {
     error: jest.fn(),
     // warn: jest.fn(),
     log: jest.fn(),
-    info: jest.fn(),
+    info: jest.fn()
     // debug: jest.fn()
 } as Console;
 
@@ -72,9 +72,9 @@ const PAGE_COMPONENT: RecursivePartial<Component> = {
             'com-example-myproject': {
                 main: {}
             }
-        },
+        }
         //   template: null
-    },
+    }
     // layout: null,
     // text: null,
     // part: null,
@@ -344,13 +344,13 @@ function mockHeadersImport(draft: boolean, mode: string) {
 }
 
 function mockFetch({
-                       contentJson,
-                       contentOk = true,
-                       contentStatus = 200,
-                       metaJson,
-                       metaOk = true,
+    contentJson,
+    contentOk = true,
+    contentStatus = 200,
+    metaJson,
+    metaOk = true,
     metaStatus = 200
-                   }: {
+}: {
     contentJson: GuillotineResponseJson
     contentOk?: boolean
     contentStatus?: number
@@ -423,6 +423,7 @@ describe('guillotine', () => {
 
                 await import('../../src/server').then(async (moduleName) => {
                     const context: Context = {
+                        contentPath: 'some/path',
                         headers: {
                             get(name: string) {
                                 if (name === 'content-studio-mode') {
@@ -462,7 +463,7 @@ describe('guillotine', () => {
                             catchAll: false,
                             defaultLocale: 'en',
                             locale: 'no',
-                            path: '',
+                            path: 'some/path',
                             renderMode: mode,
                             requestType: 'type',
                             type: 'type'
@@ -486,7 +487,7 @@ describe('guillotine', () => {
                 metaJson: GUILLOTINE_RESULT_META_MINIMAL
             });
             const context: Context = {
-                contentPath: '/content/path',
+                contentPath: '/content/path'
                 // headers
             };
             import('../../src/guillotine/fetchContent').then(({fetchContent}) => {
@@ -716,14 +717,15 @@ describe('guillotine', () => {
             }); // import
         }); // it
 
-        it('changes requestType to page for fetchContentData when requestType is not component, but the meta response has components', () => {
-            mockFetch({
-                contentJson: GUILLOTINE_RESULT_CONTENT_WITH_ARTICLES,
-                metaJson: GUILLOTINE_RESULT_META_FOR_ARTICLES
-            });
-            const CONTENT_PATH = 'articles'; // Must be present in contentJson
-            const BASE_URL = '/base/url';
-            const QUERY_COMMON = `query($path:ID!){
+        it('changes requestType to page for fetchContentData when requestType is not component, but the meta response has components',
+            () => {
+                mockFetch({
+                    contentJson: GUILLOTINE_RESULT_CONTENT_WITH_ARTICLES,
+                    metaJson: GUILLOTINE_RESULT_META_FOR_ARTICLES
+                });
+                const CONTENT_PATH = 'articles'; // Must be present in contentJson
+                const BASE_URL = '/base/url';
+                const QUERY_COMMON = `query($path:ID!){
                 guillotine {
                   get(key:$path) {
                     displayName
@@ -738,52 +740,112 @@ describe('guillotine', () => {
                   }
                 }
               }`;
-            Promise.all([import('../../src'), import('../../src/server')]).then(async ([{ComponentRegistry}, {fetchContent}]) => {
-                ComponentRegistry.setCommonQuery(QUERY_COMMON);
-                ComponentRegistry.addContentType(CATCH_ALL, {
-                    configQuery: '{catchAll contentType configQuery}',
-                    query: 'query { guillotine { catchAll } }',
-                    view: () => {
-                        return 'catchAll contentType';
-                    }
-                });
-                ComponentRegistry.addLayout(CATCH_ALL, {
-                    configQuery: '{catchAll layout configQuery}',
-                    query: '{catchAll layout query}',
-                    view: () => {
-                        return 'catchAll layout';
-                    }
-                });
-                ComponentRegistry.addMacro(CATCH_ALL, {
-                    configQuery: '{catchAll macro configQuery}',
-                    query: '{catchAll macro query}',
-                    view: () => {
-                        return 'catchAll macro';
-                    }
-                });
-                ComponentRegistry.addPage(CATCH_ALL, {
-                    configQuery: '{catchAll page configQuery}',
-                    query: '{catchAll page query}',
-                    view: () => {
-                        return 'catchAll page';
-                    }
-                });
-                ComponentRegistry.addPart(CATCH_ALL, {
-                    configQuery: '{catchAll part configQuery}',
-                    query: '{catchAll part query}',
-                    view: () => {
-                        return 'catchAll part';
-                    }
-                });
+                Promise.all([import('../../src'), import('../../src/server')]).then(async ([{ComponentRegistry}, {fetchContent}]) => {
+                    ComponentRegistry.setCommonQuery(QUERY_COMMON);
+                    ComponentRegistry.addContentType(CATCH_ALL, {
+                        configQuery: '{catchAll contentType configQuery}',
+                        query: 'query { guillotine { catchAll } }',
+                        view: () => {
+                            return 'catchAll contentType';
+                        }
+                    });
+                    ComponentRegistry.addLayout(CATCH_ALL, {
+                        configQuery: '{catchAll layout configQuery}',
+                        query: '{catchAll layout query}',
+                        view: () => {
+                            return 'catchAll layout';
+                        }
+                    });
+                    ComponentRegistry.addMacro(CATCH_ALL, {
+                        configQuery: '{catchAll macro configQuery}',
+                        query: '{catchAll macro query}',
+                        view: () => {
+                            return 'catchAll macro';
+                        }
+                    });
+                    ComponentRegistry.addPage(CATCH_ALL, {
+                        configQuery: '{catchAll page configQuery}',
+                        query: '{catchAll page query}',
+                        view: () => {
+                            return 'catchAll page';
+                        }
+                    });
+                    ComponentRegistry.addPart(CATCH_ALL, {
+                        configQuery: '{catchAll part configQuery}',
+                        query: '{catchAll part query}',
+                        view: () => {
+                            return 'catchAll part';
+                        }
+                    });
+                    const context: Context = {
+                        contentPath: CONTENT_PATH, // Anything but _/component
+                        headers: {
+                            get(name: string) {
+                                if (name === RENDER_MODE_HEADER) {
+                                    return RENDER_MODE.NEXT
+                                }
+                                if (name === PROJECT_ID_HEADER) {
+                                    return 'project';
+                                }
+                                if (name === JSESSIONID_HEADER) {
+                                    return '1234';
+                                }
+                                if (name === XP_BASE_URL_HEADER) {
+                                    return BASE_URL;
+                                }
+                                console.debug('headers get name', name);
+                                return '';
+                            }
+                        } as Context['headers']
+                    };
+                    const promise = fetchContent(context);
+                    expect(promise).resolves.toStrictEqual({
+                        common: {},
+                        data: {
+                            get: {
+                                children: [{
+                                    _path: 'articles'
+                                }]
+                            }
+                        },
+                        meta: {
+                            id: 'f5815ec2-26e0-4595-b37b-c2ba0d3c1e1c',
+                            apiUrl: 'http://localhost:8080/site/project/master',
+                            baseUrl: BASE_URL,
+                            canRender: true,
+                            catchAll: false,
+                            defaultLocale: 'en',
+                            locale: 'en',
+                            path: CONTENT_PATH,
+                            requestType: XP_REQUEST_TYPE.PAGE, // Changed internally from type to page
+                            renderMode: 'next',
+                            type: 'portal:site'
+                        },
+                        page: PAGE_COMPONENT
+                    }); // expect
+                }); // import
+            }); // it
+
+        it('handles fetchContent with contentPath containing encoded chars', () => {
+
+            mockFetch({
+                contentJson: GUILLOTINE_RESULT_CONTENT,
+                metaJson: GUILLOTINE_RESULT_META
+            })
+
+            const BASE_URL = '/base/url';
+            import('../../src/guillotine/fetchContent').then(async (moduleName) => {
+
+                const unescapedPath = 'path/with speciål+chars_and%percent!';
                 const context: Context = {
-                    contentPath: CONTENT_PATH, // Anything but _/component
+                    contentPath: encodeURIComponent(unescapedPath),
                     headers: {
                         get(name: string) {
                             if (name === RENDER_MODE_HEADER) {
-                                return RENDER_MODE.NEXT
+                                return 'next';
                             }
                             if (name === PROJECT_ID_HEADER) {
-                                return 'project';
+                                return 'prosjekt'; // Affects locale
                             }
                             if (name === JSESSIONID_HEADER) {
                                 return '1234';
@@ -791,36 +853,14 @@ describe('guillotine', () => {
                             if (name === XP_BASE_URL_HEADER) {
                                 return BASE_URL;
                             }
-                            console.debug('headers get name', name);
-                            return '';
+                            console.error('headers get name', name);
                         }
-                    } as Context['headers']
-                };
-                const promise = fetchContent(context);
-                expect(promise).resolves.toStrictEqual({
-                    common: {},
-                    data: {
-                        get: {
-                            children: [{
-                                _path: 'articles'
-                            }]
-                        }
-                    },
-                    meta: {
-                        id: 'f5815ec2-26e0-4595-b37b-c2ba0d3c1e1c',
-                        apiUrl: 'http://localhost:8080/site/project/master',
-                        baseUrl: BASE_URL,
-                        canRender: true,
-                        catchAll: false,
-                        defaultLocale: 'en',
-                        locale: 'en',
-                        path: CONTENT_PATH,
-                        requestType: XP_REQUEST_TYPE.PAGE, // Changed internally from type to page
-                        renderMode: 'next',
-                        type: 'portal:site'
-                    },
-                    page: PAGE_COMPONENT
-                }); // expect
+                    }
+                } as Context;
+
+                const result = await moduleName.fetchContent(context);
+                expect(result.meta.path).toEqual(unescapedPath);
+
             }); // import
         }); // it
 
