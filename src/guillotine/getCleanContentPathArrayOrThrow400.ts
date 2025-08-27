@@ -14,9 +14,9 @@ export const getCleanContentPathArrayOrThrow400 = (contentPath: string | string[
             }));
         }
 
-        return contentPath;
+        return decodeURIComponent(contentPath);
 
     } else {
-        return (contentPath).join('/');
+        return decodeURIComponent((contentPath).join('/'));
     }
 };

@@ -12,14 +12,15 @@ export async function fetchContentPathsForLocale(
     query: string = GET_STATIC_PATHS_QUERY,
     count = 999
 ): Promise<ContentPathItem[]> {
+    const decodedPath = decodeURIComponent(path);
     const contentApiUrl = getContentApiUrl({
-        contentPath: path,
+        contentPath: decodedPath,
         locale: config.locale
     });
     const body: ContentApiBaseBody = {
         query,
         variables: {
-            path,
+            path: decodedPath,
             pathRegex: `/content${config.site}/*`,
             count
         }
