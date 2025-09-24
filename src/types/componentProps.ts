@@ -131,7 +131,7 @@ export type Replacer = (
     renderMacroInEditMode: boolean
 ) => ReplacerResult;
 
-export type ReplacerResult = | DOMNode;
+export type ReplacerResult = DOMNode;
 
 export interface RichTextViewProps {
     data: RichTextData
