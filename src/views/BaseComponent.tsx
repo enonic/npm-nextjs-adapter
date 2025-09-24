@@ -16,7 +16,7 @@ const BaseComponent = ({component, meta, common}: BaseComponentProps) => {
     const cmpData = component[type];
     const descriptor = cmpData && 'descriptor' in cmpData ? cmpData.descriptor : undefined;
 
-    let ComponentView: JSX.Element | null;
+    let ComponentView: React.JSX.Element | null;
 
     enonicDebug('BaseComponent', type, cmpData);
 
