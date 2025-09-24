@@ -71,8 +71,8 @@
     "@testing-library/react": "^16.3.0",
     "@types/negotiator": "^0.6.4",
     "@types/node": "^24.5.2",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "@typescript-eslint/eslint-plugin": "^8.43.0",
     "@typescript-eslint/parser": "^8.44.0",
     "babel-jest": "^30.1.2",
@@ -92,8 +92,8 @@
   "types": "index.d.ts",
   "peerDependencies": {
     "html-react-parser": "^5.2.6",
-    "next": "^14.2.32",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   }
 }
