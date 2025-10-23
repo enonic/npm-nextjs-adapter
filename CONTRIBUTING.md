@@ -9,9 +9,11 @@ If you haven't already, please get in touch with us.  We have two primary channe
 
 ## Submitting changes
 
-Please send a Pull Request with a clear list of what you have done.
-
-As an external contributor, we need you to sign-off that you have the rights to the work in the commit, and that the work may be used in consistence with this project and its license.  Please use the [Pull request template](./pull_request_template.md) for this purpose.
-
-## Coding conventions
+1. Register an issue where you describe the need for the change.
+2. Fork a repository you want to contribute to.
+3. Make the changes in the code base.
+4. Squash your commits into one, before opening a pull request.
+5. Sign off the commit using name and email address that match your Github account, according to the instructions described in the [Pull request template](./pull_request_template.md).
+6. Push the changes and open a Pull Request.
+7. Notify us about the PR on the Community slack (or support desk if you are a paying customer).
 
