@@ -10,12 +10,12 @@ By making a contribution to this project, I certify that:
 
 (d) I understand and agree that this project and the contribution are public and that a record of the contribution (including all personal information I submit with it, including my sign-off) is maintained indefinitely and may be redistributed consistent with this project or the open source license(s) involved.
 
-I adhere to these requirements by adding a Signed-off-by line to commit messages.
+I adhere to these requirements by adding a Signed-off-by line to commit messages, using the same name and email address that are used in my Github profile.
 
 ```
 This is my commit message
 
-Signed-off-by: Random J Developer <random@developer.example.org>
+Signed-off-by: Name-from-github-profile <email.address@from.github.profile>
 ```
 
 Example:
