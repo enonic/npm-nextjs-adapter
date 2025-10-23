@@ -10,7 +10,7 @@ If you haven't already, please get in touch with us.  We have two primary channe
 ## Submitting changes
 
 1. Register an issue where you describe the need for the change.
-2. Fork a repository you want to contribute to.
+2. Fork this repository.
 3. Make the changes in the code base.
 4. Squash your commits into one, before opening a pull request.
 5. Sign off the commit using name and email address that match your Github account, according to the instructions described in the [Pull request template](./pull_request_template.md).
