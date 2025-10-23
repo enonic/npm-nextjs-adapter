@@ -5,8 +5,6 @@ If you haven't already, please get in touch with us.  We have two primary channe
 * Our community on Slack: https://enonic-community.slack.com
 * Our discussion forum: https://discuss.enonic.com/
 
-## Testing
-
 ## Submitting changes
 
 1. Register an issue where you describe the need for the change.
