@@ -67,19 +67,20 @@
     "@edge-runtime/jest-environment": "^4.0.0",
     "@enonic-types/core": "^7.15.4",
     "@enonic/eslint-config": "^2.1.0",
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@types/negotiator": "^0.6.4",
-    "@types/node": "^24.10.0",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "@typescript-eslint/eslint-plugin": "^8.46.2",
-    "@typescript-eslint/parser": "^8.44.0",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.48.0",
+    "@typescript-eslint/parser": "^8.48.0",
     "babel-jest": "^30.1.2",
     "concurrently": "^9.2.1",
     "cpy-cli": "^6.0.0",
     "del-cli": "^7.0.0",
-    "eslint": "^9.39.0",
+    "eslint": "^9.39.1",
     "eslint-plugin-react": "^7.37.5",
     "jest": "^30.2.0",
     "jest-environment-jsdom": "^30.2.0",
@@ -92,8 +93,8 @@
   "types": "index.d.ts",
   "peerDependencies": {
     "html-react-parser": "^5.2.6",
-    "next": "^14.2.32",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "next": "^16.0.7",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1"
   }
 }
