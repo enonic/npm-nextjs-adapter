@@ -1,4 +1,4 @@
-import {Suspense, type ReactElement} from 'react';
+import {Suspense} from 'react';
 import type {BaseComponentProps, MetaData, PageComponent} from '../types';
 
 
@@ -6,10 +6,9 @@ import {PORTAL_COMPONENT_ATTRIBUTE, RENDER_MODE, XP_COMPONENT_TYPE} from '../com
 import {IS_DEV_MODE} from '../common/env';
 import {ComponentRegistry} from '../common/ComponentRegistry';
 import Empty from './Empty';
+import getClientHydratedHtml from '../client/getClientHydratedHtml';
 import {enonicDebug} from '../utils/enonicLog';
 import {getServerRenderedHtml} from '../server/getServerRenderedHtml';
-import ClientComponentPlaceholder from './ClientComponentPlaceholder';
-import PlaceholderView from './PlaceholderView';
 
 
 const BaseComponent = ({component, meta, common}: BaseComponentProps) => {
@@ -41,14 +40,9 @@ const BaseComponent = ({component, meta, common}: BaseComponentProps) => {
     }
 
 	// need to display a placeholder if descriptor is empty as component is not initialized yet
-	if (descriptor && shouldShowPlaceholderView(meta)) {
-		// Server-side check
-		if (isComponentOutputEmptyOnServer(ComponentView)) {
-			ComponentView = <PlaceholderView type={type} descriptor={descriptor}/>;
-		}
-		// Client-side recheck to handle client-only emptiness
-		ComponentView = <ClientComponentPlaceholder component={ComponentView} type={type} descriptor={descriptor}/>;
-	}
+	if (descriptor && shouldShowPlaceholderView(meta) && isComponentOutputEmpty(ComponentView)) {
+        ComponentView = <PlaceholderComponent type={type} descriptor={descriptor}/>;
+    }
 
     if (meta.renderMode === RENDER_MODE.EDIT) {
         return (
@@ -80,10 +74,15 @@ export const MissingComponent = ({descriptor, type}: { descriptor?: string, type
     );
 };
 
-const isComponentOutputEmptyOnServer = (component: ReactElement) => {
-	// render component on the server to see if it's empty
-	// Suspense is needed to render component on the server
-	return getServerRenderedHtml(<Suspense fallback={<p>Loading...</p>}>{component}</Suspense>) === '<!--$--><!--/$-->';
+const isComponentOutputEmpty = (component: React.ReactElement) => {
+    if (typeof document !== 'undefined') {
+        // render component on the client to see if it's empty
+        return !getClientHydratedHtml(component)?.length;
+    } else {
+        // render component on the server to see if it's empty
+        // Suspense is needed to render component on the server
+        return getServerRenderedHtml(<Suspense fallback={<p>Loading...</p>}>{component}</Suspense>) === '<!--$--><!--/$-->';
+    }
 };
 
 export function shouldShowMissingView(meta: MetaData): boolean {
@@ -137,6 +136,18 @@ function createComponentAttrs(component: PageComponent, meta: MetaData, common?:
         cmpAttrs.regions = component.regions;
     }
     return cmpAttrs;
+}
+
+export const PlaceholderComponent = ({type, descriptor}: { type?: string, descriptor?: string }) => {
+	return (
+		<div style={{
+			border: '2px solid lightgrey',
+			padding: '16px'
+		}}>
+			<h3 style={{margin: 0, textTransform: 'capitalize'}}>Empty output</h3>
+			{descriptor && <p style={{color: 'grey'}}>{`${type} '${descriptor}' output is empty`}</p>}
+		</div>
+	);
 }
 
 export function shouldShowPlaceholderView(meta: MetaData): boolean {
