@@ -35,6 +35,7 @@
   // Specifies an allowlist of files to include in the program. An error occurs
   // if any of the files can’t be found.
   "files": [
+    "jsx.d.ts",
     "src/index.ts",
     "src/client.ts",
     "src/server.ts",
