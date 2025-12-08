@@ -70,7 +70,7 @@ export interface LayoutProps {
 
 export interface MacroProps {
     name: string;
-    children: string | React.ReactNode;
+    children: string | ReactNode;
     config: MacroConfig;
     meta: MetaData;
 }

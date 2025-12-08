@@ -1,4 +1,4 @@
-import React, {Suspense} from 'react';
+import {Suspense} from 'react';
 import type {BaseComponentProps, MetaData, PageComponent} from '../types';
 
 
@@ -39,8 +39,8 @@ const BaseComponent = ({component, meta, common}: BaseComponentProps) => {
         }
     }
 
-    // need to display a placeholder if descriptor is empty as component is not initialized yet
-    if (descriptor && shouldShowPlaceholderView(meta) && isComponentOutputEmpty(ComponentView)) {
+	// need to display a placeholder if descriptor is empty as component is not initialized yet
+	if (descriptor && shouldShowPlaceholderView(meta) && isComponentOutputEmpty(ComponentView)) {
         ComponentView = <PlaceholderComponent type={type} descriptor={descriptor}/>;
     }
 
@@ -139,16 +139,16 @@ function createComponentAttrs(component: PageComponent, meta: MetaData, common?:
 }
 
 export const PlaceholderComponent = ({type, descriptor}: { type?: string, descriptor?: string }) => {
-    return (
-        <div style={{
-            border: '2px solid lightgrey',
-            padding: '16px'
-        }}>
-            <h3 style={{margin: 0, textTransform: 'capitalize'}}>Empty output</h3>
-            {descriptor && <p style={{color: 'grey'}}>{`${type} '${descriptor}' output is empty`}</p>}
-        </div>
-    );
-};
+	return (
+		<div style={{
+			border: '2px solid lightgrey',
+			padding: '16px'
+		}}>
+			<h3 style={{margin: 0, textTransform: 'capitalize'}}>Empty output</h3>
+			{descriptor && <p style={{color: 'grey'}}>{`${type} '${descriptor}' output is empty`}</p>}
+		</div>
+	);
+}
 
 export function shouldShowPlaceholderView(meta: MetaData): boolean {
     return meta.renderMode === RENDER_MODE.EDIT;
