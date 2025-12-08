@@ -65,7 +65,7 @@
     "@babel/core": "^7.28.5",
     "@babel/preset-env": "^7.28.5",
     "@edge-runtime/jest-environment": "^4.0.0",
-    "@enonic-types/core": "^7.15.4",
+    "@enonic-types/core": "^7.16.0",
     "@enonic/eslint-config": "^2.1.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
@@ -74,7 +74,7 @@
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@typescript-eslint/eslint-plugin": "^8.48.0",
+    "@typescript-eslint/eslint-plugin": "^8.48.1",
     "@typescript-eslint/parser": "^8.48.0",
     "babel-jest": "^30.1.2",
     "concurrently": "^9.2.1",
@@ -86,7 +86,7 @@
     "jest-environment-jsdom": "^30.2.0",
     "madge": "^8.0.0",
     "mkdirp": "^3.0.1",
-    "ts-jest": "^29.4.5",
+    "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
@@ -96,5 +96,9 @@
     "next": "^16.0.7",
     "react": "^19.2.1",
     "react-dom": "^19.2.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enonic/npm-nextjs-adapter.git"
   }
 }
