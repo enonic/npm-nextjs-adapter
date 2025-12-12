@@ -86,6 +86,9 @@
     "jest-environment-jsdom": "^30.2.0",
     "madge": "^8.0.0",
     "mkdirp": "^3.0.1",
+    "next": "^16.0.10",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
@@ -93,9 +96,9 @@
   "types": "index.d.ts",
   "peerDependencies": {
     "html-react-parser": "^5.2.6",
-    "next": "^16.0.7",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1"
+    "next": "^16.0.10",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "repository": {
     "type": "git",
