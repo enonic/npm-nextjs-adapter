@@ -86,6 +86,7 @@
     "jest-environment-jsdom": "^30.2.0",
     "madge": "^8.0.0",
     "mkdirp": "^3.0.1",
+    "html-react-parser": "^5.2.6",
     "next": "^16.0.10",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
