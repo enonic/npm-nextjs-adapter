@@ -102,6 +102,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/enonic/npm-nextjs-adapter.git"
+    "url": "git+ssh://git@github.com:enonic/npm-nextjs-adapter.git"
   }
 }
