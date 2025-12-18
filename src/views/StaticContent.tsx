@@ -1,7 +1,7 @@
 import {StaticContentProps} from '../types';
 
 
-import {createElement, createRef} from 'react';
+import {createElement, createRef, ReactNode} from 'react';
 
 
 function useStaticContent(ref, isServer) {
@@ -17,7 +17,7 @@ function useStaticContent(ref, isServer) {
 }
 
 
-export default function StaticContent({children, element = 'div', condition = true, ...props}: StaticContentProps) {
+export default function StaticContent({children, element = 'div', condition = true, ...props}: StaticContentProps): ReactNode {
     const isServer = typeof window === 'undefined';
     const ref = createRef();
     const isStatic = useStaticContent(ref, isServer);
