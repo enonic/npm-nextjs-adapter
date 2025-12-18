@@ -11,7 +11,7 @@ import type {
     RichTextData,
     RegionTree
 } from './component';
-import type {ReactNode} from 'react';
+import type {ReactNode, ReactElement} from 'react';
 
 
 export interface BaseComponentProps {
@@ -131,7 +131,7 @@ export type Replacer = (
     renderMacroInEditMode: boolean
 ) => ReplacerResult;
 
-export type ReplacerResult = JSX.Element | DOMNode;
+export type ReplacerResult = ReactElement | DOMNode;
 
 export interface RichTextViewProps {
     data: RichTextData

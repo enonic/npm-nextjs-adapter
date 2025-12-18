@@ -95,10 +95,10 @@
   },
   "types": "index.d.ts",
   "peerDependencies": {
-    "html-react-parser": "^5.2.6",
-    "next": "^16.0.10",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "html-react-parser": "^5",
+    "next": "^16",
+    "react": "^19",
+    "react-dom": "^19"
   },
   "repository": {
     "type": "git",
