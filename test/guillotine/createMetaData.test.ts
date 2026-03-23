@@ -39,7 +39,9 @@ describe('guillotine', () => {
                 const contentId = 'contentId';
                 const requestType = XP_REQUEST_TYPE.PAGE; // EVERYTHING BUT COMPONENT
                 const renderMode = RENDER_MODE.NEXT;
-                const apiUrl = 'apiUrl';
+                const project = 'project';
+                const site = '/site';
+                const branch = 'master';
                 const baseUrl = 'baseUrl';
                 const locale = 'locale';
                 const defaultLocale = 'defaultLocale';
@@ -47,11 +49,13 @@ describe('guillotine', () => {
                 const pageCmp: PageComponent|undefined = undefined;
                 const components: PageComponent[]|undefined = undefined;
                 expect(createMetaData({
-                    contentType, contentPath, contentId, requestType, renderMode, apiUrl,
+                    contentType, contentPath, contentId, requestType, renderMode, project, site, branch,
                     baseUrl, locale, defaultLocale, requestedComponentPath, pageCmp,
                     components
                 })).toEqual({
-                    apiUrl,
+                    project,
+                    site,
+                    branch,
                     baseUrl,
                     canRender: false,
                     catchAll: false,
@@ -91,7 +95,9 @@ describe('guillotine', () => {
                 const contentId = 'contentId';
                 const requestType = XP_REQUEST_TYPE.PAGE; // EVERYTHING BUT COMPONENT
                 const renderMode = RENDER_MODE.NEXT;
-                const apiUrl = 'apiUrl';
+                const project = 'project';
+                const site = '/site';
+                const branch = 'master';
                 const baseUrl = 'baseUrl';
                 const locale = 'locale';
                 const defaultLocale = 'defaultLocale';
@@ -99,11 +105,13 @@ describe('guillotine', () => {
                 const pageCmp: PageComponent|undefined = undefined;
                 const components: PageComponent[]|undefined = undefined;
                 expect(createMetaData({
-                    contentType, contentPath, contentId, requestType, renderMode, apiUrl,
+                    contentType, contentPath, contentId, requestType, renderMode, project, site, branch,
                     baseUrl, locale, defaultLocale, requestedComponentPath, pageCmp,
                     components
                 })).toEqual({
-                    apiUrl,
+                    project,
+                    site,
+                    branch,
                     baseUrl,
                     canRender: false,
                     catchAll: false,
@@ -123,7 +131,9 @@ describe('guillotine', () => {
                 const contentId = 'contentId';
                 const requestType = XP_REQUEST_TYPE.PAGE; // EVERYTHING BUT COMPONENT
                 const renderMode = RENDER_MODE.NEXT;
-                const apiUrl = 'apiUrl';
+                const project = 'project';
+                const site = '/site';
+                const branch = 'master';
                 const baseUrl = 'baseUrl';
                 const locale = 'locale';
                 const defaultLocale = 'defaultLocale';
@@ -131,11 +141,13 @@ describe('guillotine', () => {
                 const pageCmp: PageComponent|undefined = undefined;
                 const components: PageComponent[] = [PAGE_COMPONENT];
                 expect(createMetaData({
-                    contentType, contentPath, contentId, requestType, renderMode, apiUrl,
+                    contentType, contentPath, contentId, requestType, renderMode, project, site, branch,
                     baseUrl, locale, defaultLocale, requestedComponentPath, pageCmp,
                     components
                 })).toEqual({
-                    apiUrl,
+                    project,
+                    site,
+                    branch,
                     baseUrl,
                     canRender: false,
                     catchAll: false,
@@ -156,7 +168,9 @@ describe('guillotine', () => {
                 const contentId = 'contentId';
                 const requestType = XP_REQUEST_TYPE.PAGE;
                 const renderMode = RENDER_MODE.NEXT;
-                const apiUrl = 'apiUrl';
+                const project = 'project';
+                const site = '/site';
+                const branch = 'master';
                 const baseUrl = 'baseUrl';
                 const locale = 'locale';
                 const defaultLocale = 'defaultLocale';
@@ -164,11 +178,13 @@ describe('guillotine', () => {
                 const pageCmp: PageComponent|undefined = undefined;
                 const components: PageComponent[] = [PAGE_COMPONENT];
                 expect(createMetaData({
-                    contentType, contentPath, contentId, requestType, renderMode, apiUrl,
+                    contentType, contentPath, contentId, requestType, renderMode, project, site, branch,
                     baseUrl, locale, defaultLocale, requestedComponentPath, pageCmp,
                     components
                 })).toEqual({
-                    apiUrl,
+                    project,
+                    site,
+                    branch,
                     baseUrl,
                     canRender: true,
                     catchAll: false,
@@ -188,7 +204,9 @@ describe('guillotine', () => {
                 const contentId = 'contentId';
                 const requestType = XP_REQUEST_TYPE.COMPONENT;
                 const renderMode = RENDER_MODE.NEXT;
-                const apiUrl = 'apiUrl';
+                const project = 'project';
+                const site = '/site';
+                const branch = 'master';
                 const baseUrl = 'baseUrl';
                 const locale = 'locale';
                 const defaultLocale = 'defaultLocale';
@@ -196,11 +214,13 @@ describe('guillotine', () => {
                 const pageCmp: PageComponent|undefined = undefined;
                 const components: PageComponent[] = [PAGE_COMPONENT];
                 expect(createMetaData({
-                    contentType, contentPath, contentId, requestType, renderMode, apiUrl,
+                    contentType, contentPath, contentId, requestType, renderMode, project, site, branch,
                     baseUrl, locale, defaultLocale, requestedComponentPath, pageCmp,
                     components
                 })).toEqual({
-                    apiUrl,
+                    project,
+                    site,
+                    branch,
                     baseUrl,
                     canRender: true,
                     catchAll: false,
@@ -220,7 +240,9 @@ describe('guillotine', () => {
                 const contentId = 'contentId';
                 const requestType = XP_REQUEST_TYPE.PAGE; // EVERYTHING BUT COMPONENT
                 const renderMode = RENDER_MODE.NEXT;
-                const apiUrl = 'apiUrl';
+                const project = 'project';
+                const site = '/site';
+                const branch = 'master';
                 const baseUrl = 'baseUrl';
                 const locale = 'locale';
                 const defaultLocale = 'defaultLocale';
@@ -228,11 +250,13 @@ describe('guillotine', () => {
                 const pageCmp: PageComponent = PAGE_COMPONENT;
                 const components: PageComponent[]|undefined = undefined;
                 expect(createMetaData({
-                    contentType, contentPath, contentId, requestType, renderMode, apiUrl,
+                    contentType, contentPath, contentId, requestType, renderMode, project, site, branch,
                     baseUrl, locale, defaultLocale, requestedComponentPath, pageCmp,
                     components
                 })).toEqual({
-                    apiUrl,
+                    project,
+                    site,
+                    branch,
                     baseUrl,
                     canRender: true,
                     catchAll: false,
@@ -254,7 +278,9 @@ describe('guillotine', () => {
                     const contentId = 'contentId';
                     const requestType = XP_REQUEST_TYPE.PAGE; // EVERYTHING BUT COMPONENT
                     const renderMode = RENDER_MODE.NEXT;
-                    const apiUrl = 'apiUrl';
+                    const project = 'project';
+                    const site = '/site';
+                    const branch = 'master';
                     const baseUrl = 'baseUrl';
                     const locale = 'locale';
                     const defaultLocale = 'defaultLocale';
@@ -262,11 +288,13 @@ describe('guillotine', () => {
                     const pageCmp: PageComponent|undefined = undefined;
                     const components: PageComponent[]|undefined = undefined;
                     expect(createMetaData({
-                        contentType, contentPath, contentId, requestType, renderMode, apiUrl,
+                        contentType, contentPath, contentId, requestType, renderMode, project, site, branch,
                         baseUrl, locale, defaultLocale, requestedComponentPath,
                         pageCmp, components
                     })).toEqual({
-                        apiUrl,
+                        project,
+                        site,
+                        branch,
                         baseUrl,
                         canRender: true,
                         catchAll: true,

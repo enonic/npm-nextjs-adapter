@@ -2,6 +2,7 @@ export const CATCH_ALL = '*';
 
 export enum ENV_VARS {
     MAPPINGS = 'ENONIC_MAPPINGS',
+    API_TOKEN = 'ENONIC_API_TOKEN',
     API_URL = 'ENONIC_API',
     APP_NAME = 'ENONIC_APP_NAME',
     LOG = 'ENONIC_LOGGING'
@@ -10,38 +11,40 @@ export enum ENV_VARS {
 export const FRAGMENT_CONTENTTYPE_NAME = 'portal:fragment';
 export const FRAGMENT_DEFAULT_REGION_NAME = 'fragment';
 
+import {queryGuillotine} from '../guillotine/getMetaData';
+
 /** excluded contents:
  * - folder
  * - shortcuts (redirect can't be used in prerender)
  * - media
  * - paths with '/_' in them
  */
-export const GET_STATIC_PATHS_QUERY = `query ($pathRegex: String!, $count: Int) {
-    guillotine {
-        queryDsl(
-            first: $count,
-            sort: {
-                field: "modifiedTime",
-                direction: DESC
-            }
-            query: {
-                boolean: {
-                    mustNot: [
-                        {in: {field: "type", stringValues: ["base:shortcut", "portal:fragment", "portal:template-folder", "portal:page-template"]}}
-                        {like: {field: "type", value: "media:*"}}
-                    ]
-                    must: [
-                        {like: {field:"_path", value: $pathRegex}}
-                    ]
-                }
-            }
-        ) {
-            _name
-            _path
-            site {_name}
+export const GET_STATIC_PATHS_QUERY = queryGuillotine(`queryDsl(
+      first: $count,
+      sort: {
+        field: "modifiedTime",
+        direction: DESC
+      }
+      query: {
+        boolean: {
+          mustNot: [
+            {in: {field: "type", stringValues: ["base:shortcut", "portal:fragment", "portal:template-folder", "portal:page-template"]}}
+            {like: {field: "type", value: "media:*"}}
+          ]
+          must: [
+            {like: {field:"_path", value: $pathRegex}}
+          ]
         }
-    }
-}`;
+      }
+    ) {
+      _name
+      _path
+      site {_name}
+    }`,
+    {
+        '$pathRegex': 'String!',
+        '$count': 'Int'
+    });
 
 // Seems like NodeJS.fetch lowercases all headers, so we need to lowercase the
 // header names here.

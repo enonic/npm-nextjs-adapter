@@ -1,5 +1,5 @@
 /** Checks a site-relative contentPath as a slash-delimited string or a string array, and returns a pure site-relative path string (no double slashes, starts with a slash, does not end with one). */
-export const getCleanContentPathArrayOrThrow400 = (contentPath: string | string[] | undefined): string => {
+export const getSiteRelativePathOrThrow = (contentPath: string | string[] | undefined): string => {
     if (contentPath === undefined) {
         return '';
     }

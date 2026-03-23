@@ -1,129 +1,159 @@
-import type {Context, QueryGetter, VariablesGetter} from '../../src/types';
+import type {Context, GlobalVariables, LocaleMapping, QueryGetter, VariablesGetter} from '../../src/types';
 
 
-import {
-    describe,
-    expect,
-    test as it
-} from '@jest/globals';
-import {getQueryAndVariables} from '../../src/guillotine/getQueryAndVariables';
+import {afterEach, beforeEach, describe, expect, jest, test as it} from '@jest/globals';
+import {setupServerEnv} from '../constants';
+
+
+const BRANCH = 'master';
+const MAPPING: LocaleMapping = {
+    default: true,
+    project: 'project',
+    site: '/site',
+    locale: 'en'
+};
 
 
 describe('guillotine', () => {
     describe('getQueryAndVariables', () => {
+        beforeEach(() => {
+            setupServerEnv();
+        });
+
+        afterEach(() => {
+            jest.resetModules();
+        });
+
         it("should return undefined when selectedQuery is not provided", () => {
-            const type = '';
-            const path = '';
-            const context: Context = {} as Context;
-            expect(getQueryAndVariables(type, path, context)).toEqual(undefined);
+            return import('../../src/guillotine/getQueryAndVariables').then(({getQueryAndVariables}) => {
+                const type = '';
+                const path = '';
+                const context: Context = {} as Context;
+                expect(getQueryAndVariables(type, path, BRANCH, MAPPING, context)).toEqual(undefined);
+            });
         });
 
         it("should return undefined when selectedQuery is an empty string", () => {
-            const type = 'contenttype';
-            const path = 'path';
-            const context: Context = {} as Context;
-            const selectedQuery = '';
-            expect(getQueryAndVariables(type, path, context, selectedQuery)).toEqual(undefined);
+            return import('../../src/guillotine/getQueryAndVariables').then(({getQueryAndVariables}) => {
+                const type = 'contenttype';
+                const path = 'path';
+                const context: Context = {} as Context;
+                const selectedQuery = '';
+                expect(getQueryAndVariables(type, path, BRANCH, MAPPING, context, selectedQuery)).toEqual(undefined);
+            });
         });
 
         it("should return query and variables when selectedQuery is 'query' ", () => {
-            const type = 'contenttype';
-            const path = 'path';
-            const context: Context = {} as Context;
-            const selectedQuery = 'query';
-            expect(getQueryAndVariables(type, path, context, selectedQuery)).toEqual({
-                query: 'query',
-                variables: {
-                    path: 'path'
-                }
+            return import('../../src/guillotine/getQueryAndVariables').then(({getQueryAndVariables}) => {
+                const type = 'contenttype';
+                const path = 'path';
+                const context: Context = {} as Context;
+                const selectedQuery = 'query';
+                const result = getQueryAndVariables(type, path, BRANCH, MAPPING, context, selectedQuery);
+                expect(result.query).toEqual('query');
+                expect(result.variables.path).toEqual('path');
+                expect(result.variables.project).toEqual('project');
+                expect(result.variables.siteKey).toEqual('/site');
+                expect(result.variables.branch).toEqual('master');
             });
         });
 
         it("should return query and variables when selectedQuery is [string | QueryGetter, VariablesGetter]", () => {
-            const type = 'contenttype';
-            const path = 'path';
-            const context: Context = {} as Context;
-            const variablesGetter: VariablesGetter = () => ({
-                another: 'value',
-                path: 'path2'
-            });
-            const selectedQuery: [string | QueryGetter, VariablesGetter] = ['query', variablesGetter];
-            // const config = {};
-            expect(getQueryAndVariables(type, path, context, selectedQuery)).toEqual({
-                query: 'query',
-                variables: {
+            return import('../../src/guillotine/getQueryAndVariables').then(({getQueryAndVariables}) => {
+                const type = 'contenttype';
+                const path = 'path';
+                const context: Context = {} as Context;
+                const variablesGetter: VariablesGetter = (vars: GlobalVariables) => ({
+                    ...vars,
                     another: 'value',
                     path: 'path2'
-                }
+                });
+                const selectedQuery: [string | QueryGetter, VariablesGetter] = ['query', variablesGetter];
+                const result = getQueryAndVariables(type, path, BRANCH, MAPPING, context, selectedQuery);
+                expect(result.query).toEqual('query');
+                expect(result.variables.another).toEqual('value');
+                expect(result.variables.path).toEqual('path2');
+                expect(result.variables.project).toEqual('project');
+                expect(result.variables.siteKey).toEqual('/site');
+                expect(result.variables.branch).toEqual('master');
             });
         });
 
         it("should return query and variables when selectedQuery is an Object", () => {
-            const type = 'contenttype';
-            const path = 'path';
-            const context: Context = {} as Context;
-            const variablesGetter: VariablesGetter = () => ({
-                another: 'value',
-                path: 'path2'
-            });
-            const selectedQuery = {
-                query: 'query',
-                variables: variablesGetter
-            };
-            // const config = {};
-            expect(getQueryAndVariables(type, path, context, selectedQuery)).toEqual({
-                query: 'query',
-                variables: {
+            return import('../../src/guillotine/getQueryAndVariables').then(({getQueryAndVariables}) => {
+                const type = 'contenttype';
+                const path = 'path';
+                const context: Context = {} as Context;
+                const variablesGetter: VariablesGetter = (vars: GlobalVariables) => ({
+                    ...vars,
                     another: 'value',
                     path: 'path2'
-                }
+                });
+                const selectedQuery = {
+                    query: 'query',
+                    variables: variablesGetter
+                };
+                const result = getQueryAndVariables(type, path, BRANCH, MAPPING, context, selectedQuery);
+                expect(result.query).toEqual('query');
+                expect(result.variables.another).toEqual('value');
+                expect(result.variables.path).toEqual('path2');
+                expect(result.variables.project).toEqual('project');
+                expect(result.variables.siteKey).toEqual('/site');
+                expect(result.variables.branch).toEqual('master');
             });
         });
 
         it("should throw when selectedQuery is an Object, but it's variables in not a function", () => {
-            const type = 'contenttype';
-            const path = 'path';
-            const context: Context = {} as Context;
-            const selectedQuery = {
-                query: 'query',
-                variables: true as unknown as VariablesGetter
-            } as {
-                query: string | QueryGetter
-                variables: VariablesGetter
-            };
-            // const config = {};
-            expect(() => getQueryAndVariables(type, path, context, selectedQuery)).toThrow('getVariables for content type contenttype should be a function, not: boolean');
+            return import('../../src/guillotine/getQueryAndVariables').then(({getQueryAndVariables}) => {
+                const type = 'contenttype';
+                const path = 'path';
+                const context: Context = {} as Context;
+                const selectedQuery = {
+                    query: 'query',
+                    variables: true as unknown as VariablesGetter
+                } as {
+                    query: string | QueryGetter
+                    variables: VariablesGetter
+                };
+                expect(() => getQueryAndVariables(type, path, BRANCH, MAPPING, context, selectedQuery)).toThrow(
+                    'getVariables for content type contenttype should be a function, not: boolean');
+            });
         });
 
         it("should throw when selectedQuery is an Object, but query is not a string, nor function", () => {
-            const type = 'contenttype';
-            const path = 'path';
-            const context: Context = {} as Context;
-            const variablesGetter: VariablesGetter = () => ({
-                another: 'value',
-                path: 'path2'
+            return import('../../src/guillotine/getQueryAndVariables').then(({getQueryAndVariables}) => {
+                const type = 'contenttype';
+                const path = 'path';
+                const context: Context = {} as Context;
+                const variablesGetter: VariablesGetter = (vars: GlobalVariables) => ({
+                    ...vars,
+                    another: 'value',
+                    path: 'path2'
+                });
+                const selectedQuery = {
+                    query: true as unknown as string | QueryGetter,
+                    variables: variablesGetter
+                };
+                expect(() => getQueryAndVariables(type, path, BRANCH, MAPPING, context, selectedQuery)).toThrow(
+                    'Query for content type contenttype should be a string or function, not: boolean');
             });
-            const selectedQuery = {
-                query: true as unknown as string | QueryGetter,
-                variables: variablesGetter
-            };
-            // const config = {};
-            expect(() => getQueryAndVariables(type, path, context, selectedQuery)).toThrow('Query for content type contenttype should be a string or function, not: boolean');
         });
 
         it("should return query and variables when selectedQuery is an function", () => {
-            const type = 'contenttype';
-            const path = 'path';
-            const context: Context = {} as Context;
-            const selectedQuery: QueryGetter = () => 'query';
-            const config = {
-                what: 'ever'
-            };
-            expect(getQueryAndVariables(type, path, context, selectedQuery, config)).toEqual({
-                query: 'query',
-                variables: {
-                    path: 'path'
-                }
+            return import('../../src/guillotine/getQueryAndVariables').then(({getQueryAndVariables}) => {
+                const type = 'contenttype';
+                const path = 'path';
+                const context: Context = {} as Context;
+                const selectedQuery: QueryGetter = () => 'query';
+                const config = {
+                    what: 'ever'
+                };
+                const result = getQueryAndVariables(type, path, BRANCH, MAPPING, context, selectedQuery, config);
+                expect(result.query).toEqual('query');
+                expect(result.variables.path).toEqual('path');
+                expect(result.variables.project).toEqual('project');
+                expect(result.variables.siteKey).toEqual('/site');
+                expect(result.variables.branch).toEqual('master');
             });
         });
     });

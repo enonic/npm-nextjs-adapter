@@ -3,8 +3,8 @@ import type {ComponentDescriptor, Context, FetchContentResult} from '../types';
 import {draftMode, headers} from 'next/headers';
 import {ComponentRegistry} from '../common/ComponentRegistry';
 import {PAGE_TEMPLATE_CONTENTTYPE_NAME, PAGE_TEMPLATE_FOLDER, RENDER_MODE, XP_COMPONENT_TYPE, XP_REQUEST_TYPE} from '../common/constants';
-import {APP_NAME, APP_NAME_DASHED, IS_DEV_MODE} from '../common/env';
-import {getContentApiUrl} from '../utils/getContentApiUrl';
+import {APP_NAME, APP_NAME_DASHED, IS_DEV_MODE, API_URL} from '../common/env';
+import {getContentBranch} from '../utils/getContentBranch';
 import {getLocaleMapping} from '../utils/getLocaleMapping';
 import {getRenderMode} from '../utils/getRenderMode';
 import {getXpBaseUrl} from '../utils/getXpBaseUrl';
@@ -13,7 +13,7 @@ import {buildGuillotineRequestHeaders} from '../utils/buildGuillotineRequestHead
 
 import {buildPage} from './buildPage';
 import {fetchMetaData} from './fetchMetaData';
-import {getCleanContentPathArrayOrThrow400} from './getCleanContentPathArrayOrThrow400';
+import {getSiteRelativePathOrThrow} from './getSiteRelativePathOrThrow';
 import {buildErrorResponse} from './buildErrorResponse';
 import {getContentAndComponentPaths} from './getContentAndComponentPaths';
 import {restrictComponentsToPath} from './restrictComponentsToPath';
@@ -56,27 +56,29 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
         locales
     });
     const xpBaseUrl = getXpBaseUrl(context);
-    const contentApiUrl = getContentApiUrl(context);
+    const contentApiUrl = API_URL;
     const mapping = getLocaleMapping(context);
     const renderMode = getRenderMode(context);
+    const branch = getContentBranch(context);
     let requestType = XP_REQUEST_TYPE.TYPE;
-    const requestContentPath = getCleanContentPathArrayOrThrow400(context.contentPath);
+    const requestContentPath = getSiteRelativePathOrThrow(context.contentPath);
 
     try {
-        const [siteRelativeContentPath, componentPath] = getContentAndComponentPaths(requestContentPath);
+        const [contentPathWithoutComponent, componentPath] = getContentAndComponentPaths(requestContentPath);
         if (componentPath) {
             // set component request type because url contains component path
             requestType = XP_REQUEST_TYPE.COMPONENT;
         }
 
         // /////////////  FIRST GUILLOTINE CALL FOR METADATA     /////////////////
-        const metaResult = await fetchMetaData(contentApiUrl, '${site}/' + siteRelativeContentPath, mapping, outHeaders);
+        const metaResult = await fetchMetaData(contentApiUrl, `/${contentPathWithoutComponent}`, mapping, branch, outHeaders);
         // ///////////////////////////////////////////////////////////////////////
 
         const {_id, _path, type} = metaResult.meta || {};
-        const contentPath = _path || siteRelativeContentPath;
+        const contentPath = _path || contentPathWithoutComponent;
 
-        const errorResponse = buildErrorResponse(requestType, renderMode, contentApiUrl, xpBaseUrl, locale, defaultLocale, requestContentPath, _id);
+        const errorResponse = buildErrorResponse(requestType, renderMode, mapping.project, mapping.site, branch, xpBaseUrl, locale,
+            defaultLocale, requestContentPath, _id);
 
         if (metaResult.error) {
             console.error(metaResult.error);
@@ -119,7 +121,8 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
             processComponentConfig(APP_NAME, APP_NAME_DASHED, pageCmp);
         }
 
-        const contentQueryAndVars = getQueryAndVariables(type, contentPath, context, contentTypeDef?.query, pageCmp?.page?.config);
+        const contentQueryAndVars = getQueryAndVariables(type, contentPath, branch, mapping, context, contentTypeDef?.query,
+            pageCmp?.page?.config);
         if (contentQueryAndVars) {
             allDescriptors.push({
                 type: contentTypeDef,
@@ -127,7 +130,7 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
             });
         }
 
-        const commonQueryAndVars = getQueryAndVariables(type, contentPath, context, ComponentRegistry.getCommonQuery(),
+        const commonQueryAndVars = getQueryAndVariables(type, contentPath, branch, mapping, context, ComponentRegistry.getCommonQuery(),
             pageCmp?.page?.config);
         if (commonQueryAndVars) {
             allDescriptors.push({
@@ -143,7 +146,9 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
             // Collect component queries if defined
             const componentDescriptors = collectComponentDescriptors({
                 components,
-                xpContentPath: contentPath,
+                contentPath,
+                branch,
+                mapping,
                 context
             });
             if (componentDescriptors.length) {
@@ -157,7 +162,7 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
         }
 
         // ///////////////    SECOND GUILLOTINE CALL FOR DATA   //////////////////////
-        const contentResults = await fetchContentData(contentApiUrl, contentPath, mapping, query, variables, outHeaders);
+        const contentResults = await fetchContentData(contentApiUrl, contentPath, mapping, branch, query, variables, outHeaders);
         // ///////////////////////////////////////////////////////////////////////////
 
         if (contentResults.error) {
@@ -202,10 +207,12 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
 
         const page = buildPage(type, components);
         const meta = createMetaData({
-            apiUrl: contentApiUrl,
+            project: mapping.project,
+            site: mapping.site,
+            branch,
             baseUrl: xpBaseUrl,
             components,
-            contentPath: siteRelativeContentPath,
+            contentPath: contentPathWithoutComponent,
             contentType: type,
             contentId: _id,
             defaultLocale,
@@ -234,7 +241,8 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
                 message: e.message
             };
         }
-        const errorResponse = buildErrorResponse(requestType, renderMode, contentApiUrl, xpBaseUrl, locale, defaultLocale, requestContentPath);
+        const errorResponse = buildErrorResponse(requestType, renderMode, mapping.project, mapping.site, branch, xpBaseUrl, locale,
+            defaultLocale, requestContentPath);
         return errorResponse(error.code, error.message);
     }
 }

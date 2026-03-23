@@ -1,9 +1,11 @@
-import type {Context, QueryAndVariables, SelectedQueryMaybeVariablesFunc} from '../types';
+import type {Context, LocaleMapping, QueryAndVariables, SelectedQueryMaybeVariablesFunc, GlobalVariables} from '../types';
 
 
 export function getQueryAndVariables(
     type: string,
     path: string,
+    branch: string,
+    mapping: LocaleMapping,
     context: Context,
     selectedQuery?: SelectedQueryMaybeVariablesFunc,
     config?: any
@@ -33,16 +35,25 @@ export function getQueryAndVariables(
         throw Error(`Query for content type ${type} should be a string or function, not: ${typeof query}`);
     }
 
+    let variables: GlobalVariables = {
+        path,
+        project: mapping.project,
+        siteKey: mapping.site,
+        branch
+    };
+
+    if (getVariables) {
+        variables = getVariables(variables, context, config);
+    }
+
     if (typeof query === 'function') {
-        query = query(path, context, config);
+        query = query(variables, context, config);
     }
 
     if (query) {
         return {
             query,
-            variables: getVariables ? getVariables(path, context, config) : {
-                path
-            }
+            variables
         };
     }
 }

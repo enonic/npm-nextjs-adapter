@@ -344,13 +344,13 @@ function mockHeadersImport(draft: boolean, mode: string) {
 }
 
 function mockFetch({
-    contentJson,
-    contentOk = true,
-    contentStatus = 200,
-    metaJson,
-    metaOk = true,
-    metaStatus = 200
-}: {
+                       contentJson,
+                       contentOk = true,
+                       contentStatus = 200,
+                       metaJson,
+                       metaOk = true,
+                       metaStatus = 200
+                   }: {
     contentJson: GuillotineResponseJson
     contentOk?: boolean
     contentStatus?: number
@@ -423,16 +423,16 @@ describe('guillotine', () => {
 
                 await import('../../src/server').then(async (moduleName) => {
                     const context: Context = {
-                        contentPath: 'some/path',
+                        contentPath: '/some/path',
                         headers: {
                             get(name: string) {
-                                if (name === 'content-studio-mode') {
+                                if (name === RENDER_MODE_HEADER) {
                                     return mode;
                                 }
-                                if (name === 'content-studio-project') {
+                                if (name === PROJECT_ID_HEADER) {
                                     return 'prosjekt';
                                 }
-                                if (name === 'jsessionid') {
+                                if (name === JSESSIONID_HEADER) {
                                     return '1234';
                                 }
                                 if (name === XP_BASE_URL_HEADER) {
@@ -457,13 +457,15 @@ describe('guillotine', () => {
                         // },
                         meta: {
                             id: '_id',
-                            apiUrl: `http://localhost:8080/site/prosjekt/${branch}`,
+                            branch: branch,
+                            project: 'prosjekt',
+                            site: '/nettsted',
                             baseUrl: '/admin/SOMETHING',
                             canRender: false,
                             catchAll: false,
                             defaultLocale: 'en',
                             locale: 'no',
-                            path: 'some/path',
+                            path: '/some/path',
                             renderMode: mode,
                             requestType: 'type',
                             type: 'type'
@@ -496,7 +498,9 @@ describe('guillotine', () => {
                     common: null,
                     data: null,
                     meta: {
-                        apiUrl: `http://localhost:8080/site/project/master`,
+                        branch: 'master',
+                        project: 'project',
+                        site: '/site',
                         baseUrl: '/',
                         canRender: false,
                         catchAll: false,
@@ -537,7 +541,9 @@ describe('guillotine', () => {
                     },
                     meta: {
                         id: '_id',
-                        apiUrl: `http://localhost:8080/site/project/master`,
+                        branch: 'master',
+                        project: 'project',
+                        site: '/site',
                         baseUrl: '/',
                         canRender: false,
                         catchAll: false,
@@ -577,7 +583,9 @@ describe('guillotine', () => {
                     data: null,
                     meta: {
                         id: '',
-                        apiUrl: 'http://localhost:8080/site/project/master',
+                        branch: 'master',
+                        project: 'project',
+                        site: '/site',
                         baseUrl: '/',
                         canRender: false,
                         catchAll: false,
@@ -612,7 +620,9 @@ describe('guillotine', () => {
                     data: null,
                     meta: {
                         id: '',
-                        apiUrl: 'http://localhost:8080/site/project/master',
+                        branch: 'master',
+                        project: 'project',
+                        site: '/site',
                         baseUrl: '/',
                         canRender: false,
                         catchAll: false,
@@ -648,7 +658,9 @@ describe('guillotine', () => {
                     data: null,
                     meta: {
                         id: '',
-                        apiUrl: 'http://localhost:8080/site/project/master',
+                        branch: 'master',
+                        project: 'project',
+                        site: '/site',
                         baseUrl: '/',
                         canRender: false,
                         catchAll: false,
@@ -702,7 +714,9 @@ describe('guillotine', () => {
                     data: null,
                     meta: {
                         id: 'f5815ec2-26e0-4595-b37b-c2ba0d3c1e1c',
-                        apiUrl: 'http://localhost:8080/site/project/master',
+                        branch: 'master',
+                        project: 'project',
+                        site: '/site',
                         baseUrl: '/',
                         canRender: false,
                         catchAll: false,
@@ -723,7 +737,7 @@ describe('guillotine', () => {
                     contentJson: GUILLOTINE_RESULT_CONTENT_WITH_ARTICLES,
                     metaJson: GUILLOTINE_RESULT_META_FOR_ARTICLES
                 });
-                const CONTENT_PATH = 'articles'; // Must be present in contentJson
+                const CONTENT_PATH = '/articles'; // Must be present in contentJson
                 const BASE_URL = '/base/url';
                 const QUERY_COMMON = `query($path:ID!){
                 guillotine {
@@ -810,7 +824,9 @@ describe('guillotine', () => {
                         },
                         meta: {
                             id: 'f5815ec2-26e0-4595-b37b-c2ba0d3c1e1c',
-                            apiUrl: 'http://localhost:8080/site/project/master',
+                            branch: 'master',
+                            project: 'project',
+                            site: '/site',
                             baseUrl: BASE_URL,
                             canRender: true,
                             catchAll: false,
@@ -836,7 +852,7 @@ describe('guillotine', () => {
             const BASE_URL = '/base/url';
             import('../../src/guillotine/fetchContent').then(async (moduleName) => {
 
-                const unescapedPath = 'path/with speciål+chars_and%percent!';
+                const unescapedPath = '/path/with speciål+chars_and%percent!';
                 const context: Context = {
                     contentPath: encodeURIComponent(unescapedPath),
                     headers: {
@@ -900,7 +916,9 @@ describe('guillotine', () => {
                     },
                     meta: {
                         id: 'f5815ec2-26e0-4595-b37b-c2ba0d3c1e1c',
-                        apiUrl: `http://localhost:8080/site/prosjekt/master`,
+                        branch: 'master',
+                        project: 'prosjekt',
+                        site: '/nettsted',
                         baseUrl: BASE_URL,
                         canRender: false,
                         catchAll: false,

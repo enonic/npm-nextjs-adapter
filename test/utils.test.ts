@@ -40,7 +40,7 @@ describe('utils', () => {
         });
     });
 
-    describe('getContentApiUrl', () => {
+    describe('getContentBranch', () => {
         const TESTS = {
             'edit': 'draft',
             'inline': 'draft',
@@ -50,9 +50,9 @@ describe('utils', () => {
             'next': 'master'
         };
         Object.entries(TESTS).forEach(([mode, branch]) => {
-            it(`returns correct url with branch ${branch} when mode is ${mode}`, () => {
+            it(`returns correct branch ${branch} when mode is ${mode}`, () => {
 
-                import('../src/utils/getContentApiUrl').then((moduleName) => {
+                import('../src/utils/getContentBranch').then((moduleName) => {
                     const context: Context = {
                         headers: {
                             get(name: string) {
@@ -66,7 +66,7 @@ describe('utils', () => {
                             }
                         }
                     } as Context;
-                    expect(moduleName.getContentApiUrl(context)).toEqual(`http://localhost:8080/site/film-db/${branch}`);
+                    expect(moduleName.getContentBranch(context)).toEqual(branch);
                 });
             });
         });

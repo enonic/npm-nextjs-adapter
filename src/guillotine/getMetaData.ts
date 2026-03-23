@@ -53,22 +53,31 @@ export const pageFragmentQuery = () => `components(resolveFragment: false, resol
         id
         fragment {
             components {
-${indent(componentsQuery(),16)}
+${indent(componentsQuery(), 16)}
             }
         }
     }
-${indent(componentsQuery(),4)}
+${indent(componentsQuery(), 4)}
 }`;
 
 export function getMetaQuery(pageFragment?: string): string {
-    return `query($path:ID!) {
-    guillotine {
-        get(key:$path) {
-            _id
-            _path
-            type
-${indent(pageFragment || '', 12)}
-        }
-    }
-}`;
+    return queryGuillotineWithPath(`get(key:$path) {
+    _id
+    _path
+    type
+${indent(pageFragment || '', 4)}
+}`);
+}
+
+export function queryGuillotine(query: string, args?: Record<string, string>): string {
+    const argsString = args && Object.entries(args).map(([name, type]) => `${name}: ${type}`);
+    return `query($siteKey: String, $project: String, $branch: String${argsString ? ', ' + argsString.join(', ') : ''}) {
+              guillotine(siteKey: $siteKey, project: $project, branch: $branch) {
+                ${query}
+              }
+            }`;
+}
+
+export function queryGuillotineWithPath(query: string, args?: Record<string, string>): string {
+    return queryGuillotine(query, Object.assign({'$path': 'ID!'}, args));
 }

@@ -6,14 +6,11 @@ import {fetchContentPathsForLocale} from './fetchContentPathsForLocale';
 
 
 export async function fetchContentPathsForAllLocales(
-    path: string,
     query: string = GET_STATIC_PATHS_QUERY,
     countPerLocale = 999
 ): Promise<ContentPathItem[]> {
     const promises = Object.values(getLocaleMappings()).map(
-        config => fetchContentPathsForLocale(
-            path, config, query, countPerLocale
-        )
+        config => fetchContentPathsForLocale(config, query, countPerLocale)
     );
     return Promise.all(promises).then(results => {
         return results.reduce((all, localePaths) => all.concat(localePaths), []);

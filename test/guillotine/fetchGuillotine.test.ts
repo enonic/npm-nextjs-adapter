@@ -1,4 +1,4 @@
-import type {FetchOptions, LocaleMapping} from '../../src/types';
+import type {FetchOptions} from '../../src/types';
 
 
 import {afterEach, beforeEach, describe, expect, jest, test as it} from '@jest/globals';
@@ -27,16 +27,9 @@ const QUERY = `{
 
 const FETCH_GUILLOTINE_PARAMS_VALID: [
     string,
-    LocaleMapping,
     FetchOptions?,
 ] = [
-    'http://localhost:8080/site/enonic-homepage/master',
-    {
-        default: true,
-        project: 'enonic-homepage',
-        site: 'enonic-homepage',
-        locale: 'en'
-    },
+    'http://localhost:8080/site',
     {
         cache: 'no-store',
         next: {
@@ -111,12 +104,12 @@ describe('guillotine', () => {
 
 
         it('handles variables = undefined', async () => {
-            const [contentApiUrl, mapping, options] = Object.create(FETCH_GUILLOTINE_PARAMS_VALID);
+            const [contentApiUrl, options] = Object.create(FETCH_GUILLOTINE_PARAMS_VALID);
             const opts = Object.create(options);
             delete opts.body.variables;
 
             await import('../../src/server').then((moduleName) => {
-                moduleName.fetchGuillotine(contentApiUrl, mapping, opts).then((result) => {
+                moduleName.fetchGuillotine(contentApiUrl, opts).then((result) => {
                     expect(result).toEqual({
                         guillotine: {
                             query: [{
@@ -151,7 +144,7 @@ describe('guillotine', () => {
         });
 
         it('handles variables with path', async () => {
-            const [contentApiUrl, mapping, options] = FETCH_GUILLOTINE_PARAMS_VALID;
+            const [contentApiUrl, options] = FETCH_GUILLOTINE_PARAMS_VALID;
 
             const opts = {
                 ...options,
@@ -164,7 +157,7 @@ describe('guillotine', () => {
             };
 
             await import('../../src/server').then((moduleName) => {
-                moduleName.fetchGuillotine(contentApiUrl, mapping, opts).then((result) => {
+                moduleName.fetchGuillotine(contentApiUrl, opts).then((result) => {
                     expect(result).toEqual({
                         guillotine: {
                             query: [{
@@ -177,7 +170,7 @@ describe('guillotine', () => {
         });
 
         it('returns an error when query is not a string', async () => {
-            const [contentApiUrl, mapping, options] = FETCH_GUILLOTINE_PARAMS_VALID;
+            const [contentApiUrl, options] = FETCH_GUILLOTINE_PARAMS_VALID;
 
             const opts = {
                 ...options,
@@ -188,7 +181,7 @@ describe('guillotine', () => {
             };
 
             await import('../../src/server').then((moduleName) => {
-                moduleName.fetchGuillotine(contentApiUrl, mapping, opts).then((result) => {
+                moduleName.fetchGuillotine(contentApiUrl, opts).then((result) => {
                     expect(result).toEqual({
                         error: {
                             code: '400',
@@ -200,7 +193,7 @@ describe('guillotine', () => {
         });
 
         it('returns an error when query is an empty string', async () => {
-            const [contentApiUrl, mapping, options] = FETCH_GUILLOTINE_PARAMS_VALID;
+            const [contentApiUrl, options] = FETCH_GUILLOTINE_PARAMS_VALID;
 
             const opts = {
                 ...options,
@@ -211,7 +204,7 @@ describe('guillotine', () => {
             };
 
             await import('../../src/server').then(async (moduleName) => {
-                let result = await moduleName.fetchGuillotine(contentApiUrl, mapping, opts);
+                let result = await moduleName.fetchGuillotine(contentApiUrl, opts);
                 return expect(result).toEqual({
                     error: {
                         code: '400',
@@ -222,7 +215,7 @@ describe('guillotine', () => {
         });
 
         it('returns an error when path variable contains XP error URL pattern', async () => {
-            const [contentApiUrl, mapping, options] = FETCH_GUILLOTINE_PARAMS_VALID;
+            const [contentApiUrl, options] = FETCH_GUILLOTINE_PARAMS_VALID;
 
             const opts = {
                 ...options,
@@ -235,7 +228,7 @@ describe('guillotine', () => {
             };
 
             await import('../../src/server').then((moduleName) => {
-                moduleName.fetchGuillotine(contentApiUrl, mapping, opts).then((result) => {
+                moduleName.fetchGuillotine(contentApiUrl, opts).then((result) => {
                     expect(result).toEqual({
                         error: {
                             code: '777',
@@ -343,13 +336,13 @@ describe('guillotine', () => {
 
         it("passes cache and next options and add headers", async () => {
 
-            const [contentApiUrl, mapping, options] = FETCH_GUILLOTINE_PARAMS_VALID;
+            const [contentApiUrl, options] = FETCH_GUILLOTINE_PARAMS_VALID;
 
             const opts = Object.create(options);
             delete opts.headers;
 
             await import('../../src/server').then((moduleName) => {
-                moduleName.fetchGuillotine(contentApiUrl, mapping, opts).then((result) => {
+                moduleName.fetchGuillotine(contentApiUrl, opts).then((result) => {
 
                     const [url, opts] = fetchMock.mock.lastCall;
 
@@ -360,7 +353,6 @@ describe('guillotine', () => {
                     })
                     const headers = opts.headers as Headers;
                     expect(headers).toBeTruthy();
-                    expect(headers.get('X-Guillotine-SiteKey')).toEqual('enonic-homepage');
                     expect(headers.get('Content-Type')).toEqual('application/json');
                     expect(headers.get('Accept')).toEqual('application/json');
 
@@ -368,27 +360,25 @@ describe('guillotine', () => {
             });
         });
 
-        it("does not allow to override X-Guillotine-SiteKey header only", async () => {
+        it("allows overriding Content-Type and Accept headers", async () => {
 
-            const [contentApiUrl, mapping, options] = FETCH_GUILLOTINE_PARAMS_VALID;
+            const [contentApiUrl, options] = FETCH_GUILLOTINE_PARAMS_VALID;
 
             const opts = {
                 ...options,
                 headers: {
-                    'X-Guillotine-SiteKey': 'should-not-be-applied',
                     'Content-Type': 'text/plain',
                     'Accept': 'text/plain'
                 }
             };
 
             await import('../../src/server').then((moduleName) => {
-                moduleName.fetchGuillotine(contentApiUrl, mapping, opts).then((result) => {
+                moduleName.fetchGuillotine(contentApiUrl, opts).then((result) => {
 
                     const [url, opts] = fetchMock.mock.lastCall;
 
                     const headers = opts.headers as Headers;
                     expect(headers).toBeTruthy();
-                    expect(headers.get('X-Guillotine-SiteKey')).toEqual('enonic-homepage');
                     expect(headers.get('Content-Type')).toEqual('text/plain');
                     expect(headers.get('Accept')).toEqual('text/plain');
 

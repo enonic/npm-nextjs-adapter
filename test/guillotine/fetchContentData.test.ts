@@ -16,7 +16,9 @@ const FETCH_CONTENT_RESULT: FetchContentResult = {
     },
     common: null, // {},
     meta: {
-        apiUrl: 'apiUrl',
+        branch: 'master',
+        project: 'project',
+        site: '/site',
         baseUrl: 'baseUrl',
         canRender: true,
         catchAll: false,
@@ -61,7 +63,7 @@ describe('guillotine', () => {
             // const variables = undefined;
             // const headers = undefined;
             expect(fetchContentData(
-                contentApiUrl, xpContentPath, mapping, query
+                contentApiUrl, xpContentPath, mapping, 'master', query
             )).resolves.toEqual({
                 error: {
                     code: '400',
@@ -85,7 +87,7 @@ describe('guillotine', () => {
             };
             // const headers = undefined;
             expect(fetchContentData(
-                contentApiUrl, xpContentPath, mapping, query, variables
+                contentApiUrl, xpContentPath, mapping, 'master', query, variables
             )).resolves.toEqual({
                 contents: [FETCH_CONTENT_RESULT?.data?.guillotine]
             });

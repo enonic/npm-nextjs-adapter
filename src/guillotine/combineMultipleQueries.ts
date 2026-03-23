@@ -5,7 +5,11 @@ const ALIAS_PREFIX = 'request';
 
 const GRAPHQL_FRAGMENTS_REGEXP = /fragment\s+.+\s+on\s+.+\s*{[\s\w{}().,:"'`]+}/;
 
-const GUILLOTINE_QUERY_REGEXP = /^\s*query\s*(?:\((.*)*\))?\s*{\s*guillotine\s*{((?:.|\s)+)}\s*}\s*$/;
+// const GUILLOTINE_QUERY_REGEXP = /^\s*query\s*(?:\((.*)*\))?\s*{\s*guillotine\s*{((?:.|\s)+)}\s*}\s*$/;
+const GUILLOTINE_QUERY_REGEXP = /^\s*query\s*(?:\(([^)]*)\))?\s*{\s*((?:.|\s)+)\s*}\s*$/;
+
+const GLOBAL_PARAMS = [{key: 'path', type: 'ID!'}, {key: 'siteKey', type: 'String'}, {key: 'project', type: 'String'},
+    {key: 'branch', type: 'String'}];
 
 
 export function combineMultipleQueries(queriesWithVars: ComponentDescriptor[]): QueryAndVariables {
@@ -19,6 +23,7 @@ export function combineMultipleQueries(queriesWithVars: ComponentDescriptor[]): 
         if (!queryAndVars) {
             return;
         }
+        const currentAlias = `${ALIAS_PREFIX}${index}`;
 
         // Extract fragments first if exist
         let q = queryAndVars.query;
@@ -31,31 +36,37 @@ export function combineMultipleQueries(queriesWithVars: ComponentDescriptor[]): 
         }
 
         // Extract graphql query and its params and add prefixes to exclude collisions with other queries
-        match = q.match(GUILLOTINE_QUERY_REGEXP) || ['']; // Fall back to empty string if no match
+        match = q.match(GUILLOTINE_QUERY_REGEXP) || [''];
         const args = match[1];
         let query = match[2];
 
         if (args) {
             args.split(',').forEach(originalParamString => {
-                const [originalKey, originalVal] = originalParamString.trim().split(':');
-                const [prefixedKey, prefixedVal] = [`$${ALIAS_PREFIX}${index}_${originalKey.substr(1)}`, originalVal];
+                const [originalKey, originalVal] = originalParamString.trim().split(':').map(s => s.trim());
+                const [prefixedKey, prefixedVal] = [`$${currentAlias}_${originalKey.substring(1)}`, originalVal];
                 superParams.push(`${prefixedKey}:${prefixedVal}`);
-                // also update param references in query itself !
-                // query = query.replaceAll(originalKey, prefixedKey);
-                // replaceAll is not supported in older nodejs versions
-                const origKeyPattern = new RegExp(originalKey.replace(/\$/g, '\\$'), 'g');
-                query = query.replace(origKeyPattern, prefixedKey);
+                // Replace param usages in the query
+                query = query.replace(new RegExp(`\\${originalKey}`, 'g'), prefixedKey);
+                // Variables are updated later
             });
-        }
-
-        if (query?.length) {
-            queries.push(`${ALIAS_PREFIX}${index}:guillotine {${query}}`);
         }
 
         // Update variables with the same prefixes
         Object.entries(queryAndVars.variables || {}).forEach(entry => {
-            superVars[`${ALIAS_PREFIX}${index}_${entry[0]}`] = entry[1];
+            superVars[`${currentAlias}_${entry[0]}`] = entry[1];
         });
+
+        if (query?.length) {
+            queries.push(`${currentAlias}:${query}`);
+
+            // Find global params used in the query and add them to superParams
+            GLOBAL_PARAMS.forEach(param => {
+                const def = `$${param.key}:${param.type}`;
+                if (query.includes(`$${param.key}`) && superParams.indexOf(def) < 0) {
+                    superParams.push(def);
+                }
+            });
+        }
     });
 
     // Compose the super query
