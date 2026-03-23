@@ -166,24 +166,35 @@ describe('UrlProcessor', () => {
         });
     });
 
-
     describe('getAsset', () => {
-        it("returns asset url without language prefix", () => {
+        it("returns XP asset url with api url host and without language prefix", () => {
+            import('../src').then(({getAsset}) => {
+                const url = '/_/media:image/image.jpg';
+                expect(getAsset(url, {
+                    ...META,
+                    renderMode: RENDER_MODE.NEXT
+                })).toEqual('http://localhost:8080/_/media:image/image.jpg');
+            });
+        });
+
+        it("returns relative next asset url without language prefix", () => {
             import('../src').then(({getAsset}) => {
                 const url = '/images/image.jpg';
                 expect(getAsset(url, {
                     ...META,
                     renderMode: RENDER_MODE.NEXT
-                })).toEqual('/site/inline/enonic-homepage/draft/images/image.jpg');
+                })).toEqual('/images/image.jpg');
             });
         });
     });
 
     describe('getUrl', () => {
-        it("returns baseurl when url is empty", () => {
+        it("returns site root url when url is empty", () => {
             import('../src').then(({getUrl}) => {
-                const url = '';
-                expect(getUrl(url, META)).toEqual('/site/inline/enonic-homepage/draft/');
+                const url = getUrl('', META);
+                const urlParts = url.split('?');
+                expect(urlParts[0]).toEqual('/site');
+                expect(urlParts[1]).toMatch(/^xp=.+$/);
             });
         });
     });
@@ -194,58 +205,47 @@ describe('UrlProcessor', () => {
             expected: '#hash',
             meta: META
         }, {
-            url: 'http://localhost:8080/site/path',
-            expected: 'http://localhost:8080/site/path',
+            // urls are returned as is without meta
+            url: '/site/_/media:image/1234',
+            expected: '/site/_/media:image/1234',
             meta: false as unknown as MetaData
         }, {
-            url: 'http://localhost:8080/site/_/image/1234',
-            expected: 'http://localhost:8080/site/_/image/1234',
+            // absolute urls are returned as-is
+            url: 'http://localhost:8080/site/_/media:image/1234',
+            expected: 'http://localhost:8080/site/_/media:image/1234',
             meta: {
                 ...META,
                 renderMode: RENDER_MODE.NEXT
             }
         }, {
-            url: 'http://localhost:8080/site/_/attachment/1234',
-            expected: 'http://localhost:8080/site/_/attachment/1234',
+            // xp media urls are transformed to absolute
+            url: '/site/_/media:attachment/1234',
+            expected: 'http://localhost:8080/site/_/media:attachment/1234',
             meta: {
                 ...META,
                 renderMode: RENDER_MODE.NEXT
             }
         }, {
-            // isRelative
+            // xp media urls are transformed to absolute
+            url: '/site/_/media:image/1234',
+            expected: 'http://localhost:8080/site/_/media:image/1234',
+            meta: {
+                ...META,
+                renderMode: RENDER_MODE.NEXT
+            }
+        }, {
+            // language is added in next mode
             url: '/path',
-            expected: '/site/inline/enonic-homepage/draft/no/path',
+            expected: '/no/path',
             meta: {
                 ...META,
                 renderMode: RENDER_MODE.NEXT
-            }
-        }, {
-            url: 'http://localhost:8080/site/path',
-            expected: '/site/inline/enonic-homepage/draft/no/path',
-            meta: {
-                ...META,
-                renderMode: RENDER_MODE.NEXT
-            }
-        }, {
-            url: 'http://localhost:8080/site/path',
-            expected: '/site/inline/enonic-homepage/draft/path',
-            meta: {
-                ...META,
-                apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query'
-            }
-        }, {
-            url: 'http://localhost:8080/simon',
-            expected: '/site/inline/enonic-homepage/draft/simon',
-            meta: {
-                ...META,
-                apiUrl: 'https://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query'
             }
         }, {
             url: 'https://google.com',
             expected: 'https://google.com',
             meta: {
-                ...META,
-                apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query'
+                ...META
             }
         }].forEach(({url, expected, meta}) => {
             it(`should return ${expected} when url is ${url}`, () => {
@@ -254,57 +254,26 @@ describe('UrlProcessor', () => {
                 });
             });
         });
-        it("should not cut out site name from absolute url if site differs from one from locale mapping", () => {
-            import('../src').then(({UrlProcessor}) => {
-                expect(UrlProcessor.process('http://localhost:8080/site/nettsteder/simon', {
-                    ...META,
-                    apiUrl: 'http://localhost:8080/site'
-                })).toEqual('/site/inline/enonic-homepage/draft/nettsteder/simon');
-            });
-        })
-        it("should cut out site name from absolute url if it equals one from locale mapping", () => {
-            import('../src').then(({UrlProcessor}) => {
-                expect(UrlProcessor.process('http://localhost:8080/site/nettsted/don/simon', {
-                    ...META,
-                    apiUrl: 'http://localhost:8080/site'
-                })).toEqual('/site/inline/enonic-homepage/draft/don/simon');
-            });
-        })
-        it("should cut out site name from relative url if it equals one from locale mapping", () => {
-            import('../src').then(({UrlProcessor}) => {
-                expect(UrlProcessor.process('/nettsted/don/simon', {
-                    ...META,
-                    apiUrl: 'http://localhost:8080/site'
-                })).toEqual('/site/inline/enonic-homepage/draft/don/simon');
-            });
-        })
-        it("should not cut out site name from relative url if it differs one from locale mapping", () => {
-            import('../src').then(({UrlProcessor}) => {
-                expect(UrlProcessor.process('/nettsteder/don/simon', {
-                    ...META,
-                    apiUrl: 'http://localhost:8080/site'
-                })).toEqual('/site/inline/enonic-homepage/draft/nettsteder/don/simon');
-            });
-        })
     }); // process
 
     describe('processSrcSet', () => {
         it("works for srcset without width descriptor", () => {
             import('../src').then(({UrlProcessor}) => {
-                const srcset = 'elva-fairy-480w.jpg';
-                expect(UrlProcessor.processSrcSet(srcset, META)).toEqual('/site/inline/enonic-homepage/draft/elva-fairy-480w.jpg');
+                const srcset = '/images/elva-fairy-480w.jpg';
+                expect(UrlProcessor.processSrcSet(srcset, META)).toEqual('/images/elva-fairy-480w.jpg');
             });
         });
         it("works for srcset with a single src", () => {
             import('../src').then(({UrlProcessor}) => {
-                const srcset = 'elva-fairy-480w.jpg 480w 1x';
-                expect(UrlProcessor.processSrcSet(srcset, META)).toEqual('/site/inline/enonic-homepage/draft/elva-fairy-480w.jpg 480w 1x');
+                const srcset = '/_/media:image/elva-fairy-480w.jpg 480w 1x';
+                expect(UrlProcessor.processSrcSet(srcset, META)).toEqual('http://localhost:8080/_/media:image/elva-fairy-480w.jpg 480w 1x');
             });
         });
         it("works for srcset with a two srcs", () => {
             import('../src').then(({UrlProcessor}) => {
-                const srcset = 'elva-fairy-480w.jpg 480w 1x, elva-fairy-800w.jpg 800w';
-                expect(UrlProcessor.processSrcSet(srcset, META)).toEqual('/site/inline/enonic-homepage/draft/elva-fairy-480w.jpg 480w 1x, /site/inline/enonic-homepage/draft/elva-fairy-800w.jpg 800w');
+                const srcset = '/_/media:attachment/elva-fairy-480w.jpg 480w 1x, /_/media:attachment/elva-fairy-800w.jpg 800w';
+                expect(UrlProcessor.processSrcSet(srcset, META)).toEqual(
+                    'http://localhost:8080/_/media:attachment/elva-fairy-480w.jpg 480w 1x, http://localhost:8080/_/media:attachment/elva-fairy-800w.jpg 800w');
             });
         });
         it("warns and returns srcset when it can't process the srcset", () => {
