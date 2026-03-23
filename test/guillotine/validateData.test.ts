@@ -190,7 +190,7 @@ describe('guillotine', () => {
                     get: {
                         data: {
                             target: {
-                                pageUrl: '/redirect/page'
+                                pageUrl: '/site/redirect/page'
                             },
                             parameters: [
                                 {
@@ -233,7 +233,8 @@ describe('guillotine', () => {
                 expect(redirect).not.toHaveBeenCalled();
                 moduleName.validateData(fetchContentResult);
                 expect(notFound).not.toHaveBeenCalled();
-                expect(redirect).toHaveBeenCalledWith("/no/redirect/page?intValue=1&boolValue=true&strValue=string", RedirectType.replace);
+                expect(redirect).toHaveBeenCalledWith("/no/site/redirect/page?intValue=1&boolValue=true&strValue=string",
+                    RedirectType.replace);
             });
         });
 

@@ -236,12 +236,21 @@ describe('UrlProcessor', () => {
         }, {
             // language is added in next mode
             url: '/path',
-            expected: '/no/path',
+            expected: '/no/site/path',
             meta: {
                 ...META,
                 renderMode: RENDER_MODE.NEXT
             }
         }, {
+            // double slashes are handled in next mode
+            url: '//some//path/',
+            expected: '/no/site/some/path',
+            meta: {
+                ...META,
+                renderMode: RENDER_MODE.NEXT
+            }
+        }, {
+            // external urls are preserved
             url: 'https://google.com',
             expected: 'https://google.com',
             meta: {

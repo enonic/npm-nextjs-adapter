@@ -1,5 +1,5 @@
 import type {ImageData, LinkData, MetaData} from '../types';
-import {RENDER_MODE, RENDER_MODE_HEADER, PROJECT_ID_HEADER, XP_BASE_URL_HEADER} from './constants';
+import {RENDER_MODE} from './constants';
 import {fixDoubleSlashes, stripOutsideSlashes} from '../utils/fixDoubleSlashes';
 import {addBasePath} from 'next/dist/client/add-base-path';
 import {API_URL} from './env';
@@ -18,6 +18,7 @@ export class UrlProcessor {
     private static IMG_ATMT_REGEXP = /_\/media:image|attachment\//;
 
     public static process(url: string, meta: MetaData, serverSide = false, isResource = false): string {
+        // console.debug(`UrlProcessor: renderMode=${meta?.renderMode}, serverSide=${serverSide}, isResource=${isResource}):`);
         if (this.startsWithHash(url) || this.isAbsolute(url) || !meta) {
             // do not process if:
             // - url starts with #
@@ -36,12 +37,7 @@ export class UrlProcessor {
             return result;
         }
 
-        let result: string;
-        if (url == '' || url == '/') {
-            result = meta.site;
-        } else {
-            result = this.stripBaseUrl(url, meta);
-        }
+        let result = this.normalizeBaseUrl(url, meta, isResource);
 
         // only add basePath and locale in next mode
         if (meta.renderMode === RENDER_MODE.NEXT) {
@@ -55,12 +51,13 @@ export class UrlProcessor {
                 // no need for baseurl and basepath on server
                 result = addBasePath(result);
             }
-        } else if (!isResource) {
+        } else if (!isResource && process.env.ENONIC_API_TOKEN) {
             // add xp blob for all links but next resources
+            // jsessionid should already be present in the cookies
             const xpBlob = encryptParams({
-                [RENDER_MODE_HEADER]: meta.renderMode,
-                [PROJECT_ID_HEADER]: meta.project,
-                [XP_BASE_URL_HEADER]: meta.baseUrl
+                xpRenderMode: meta.renderMode,
+                xpProject: meta.project,
+                xpBaseUrl: meta.baseUrl
             }, process.env.ENONIC_API_TOKEN);
 
             result += `${url.includes('?') ? '&' : '?'}xp=${xpBlob}`
@@ -71,14 +68,26 @@ export class UrlProcessor {
         return result;
     }
 
-    private static stripBaseUrl(url: string, meta: MetaData) {
-        if (meta.baseUrl?.length) {
-            // see if url starts with site name and remove it
-            const normalBaseUrl = stripOutsideSlashes(meta.baseUrl).replaceAll('/', '\\/');
-            return url.replace(new RegExp(`^/?${normalBaseUrl}(?=/|$)`), `/${meta.site}`);
-        } else {
+    private static normalizeBaseUrl(url: string, meta: MetaData, isResource: boolean) {
+        if (isResource) {
             return url;
         }
+
+        let result = url;
+        if (meta.baseUrl?.length && meta.baseUrl !== '/') {
+            // see if url starts with site name and remove it
+            const normalBaseUrl = stripOutsideSlashes(meta.baseUrl).replaceAll('/', '\\/');
+            result = url.replace(new RegExp(`^/?${normalBaseUrl}(?=/|$)`), '');
+        }
+
+        if (result.charAt(0) !== '/') {
+            result = '/' + result;
+        }
+        if (!result.startsWith(meta.site)) {
+            result = `${meta.site}${result !== '/' ? result : ''}`;
+        }
+        console.debug(`UrlProcessor.normalizeBaseUrl: ${url} ==> ${result}`);
+        return result;
     }
 
     public static isMediaLink(ref: string, linkData: LinkData[]): boolean {
