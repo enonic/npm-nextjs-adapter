@@ -9,13 +9,22 @@ globalThis.console = {
 } as Console;
 
 
-import type {Context, PageComponent} from '../../src/types';
+import type {Context, LocaleMapping, PageComponent} from '../../src/types';
 
 
 import {beforeAll, describe, expect, jest, test as it} from '@jest/globals';
 import {ComponentRegistry} from '../../src/common/ComponentRegistry';
 import {ENONIC_APP_NAME, setupServerEnv} from '../constants';
 import {XP_COMPONENT_TYPE} from '../../src/common/constants';
+
+
+const BRANCH = 'master';
+const MAPPING: LocaleMapping = {
+    default: true,
+    project: 'project',
+    site: '/site',
+    locale: 'en'
+};
 
 
 const PART_NAME_HEADING = `${ENONIC_APP_NAME}:heading`;
@@ -70,7 +79,7 @@ describe('guillotine', () => {
             }
             import('../../src/guillotine/collectComponentDescriptors').then((moduleName) => {
                 expect(moduleName.collectComponentDescriptors({
-                    components, xpContentPath, context
+                    components, contentPath: xpContentPath, branch: BRANCH, mapping: MAPPING, context
                 })).toEqual([]);
             });
         });
@@ -82,22 +91,21 @@ describe('guillotine', () => {
                 contentPath: '/contextContentPath'
             }
             import('../../src/guillotine/collectComponentDescriptors').then((moduleName) => {
-                expect(moduleName.collectComponentDescriptors({
-                    components, xpContentPath, context
-                })).toEqual([{
-                    component: PART_COMPONENT,
-                    queryAndVariables: {
-                        query: PART_QUERY,
-                        variables: {
-                            path: xpContentPath
-                        }
-                    },
-                    type: {
-                        catchAll: PART_CATCH_ALL,
-                        configQuery: PART_CONFIG_QUERY,
-                        query: PART_QUERY
-                    }
-                }]);
+                const result = moduleName.collectComponentDescriptors({
+                    components, contentPath: xpContentPath, branch: BRANCH, mapping: MAPPING, context
+                });
+                expect(result.length).toEqual(1);
+                expect(result[0].component).toEqual(PART_COMPONENT);
+                expect(result[0].queryAndVariables.query).toEqual(PART_QUERY);
+                expect(result[0].queryAndVariables.variables.path).toEqual(xpContentPath);
+                expect(result[0].queryAndVariables.variables).toHaveProperty('project');
+                expect(result[0].queryAndVariables.variables).toHaveProperty('siteKey');
+                expect(result[0].queryAndVariables.variables).toHaveProperty('branch');
+                expect(result[0].type).toEqual({
+                    catchAll: PART_CATCH_ALL,
+                    configQuery: PART_CONFIG_QUERY,
+                    query: PART_QUERY
+                });
             });
         });
 
@@ -109,22 +117,21 @@ describe('guillotine', () => {
             }
 
             import('../../src/guillotine/collectComponentDescriptors').then((moduleName) => {
-                expect(moduleName.collectComponentDescriptors({
-                    components, xpContentPath, context
-                })).toEqual([{
-                    component: PART_COMPONENT,
-                    queryAndVariables: {
-                        query: PART_QUERY,
-                        variables: {
-                            path: xpContentPath
-                        }
-                    },
-                    type: {
-                        catchAll: PART_CATCH_ALL,
-                        configQuery: PART_CONFIG_QUERY,
-                        query: PART_QUERY
-                    }
-                }]);
+                const result = moduleName.collectComponentDescriptors({
+                    components, contentPath: xpContentPath, branch: BRANCH, mapping: MAPPING, context
+                });
+                expect(result.length).toEqual(1);
+                expect(result[0].component).toEqual(PART_COMPONENT);
+                expect(result[0].queryAndVariables.query).toEqual(PART_QUERY);
+                expect(result[0].queryAndVariables.variables.path).toEqual(xpContentPath);
+                expect(result[0].queryAndVariables.variables).toHaveProperty('project');
+                expect(result[0].queryAndVariables.variables).toHaveProperty('siteKey');
+                expect(result[0].queryAndVariables.variables).toHaveProperty('branch');
+                expect(result[0].type).toEqual({
+                    catchAll: PART_CATCH_ALL,
+                    configQuery: PART_CONFIG_QUERY,
+                    query: PART_QUERY
+                });
             });
         });
 
@@ -136,7 +143,7 @@ describe('guillotine', () => {
             }
             import('../../src/guillotine/collectComponentDescriptors').then((moduleName) => {
                 expect(moduleName.collectComponentDescriptors({
-                    components, xpContentPath, context
+                    components, contentPath: xpContentPath, branch: BRANCH, mapping: MAPPING, context
                 })).toEqual([]);
             });
         });

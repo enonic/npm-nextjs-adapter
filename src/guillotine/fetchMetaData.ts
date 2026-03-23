@@ -7,17 +7,21 @@ import {fetchGuillotine} from './fetchGuillotine';
 
 export const fetchMetaData = async (
     contentApiUrl: string,
-    xpContentPath: string,
+    contentPath: string,
     mapping: LocaleMapping,
+    branch: string,
     headers?: GuillotineRequestHeaders
 ): Promise<MetaResult> => {
     const body: ContentApiBaseBody = {
         query: getMetaQuery(pageFragmentQuery()),
         variables: {
-            path: xpContentPath
+            path: contentPath,
+            siteKey: mapping.site,
+            project: mapping.project,
+            branch
         }
     };
-    const metaResult = await fetchGuillotine<MetaResult>(contentApiUrl, mapping, {
+    const metaResult = await fetchGuillotine<MetaResult>(contentApiUrl, {
         body,
         headers
     });

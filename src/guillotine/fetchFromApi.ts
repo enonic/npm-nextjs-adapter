@@ -1,16 +1,15 @@
-import type {FetchOptions, GuillotineResponse, GuillotineResponseJson, LocaleMapping} from '../types';
+import type {FetchOptions, GuillotineResponse, GuillotineResponseJson} from '../types';
 
 /** Generic fetch */
 export async function fetchFromApi<Data = Record<string, unknown>>(
     apiUrl: string,
-    mapping: LocaleMapping,
     options?: FetchOptions
 ): Promise<GuillotineResponseJson> {
 
     const opts = {
         method: options?.method || 'POST',
         body: options?.body ? JSON.stringify(options?.body) : null,
-        headers: mergeHeaders(mapping, options?.headers),
+        headers: mergeHeaders(options?.headers),
         next: options?.next,
         cache: options?.cache
     };
@@ -60,7 +59,7 @@ export async function fetchFromApi<Data = Record<string, unknown>>(
     return json;
 }
 
-function mergeHeaders(mapping: LocaleMapping, headers?: HeadersInit): Headers {
+function mergeHeaders(headers?: HeadersInit): Headers {
     const newHeaders = new Headers({
         'Accept': 'application/json',
         'Content-Type': 'application/json'
@@ -70,7 +69,5 @@ function mergeHeaders(mapping: LocaleMapping, headers?: HeadersInit): Headers {
             newHeaders.set(headersKey, headers[headersKey]);
         });
     }
-    // append last to make sure it is not overwritten
-    newHeaders.set('X-Guillotine-SiteKey', mapping.site);
     return newHeaders;
 }

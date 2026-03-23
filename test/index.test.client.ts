@@ -54,7 +54,8 @@ describe('index (CLIENT)', () => {
             setupClientEnv();
 
             import('../src').then(({UrlProcessor}) => {
-                expect(UrlProcessor.process('https://localhost:8080/some/test/url', META)).toEqual('/site/inline/enonic-homepage/draft/some/test/url');
+                // absolute urls are now returned as-is
+                expect(UrlProcessor.process('https://localhost:8080/some/test/url', META)).toEqual('https://localhost:8080/some/test/url');
             });
         }
     );
