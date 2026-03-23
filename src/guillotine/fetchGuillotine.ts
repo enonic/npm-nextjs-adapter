@@ -1,4 +1,4 @@
-import type {FetchOptions, GuillotineResult, LocaleMapping} from '../types';
+import type {FetchOptions, GuillotineResult} from '../types';
 import gqlmin from 'gqlmin';
 
 import {fetchFromApi} from './fetchFromApi';
@@ -8,7 +8,6 @@ const XP_ERROR_PATTERN = '/_/error/';
 /** Guillotine-specialized fetch, using the generic fetch above */
 export async function fetchGuillotine<Data = Record<string, unknown>>(
     contentApiUrl: string,
-    mapping: LocaleMapping,
     options?: FetchOptions
 ): Promise<GuillotineResult> {
     const body = options?.body;
@@ -40,7 +39,6 @@ export async function fetchGuillotine<Data = Record<string, unknown>>(
     const pathMessage = path ? JSON.stringify(path) : '';
     return await fetchFromApi<Data>(
         contentApiUrl,
-        mapping,
         options
     )
         .then(json => {

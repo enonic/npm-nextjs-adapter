@@ -5,7 +5,7 @@ import {RENDER_MODE, XP_REQUEST_TYPE} from '../common/constants';
 
 
 export function buildErrorResponse(requestType: XP_REQUEST_TYPE, renderMode: RENDER_MODE,
-    apiUrl: string, baseUrl: string, locale: string, defaultLocale: string,
+                                   project: string, site: string, branch: string, baseUrl: string, locale: string, defaultLocale: string,
                                    contentPath ?: string, contentId?: string): (code ?: string, message ?: string) => FetchContentResult {
 
     return function (code = '500', message = 'Unknown error') {
@@ -25,7 +25,9 @@ export function buildErrorResponse(requestType: XP_REQUEST_TYPE, renderMode: REN
                 path: contentPath || '',
                 canRender: false,
                 catchAll: false,
-                apiUrl,
+                project,
+                site,
+                branch,
                 baseUrl,
                 locale,
                 defaultLocale

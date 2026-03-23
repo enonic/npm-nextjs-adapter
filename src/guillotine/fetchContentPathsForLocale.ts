@@ -2,30 +2,29 @@ import type {ContentApiBaseBody, ContentPathItem, GuillotineResult, LocaleMappin
 
 
 import {GET_STATIC_PATHS_QUERY} from '../common/constants';
-import {getContentApiUrl} from '../utils/getContentApiUrl';
+import {API_URL} from '../common/env';
+import {getContentBranch} from '../utils/getContentBranch';
 import {fetchGuillotine} from './fetchGuillotine';
 
 
 export async function fetchContentPathsForLocale(
-    path: string,
-    config: LocaleMapping,
+    mapping: LocaleMapping,
     query: string = GET_STATIC_PATHS_QUERY,
     count = 999
 ): Promise<ContentPathItem[]> {
-    const decodedPath = decodeURIComponent(path);
-    const contentApiUrl = getContentApiUrl({
-        contentPath: decodedPath,
-        locale: config.locale
-    });
+    const contentApiUrl = API_URL;
     const body: ContentApiBaseBody = {
         query,
         variables: {
-            path: decodedPath,
-            pathRegex: `/content${config.site}/*`,
-            count
+            path: mapping.site,
+            pathRegex: `/content${mapping.site}/*`,
+            count,
+            project: mapping.project,
+            siteKey: mapping.site,
+            branch: getContentBranch()
         }
     };
-    return fetchGuillotine<ContentPathItem[]>(contentApiUrl, config, {body}).then((
+    return fetchGuillotine<ContentPathItem[]>(contentApiUrl, {body}).then((
         results: GuillotineResult
     ) => {
         return results.guillotine.queryDsl.reduce((
@@ -36,7 +35,7 @@ export async function fetchContentPathsForLocale(
             const contentPath = child._path.replace(regexp, '');
             prev.push({
                 contentPath: contentPath.split('/'),
-                locale: config.locale
+                locale: mapping.locale
             });
             return prev;
         }, []);

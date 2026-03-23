@@ -57,6 +57,60 @@ describe('guillotine', () => {
             expect(variables).toEqual({});
         });
 
+        it('should inject global params (but not other) that are used in query', () => {
+            const {
+                query,
+                variables
+            } = combineMultipleQueries([{
+                type: REGISTERED_PART,
+                component: PART_COMPONENT,
+                queryAndVariables: {
+                    query: 'query{guillotine(project:$project,siteKey:$siteKey){get(key:$path){x}}}',
+                }
+            }, {
+                type: REGISTERED_PART,
+                component: PART_COMPONENT,
+                queryAndVariables: {
+                    query: 'query($someVar:String){guillotine(branch:$branch,foo:$bar){x}}',
+                    variables: {
+                        bar: 'value3'
+                    }
+                }
+            }]);
+            expect(ws(query)).toEqual(
+                'query ($path:ID!, $siteKey:String, $project:String, $request1_someVar:String, $branch:String) { request0:guillotine(project:$project,siteKey:$siteKey){get(key:$path){x}} request1:guillotine(branch:$branch,foo:$bar){x} }');
+            expect(variables).toEqual({
+                request1_bar: 'value3'
+            });
+        });
+
+        it('should override global params if they are defined in the query', () => {
+            const {
+                query,
+                variables
+            } = combineMultipleQueries([{
+                type: REGISTERED_PART,
+                component: PART_COMPONENT,
+                queryAndVariables: {
+                    query: 'query{guillotine(project:$project){x}}',
+                }
+            }, {
+                type: REGISTERED_PART,
+                component: PART_COMPONENT,
+                queryAndVariables: {
+                    query: 'query($path:ID!){guillotine(branch:$branch){get(key:$path){x}}}',
+                    variables: {
+                        path: 'value3'
+                    }
+                }
+            }]);
+            expect(ws(query)).toEqual(
+                'query ($project:String, $request1_path:ID!, $branch:String) { request0:guillotine(project:$project){x} request1:guillotine(branch:$branch){get(key:$request1_path){x}} }');
+            expect(variables).toEqual({
+                request1_path: 'value3'
+            });
+        });
+
         it('should handle fragment and guillotine queries', () => {
             const {
                 query,
@@ -73,23 +127,24 @@ describe('guillotine', () => {
             },{
                 type: REGISTERED_PART,
                 component: PART_COMPONENT,
-                queryAndVariables: { 
-                    query: 'query{guillotine{x}}'
+                queryAndVariables: {
+                    query: 'query{guillotine(project:$project){x}}'
                 }
             },{
                 type: REGISTERED_PART,
                 component: PART_COMPONENT,
-                queryAndVariables: { 
-                    query: 'query(someVar:$key3){guillotine{x}}',
+                queryAndVariables: {
+                    query: 'query($someVar:String){guillotine(branch:$branch){x}}',
                     variables: {
-                        key3: 'value3'
+                        someVar: 'value3'
                     }
                 }
             }]);
-            expect(ws(query)).toEqual('query ($request2_omeVar:$key3) { request1:guillotine {x} request2:guillotine {x} } fragment x on y {z}');
+            expect(ws(query)).toEqual(
+                'query ($project:String, $request2_someVar:String, $branch:String) { request1:guillotine(project:$project){x} request2:guillotine(branch:$branch){x} } fragment x on y {z}');
             expect(variables).toEqual({
                 request0_key1: 'value1',
-                request2_key3: 'value3'
+                request2_someVar: 'value3'
             });
         });
     });

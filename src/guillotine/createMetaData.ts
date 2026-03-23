@@ -6,7 +6,9 @@ import {ComponentRegistry} from '../common/ComponentRegistry';
 
 
 export function createMetaData({
-                                   apiUrl,
+                                   project,
+                                   site,
+                                   branch,
                                    baseUrl,
                                    components = [], // Optional NOTE: Doesn't handle null
                                    contentPath,
@@ -19,7 +21,9 @@ export function createMetaData({
                                    requestedComponentPath,
     requestType
                                }: {
-    apiUrl: string
+    project: string
+    site: string
+    branch: string
     baseUrl: string
     components?: PageComponent[]
     contentPath: string
@@ -36,7 +40,9 @@ export function createMetaData({
     // Only adding some .meta attributes here on certain conditions
     // (instead of always adding them and letting them be visible as false/undefined etc)
     const meta: MetaData = {
-        apiUrl,
+        project,
+        site,
+        branch,
         baseUrl,
         canRender: false,
         catchAll: false, // catchAll only refers to content type catch-all
