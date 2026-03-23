@@ -1,12 +1,9 @@
 import type {ImageData, LinkData, MetaData} from '../types';
-
-
-import {RENDER_MODE} from './constants';
-import {fixDoubleSlashes} from '../utils/fixDoubleSlashes';
+import {RENDER_MODE, RENDER_MODE_HEADER, PROJECT_ID_HEADER, XP_BASE_URL_HEADER} from './constants';
+import {fixDoubleSlashes, stripOutsideSlashes} from '../utils/fixDoubleSlashes';
 import {addBasePath} from 'next/dist/client/add-base-path';
-import {parseUrl} from 'next/dist/shared/lib/router/utils/parse-url';
-import {getLocaleMappingByLocale} from '../utils/getLocaleMappingByLocale';
-
+import {API_URL} from './env';
+import {encryptParams} from '../utils/encryptParams';
 
 export class UrlProcessor {
 
@@ -18,48 +15,36 @@ export class UrlProcessor {
     public static LINK_ATTR = 'data-link-ref';
     public static MACRO_ATTR = 'data-macro-ref';
 
-    private static IMG_ATMT_REGEXP = /_\/image\/|_\/attachment\//;
-    private static endSlashPattern = /\/+$/;
-    private static startSlashPattern = /^\/+/;
-    private static localhostPattern = /localhost/;
+    private static IMG_ATMT_REGEXP = /_\/media:image|attachment\//;
 
     public static process(url: string, meta: MetaData, serverSide = false, isResource = false): string {
-        if (this.startsWithHash(url) || !meta || (this.isAttachmentUrl(url)) && meta.renderMode === RENDER_MODE.NEXT) {
+        if (this.startsWithHash(url) || this.isAbsolute(url) || !meta) {
             // do not process if:
             // - url starts with #
+            // - url is absolute
             // - meta is absent
-            // - attachment urls in NEXT mode
+            console.debug(`UrlProcessor [${meta?.renderMode}]: ${url} ==> same`);
             return url;
         }
 
-        let normalUrl: string;
-        if (this.isRelative(url)) {
-            const mapping = getLocaleMappingByLocale(meta.locale);
-            if (mapping.site?.length) {
-                // see if url starts with site name and remove it
-                const normalSite = mapping.site.replace(this.startSlashPattern, '').replace(this.endSlashPattern, '');
-                normalUrl = url.replace(new RegExp(`^/?${normalSite}(?=/|$)`), '');
-            } else {
-                normalUrl = url;
-            }
-        } else {
-            // url is absolute, try to make it relative by striping apiUrl
-            // NB: will fail to do so if content api is not on the same domain as enonic xp
-            const apiUrl = this.getApiUrl(meta);
-            normalUrl = this.stripApiUrl(url, apiUrl);
+        if (this.isAttachmentUrl(url)) {
+            // XP resource, add api url host and base url
+            const apiUrl = new URL(API_URL);
+            const result = `${apiUrl.origin}${url}`;
 
-            // if url is still absolute, return it as is
-            if (!this.isRelative(normalUrl)) {
-                return normalUrl;
-            }
+            console.debug(`UrlProcessor [${meta?.renderMode}]: ${url} ==> ${result}`);
+            return result;
         }
 
-        const baseUrl = meta?.baseUrl && meta?.baseUrl !== '/' ? meta.baseUrl : '';
-
         let result: string;
+        if (url == '' || url == '/') {
+            result = meta.site;
+        } else {
+            result = this.stripBaseUrl(url, meta);
+        }
+
+        // only add basePath and locale in next mode
         if (meta.renderMode === RENDER_MODE.NEXT) {
-            // only add basePath and locale in next mode
-            result = `/${normalUrl}`;
             if (!isResource && meta.locale !== meta.defaultLocale) {
                 // append locale if it's not the default one
                 // to avoid additional middleware redirection
@@ -68,20 +53,32 @@ export class UrlProcessor {
             }
             if (!serverSide) {
                 // no need for baseurl and basepath on server
-                result = addBasePath(`${baseUrl}${result}`);
+                result = addBasePath(result);
             }
-        } else {
-            result = `${baseUrl}/${normalUrl}`;
-        }
+        } else if (!isResource) {
+            // add xp blob for all links but next resources
+            const xpBlob = encryptParams({
+                [RENDER_MODE_HEADER]: meta.renderMode,
+                [PROJECT_ID_HEADER]: meta.project,
+                [XP_BASE_URL_HEADER]: meta.baseUrl
+            }, process.env.ENONIC_API_TOKEN);
 
-        return fixDoubleSlashes(result);
+            result += `${url.includes('?') ? '&' : '?'}xp=${xpBlob}`
+        }
+        result = fixDoubleSlashes(result);
+
+        console.debug(`UrlProcessor [${meta?.renderMode}]: ${url} ==> ${result}`);
+        return result;
     }
 
-    /*
-    * Deprecated
-    * */
-    public static setSiteKey(key: string): void {
-        // TODO: remove in next major release
+    private static stripBaseUrl(url: string, meta: MetaData) {
+        if (meta.baseUrl?.length) {
+            // see if url starts with site name and remove it
+            const normalBaseUrl = stripOutsideSlashes(meta.baseUrl).replaceAll('/', '\\/');
+            return url.replace(new RegExp(`^/?${normalBaseUrl}(?=/|$)`), `/${meta.site}`);
+        } else {
+            return url;
+        }
     }
 
     public static isMediaLink(ref: string, linkData: LinkData[]): boolean {
@@ -98,46 +95,17 @@ export class UrlProcessor {
         return srcset.split(/, */g).map(src => {
             const srcParts = src.trim().split(' ');
             switch (srcParts.length) {
-                case 1: // src only
-                    return this.process(src, meta);
-                case 2: // width descriptor
-                    return `${this.process(srcParts[0], meta)} ${srcParts[1]}`;
-                case 3: // pixel density descriptor
-                    return `${this.process(srcParts[0], meta)} ${srcParts[1]} ${srcParts[2]}`;
-                default:
-                    console.warn('Can not process image srcset: ' + src);
-                    return src;
+            case 1: // src only
+                return getAsset(src, meta);
+            case 2: // width descriptor
+                return `${getAsset(srcParts[0], meta)} ${srcParts[1]}`;
+            case 3: // pixel density descriptor
+                return `${getAsset(srcParts[0], meta)} ${srcParts[1]} ${srcParts[2]}`;
+            default:
+                console.warn('Can not process image srcset: ' + src);
+                return src;
             }
         }).join(', ');
-    }
-
-    private static stripApiUrl(url: string, apiUrl: string): string {
-        // normalise localhost-127.0.0.1 if present in urls
-        const normalUrl = parseUrl(url.replace(this.localhostPattern, '127.0.0.1'));
-        const normalApiUrl = parseUrl(apiUrl.replace(this.localhostPattern, '127.0.0.1'));
-
-        // WARNING! disregarding the protocol (http/https)
-
-        if (normalUrl.hostname !== normalApiUrl.hostname
-            || normalUrl.port !== normalApiUrl.port) {
-            // can't strip apiUrl if hostnames or ports are different
-            return url;
-        }
-
-        const urlPathCrumbs = normalUrl.pathname.split('/');
-        const apiUrlPathCrumbs = normalApiUrl.pathname.split('/');
-        for (let i = 0; i < Math.min(apiUrlPathCrumbs.length, urlPathCrumbs.length);) {
-            const urlPathCrumb = urlPathCrumbs[i];
-            const apiUrlPathCrumb = apiUrlPathCrumbs[i];
-            if (urlPathCrumb === apiUrlPathCrumb) {
-                urlPathCrumbs.shift();
-                apiUrlPathCrumbs.shift();
-            } else {
-                i++;
-            }
-        }
-
-        return `/${urlPathCrumbs.join('/')}` + normalUrl.search + normalUrl.hash;
     }
 
     private static isAttachmentUrl(url: string): boolean {
@@ -148,17 +116,8 @@ export class UrlProcessor {
         return url?.charAt(0) == '#';
     }
 
-    private static isRelative(url: string): boolean {
-        return !/^(?:ht|f)tps?:\/\/[^ :\r\n\t]+/.test(url);
-    }
-
-    private static getApiUrl(meta: MetaData) {
-        let combinedUrl = meta.apiUrl?.replace(this.endSlashPattern, '') || '';
-        const mapping = getLocaleMappingByLocale(meta.locale);
-        if (mapping.site?.length) {
-            combinedUrl += '/' + mapping.site.replace(this.startSlashPattern, '');
-        }
-        return combinedUrl;
+    private static isAbsolute(url: string): boolean {
+        return /^(?:ht|f)tps?:\/\/[^ :\r\n\t]+/.test(url);
     }
 }
 
