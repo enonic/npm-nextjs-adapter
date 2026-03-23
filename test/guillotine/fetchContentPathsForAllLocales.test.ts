@@ -82,11 +82,10 @@ describe('guillotine', () => {
     });
 
     describe('fetchContentPathsForAllLocales', () => {
-        it('works with just path', () => {
-            const path = '/HAS_NO_EFFECT_SINCE_RESPONSE_IS_MOCKED';
-            import('../../src/server').then((moduleName) => {
-                expect(moduleName.fetchContentPathsForAllLocales(path))
-                    .resolves.toEqual([{
+        it('works with just path', async () => {
+            const moduleName = await import('../../src/server');
+            await expect(moduleName.fetchContentPathsForAllLocales())
+                .resolves.toEqual([{
                     "contentPath": [""],
                     "locale": "en"
                 }, {
@@ -111,9 +110,8 @@ describe('guillotine', () => {
                     "contentPath": ["no-site", "no-leading-slash-test"],
                     "locale": "no"
                 }]);
-            });
         });
-        it('works with query and countPerLocale', () => {
+        it('works with query and countPerLocale', async () => {
             const query = `query ($count: Int) {
     guillotine {
         queryDsl(
@@ -134,19 +132,17 @@ describe('guillotine', () => {
         }
     }
 }`;
-            const path = '/HAS_NO_EFFECT_SINCE_RESPONSE_IS_MOCKED';
             const countPerLocale = 1;
-            import('../../src/server').then((moduleName) => {
-                expect(moduleName.fetchContentPathsForAllLocales(
-                    path, query, countPerLocale
-                )).resolves.toEqual([{
-                    "contentPath": [""],
-                    "locale": "en"
-                }, {
-                    "contentPath": [""],
-                    "locale": "no"
-                }]);
-            });
+            const moduleName = await import('../../src/server');
+            await expect(moduleName.fetchContentPathsForAllLocales(
+                query, countPerLocale
+            )).resolves.toEqual([{
+                "contentPath": [""],
+                "locale": "en"
+            }, {
+                "contentPath": [""],
+                "locale": "no"
+            }]);
         });
     });
 });

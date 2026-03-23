@@ -102,7 +102,14 @@ export interface QueryAndVariables {
     variables?: Record<string, any>
 }
 
-export type QueryGetter = (path: string, context?: Context, config?: any) => string;
+export interface GlobalVariables {
+    path: string;
+    siteKey: string;
+    branch: string;
+    project: string;
+}
+
+export type QueryGetter = (vars: GlobalVariables, context?: Context, config?: any) => string;
 
 export type SelectedQueryMaybeVariablesFunc =
     | string
@@ -123,9 +130,6 @@ export interface TextData {
 
 // TODO: also access as arguments: dataAsJson, pageAsJson, configAsJson from the first (meta) call here?
 //   Another option could be to let the component or page controller pass those values to NextJS by a header
-export type VariablesGetter = (path: string, context?: Context, config?: any) => VariablesGetterResult;
+export type VariablesGetter = (vars: GlobalVariables, context?: Context, config?: any) => VariablesGetterResult;
 
-export interface VariablesGetterResult {
-    [variables: string]: any
-    path: string
-}
+export type VariablesGetterResult = GlobalVariables & Record<string, any>;

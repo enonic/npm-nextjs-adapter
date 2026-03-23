@@ -6,12 +6,14 @@ export const ENONIC_API = 'http://localhost:8080/site';
 export const ENONIC_APP_NAME = 'com.enonic.app.enonic';
 export const ENONIC_APP_NAME_UNDERSCORED = ENONIC_APP_NAME.replace(/\./g, '_');
 export const ENONIC_MAPPINGS = 'en:project/site,no:prosjekt/nettsted';
+export const ENONIC_API_TOKEN = 'test-token';
 
 export function setupServerEnv(overrides: Record<string, string> = {}): void {
     jest.replaceProperty(process, 'env', {
         [ENV_VARS.API_URL]: ENONIC_API,
         [ENV_VARS.APP_NAME]: ENONIC_APP_NAME,
         [ENV_VARS.MAPPINGS]: ENONIC_MAPPINGS,
+        [ENV_VARS.API_TOKEN]: ENONIC_API_TOKEN,
         ...overrides
     });
 }
@@ -37,7 +39,9 @@ export const META: MetaData = {
     },
     canRender: true,
     catchAll: false,
-    apiUrl: 'http://localhost:8080/site/_/service/com.enonic.app.enonic/guillotine/query',
+    branch: 'draft',
+    project: 'project',
+    site: '/site',
     baseUrl: '/site/inline/enonic-homepage/draft',
     locale: 'no',
     defaultLocale: 'en'

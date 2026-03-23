@@ -21,7 +21,9 @@ describe('views', () => {
             renderMode: RENDER_MODE.NEXT,
             canRender: true,
             catchAll: false,
-            apiUrl: 'http://localhost:8080/site/api',
+            branch: 'master',
+            project: 'project',
+            site: '/site',
             baseUrl: '/base/url',
             locale: 'no',
             defaultLocale: 'en'
@@ -160,8 +162,8 @@ describe('views', () => {
 
             await waitFor(() => {
                 expect(rootEl.outerHTML).toEqual(`<div id="text-root">
-                    <p>Some text before <a href="/base/url/no/some/link">the link</a> and some text after.</p>
-                    <figure><a href="/base/url/no/some/image"><img alt="Some image" src="/base/url/no/some/image.jpg"></a><figcaption>Some caption</figcaption></figure>
+                    <p>Some text before <a href="/no/some/link">the link</a> and some text after.</p>
+                    <figure><a href="/no/some/image"><img alt="Some image" src="/no/some/image.jpg"></a><figcaption>Some caption</figcaption></figure>
                     <div><strong>Child content</strong> of the macro.</div>
                     </div>`);
             });

@@ -1,4 +1,4 @@
-import type {ComponentDescriptor, Context, PageComponent} from '../types';
+import type {ComponentDescriptor, Context, PageComponent, LocaleMapping} from '../types';
 
 
 import {ComponentRegistry} from '../common/ComponentRegistry';
@@ -11,11 +11,15 @@ import {getQueryAndVariables} from './getQueryAndVariables';
 
 export function collectComponentDescriptors({
     components,
-    xpContentPath,
+                                                contentPath,
+                                                branch,
+                                                mapping,
     context
 }: {
     components: PageComponent[]
-    xpContentPath: string
+    contentPath: string
+    branch: string
+    mapping: LocaleMapping
     context: Context
 }): ComponentDescriptor[] {
 
@@ -30,7 +34,7 @@ export function collectComponentDescriptors({
             if (cmpDef) {
                 // const partPath = `${xpContentPath}/_component${cmp.path}`;
                 const config = getComponentConfig(cmp);
-                const queryAndVariables = getQueryAndVariables(cmp.type, xpContentPath, context, cmpDef.query, config);
+                const queryAndVariables = getQueryAndVariables(cmp.type, contentPath, branch, mapping, context, cmpDef.query, config);
                 if (queryAndVariables) {
                     descriptors.push({
                         component: cmp,
@@ -43,7 +47,9 @@ export function collectComponentDescriptors({
             // look for parts inside fragments
             const fragPartDescs = collectComponentDescriptors({
                 components: cmp.fragment?.fragment?.components,
-                xpContentPath,
+                contentPath,
+                branch,
+                mapping,
                 context
             });
             if (fragPartDescs.length) {
