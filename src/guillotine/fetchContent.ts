@@ -2,7 +2,14 @@ import type {ComponentDescriptor, Context, FetchContentResult} from '../types';
 
 import {draftMode, headers} from 'next/headers';
 import {ComponentRegistry} from '../common/ComponentRegistry';
-import {PAGE_TEMPLATE_CONTENTTYPE_NAME, PAGE_TEMPLATE_FOLDER, RENDER_MODE, XP_COMPONENT_TYPE, XP_REQUEST_TYPE} from '../common/constants';
+import {
+    PAGE_TEMPLATE_CONTENTTYPE_NAME,
+    PAGE_TEMPLATE_FOLDER,
+    RENDER_MODE,
+    XP_COMPONENT_TYPE,
+    XP_REQUEST_TYPE,
+    RENDER_MODE_HEADER
+} from '../common/constants';
 import {APP_NAME, APP_NAME_DASHED, IS_DEV_MODE, API_URL} from '../common/env';
 import {getContentBranch} from '../utils/getContentBranch';
 import {getLocaleMapping} from '../utils/getLocaleMapping';
@@ -47,6 +54,8 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
         allHeaders.forEach((value, key) => {
             context.headers.set(key, value);
         });
+        // set render mode based on preview cookie.
+        context.headers.set(RENDER_MODE_HEADER, RENDER_MODE.EDIT);
     }
 
     const outHeaders = buildGuillotineRequestHeaders({

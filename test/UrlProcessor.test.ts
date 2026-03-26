@@ -191,10 +191,7 @@ describe('UrlProcessor', () => {
     describe('getUrl', () => {
         it("returns site root url when url is empty", () => {
             import('../src').then(({getUrl}) => {
-                const url = getUrl('', META);
-                const urlParts = url.split('?');
-                expect(urlParts[0]).toEqual('/site');
-                expect(urlParts[1]).toMatch(/^xp=.+$/);
+                expect(getUrl('', META)).toEqual('/no/site');
             });
         });
     });

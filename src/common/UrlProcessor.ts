@@ -1,9 +1,8 @@
 import type {ImageData, LinkData, MetaData} from '../types';
 import {RENDER_MODE} from './constants';
-import {fixDoubleSlashes, stripOutsideSlashes} from '../utils/fixDoubleSlashes';
+import {fixDoubleSlashes} from '../utils/fixDoubleSlashes';
 import {addBasePath} from 'next/dist/client/add-base-path';
 import {API_URL} from './env';
-import {encryptParams} from '../utils/encryptParams';
 
 export class UrlProcessor {
 
@@ -39,28 +38,19 @@ export class UrlProcessor {
 
         let result = this.normalizeBaseUrl(url, meta, isResource);
 
+        if (!isResource && meta.locale !== meta.defaultLocale) {
+            // append locale if it's not the default one
+            // to avoid additional middleware redirection
+            // NB: don't add locale to resource urls
+            result = `/${meta.locale}${result}`;
+        }
+
         // only add basePath and locale in next mode
         if (meta.renderMode === RENDER_MODE.NEXT) {
-            if (!isResource && meta.locale !== meta.defaultLocale) {
-                // append locale if it's not the default one
-                // to avoid additional middleware redirection
-                // NB: don't add locale to resource urls
-                result = `/${meta.locale}${result}`;
-            }
             if (!serverSide) {
                 // no need for baseurl and basepath on server
                 result = addBasePath(result);
             }
-        } else if (!isResource && process.env.ENONIC_API_TOKEN) {
-            // add xp blob for all links but next resources
-            // jsessionid should already be present in the cookies
-            const xpBlob = encryptParams({
-                xpRenderMode: meta.renderMode,
-                xpProject: meta.project,
-                xpBaseUrl: meta.baseUrl
-            }, process.env.ENONIC_API_TOKEN);
-
-            result += `${url.includes('?') ? '&' : '?'}xp=${xpBlob}`
         }
         result = fixDoubleSlashes(result);
 
@@ -74,19 +64,13 @@ export class UrlProcessor {
         }
 
         let result = url;
-        if (meta.baseUrl?.length && meta.baseUrl !== '/') {
-            // see if url starts with site name and remove it
-            const normalBaseUrl = stripOutsideSlashes(meta.baseUrl).replaceAll('/', '\\/');
-            result = url.replace(new RegExp(`^/?${normalBaseUrl}(?=/|$)`), '');
-        }
-
         if (result.charAt(0) !== '/') {
             result = '/' + result;
         }
         if (!result.startsWith(meta.site)) {
             result = `${meta.site}${result !== '/' ? result : ''}`;
         }
-        console.debug(`UrlProcessor.normalizeBaseUrl: ${url} ==> ${result}`);
+
         return result;
     }
 

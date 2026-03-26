@@ -113,6 +113,9 @@ describe('views', () => {
                 links: [{
                     ref: "link-ref-1",
                     uri: "/some/link",
+                    content: {
+                        _path: "/some/path/link",
+                    },
                     media: {
                         content: {
                             id: 'content-id-1'
@@ -162,7 +165,7 @@ describe('views', () => {
 
             await waitFor(() => {
                 expect(rootEl.outerHTML).toEqual(`<div id="text-root">
-                    <p>Some text before <a href="/no/site/some/link">the link</a> and some text after.</p>
+                    <p>Some text before <a href="/no/site/some/path/link">the link</a> and some text after.</p>
                     <figure><a href="/no/site/some/image"><img alt="Some image" src="/no/site/some/image.jpg"></a><figcaption>Some caption</figcaption></figure>
                     <div><strong>Child content</strong> of the macro.</div>
                     </div>`);
