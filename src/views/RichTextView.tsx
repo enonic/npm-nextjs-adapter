@@ -86,7 +86,7 @@ function MacroAdapter(props: MacroComponentParams<ExtraRichTextProps>) {
 }
 
 function LinkAdapter(props: LinkComponentParams<ExtraRichTextProps>) {
-    return <Link href={getUrl(props.href, props.nextMeta)}>{props.children}</Link>;
+    return <Link href={getUrl(props.content?._path || props.href, props.nextMeta)}>{props.children}</Link>;
 }
 
 function ImageAdapter(props: ImageComponentParams<ExtraRichTextProps>) {
