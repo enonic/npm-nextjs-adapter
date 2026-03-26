@@ -20,6 +20,7 @@ export const richTextQuery = (fieldName: string) => {
         ref
         uri
         content {
+            _path
             _id
         }
         media {
