@@ -80,9 +80,9 @@ function wrapData(data: RichTextData): ExtendedRichTextData {
 }
 
 function MacroAdapter(props: MacroComponentParams<ExtraRichTextProps>) {
-    const {children, component, data, common, meta, nextMeta, renderInEditMode} = props;
+    const {children, component, data, common, meta, nextMeta} = props;
 
-    return <BaseMacro data={data as Omit<MacroData, 'ref'>} meta={nextMeta} renderInEditMode={renderInEditMode}>{children}</BaseMacro>;
+    return <BaseMacro data={data as Omit<MacroData, 'ref'>} meta={nextMeta}>{children}</BaseMacro>;
 }
 
 function LinkAdapter(props: LinkComponentParams<ExtraRichTextProps>) {
