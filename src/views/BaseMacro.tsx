@@ -1,9 +1,7 @@
 import type {BaseMacroProps, MacroConfig} from '../types';
 
 import {ComponentRegistry} from '../common/ComponentRegistry';
-import {RENDER_MODE} from '../common/constants';
 import {sanitizeGraphqlName} from '../utils/sanitizeGraphqlName';
-import HTMLReactParser from 'html-react-parser';
 import {shouldShowMissingView, MissingComponent} from './BaseComponent';
 import React from 'react';
 
@@ -15,39 +13,12 @@ export const MACRO_EMBED = 'system:embed';
 
 
 const BaseMacro = (props: BaseMacroProps) => {
-    const {data, children, meta, renderInEditMode} = props;
+    const {data, children, meta} = props;
 
     let config = data.config?.[sanitizeGraphqlName(data.name)] ?? {};
     if (data.descriptor !== MACRO_DISABLE) {
         // do not do any processing for disable macro
         config = normalizeValue(config);
-    }
-
-    if (!renderInEditMode && meta?.renderMode === RENDER_MODE.EDIT) {
-        const attrs = formatAttributes(config);
-        if (config.body) {
-            // NB. config body takes precedence over children
-
-            // do not parse system macros (embed, disable) in edit mode
-            // but parse others because panel macros (for instance) wants its content to be html, not string
-            // TODO: should we make this behavior configurable ?
-            const bodyString = !data.descriptor.startsWith('system:') ? HTMLReactParser(config.body as string) : config.body;
-            return <>
-                {`[${data.name}${attrs}]`}
-                {bodyString}
-                {`[/${data.name}]`}
-            </>;
-        } else if (children) {
-            return <>
-                {`[${data.name}${attrs}]`}
-                {children}
-                {`[/${data.name}]`}
-            </>;
-        } else {
-            return <>
-                {`[${data.name}${attrs}/]`}
-            </>;
-        }
     }
 
     const macro = ComponentRegistry.getMacro(data.descriptor);
