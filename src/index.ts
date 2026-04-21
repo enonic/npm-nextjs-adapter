@@ -39,6 +39,5 @@ export {decryptParams} from './utils/decryptParams';
 
 export {
     UrlProcessor,
-    getAsset,
     getUrl
 } from './common/UrlProcessor';
