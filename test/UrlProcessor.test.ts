@@ -166,28 +166,6 @@ describe('UrlProcessor', () => {
         });
     });
 
-    describe('getAsset', () => {
-        it("returns XP asset url with api url host and without language prefix", () => {
-            import('../src').then(({getAsset}) => {
-                const url = '/_/media:image/image.jpg';
-                expect(getAsset(url, {
-                    ...META,
-                    renderMode: RENDER_MODE.NEXT
-                })).toEqual('http://localhost:8080/_/media:image/image.jpg');
-            });
-        });
-
-        it("returns relative next asset url without language prefix", () => {
-            import('../src').then(({getAsset}) => {
-                const url = '/images/image.jpg';
-                expect(getAsset(url, {
-                    ...META,
-                    renderMode: RENDER_MODE.NEXT
-                })).toEqual('/images/image.jpg');
-            });
-        });
-    });
-
     describe('getUrl', () => {
         it("returns site root url when url is empty", () => {
             import('../src').then(({getUrl}) => {
@@ -258,6 +236,26 @@ describe('UrlProcessor', () => {
                 import('../src').then(({UrlProcessor}) => {
                     expect(UrlProcessor.process(url, meta)).toEqual(expected);
                 });
+            });
+        });
+
+        it("returns XP asset url with api url host and without language prefix when isResource is true", () => {
+            import('../src').then(({UrlProcessor}) => {
+                const url = '/_/media:image/image.jpg';
+                expect(UrlProcessor.process(url, {
+                    ...META,
+                    renderMode: RENDER_MODE.NEXT
+                }, false, true)).toEqual('http://localhost:8080/_/media:image/image.jpg');
+            });
+        });
+
+        it("returns relative next asset url without language prefix when isResource is true", () => {
+            import('../src').then(({UrlProcessor}) => {
+                const url = '/images/image.jpg';
+                expect(UrlProcessor.process(url, {
+                    ...META,
+                    renderMode: RENDER_MODE.NEXT
+                }, false, true)).toEqual('/images/image.jpg');
             });
         });
     }); // process

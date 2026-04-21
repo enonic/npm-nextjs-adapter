@@ -89,11 +89,11 @@ export class UrlProcessor {
             const srcParts = src.trim().split(' ');
             switch (srcParts.length) {
             case 1: // src only
-                return getAsset(src, meta);
+                return UrlProcessor.process(src, meta, false, true);
             case 2: // width descriptor
-                return `${getAsset(srcParts[0], meta)} ${srcParts[1]}`;
+                return `${UrlProcessor.process(srcParts[0], meta, false, true)} ${srcParts[1]}`;
             case 3: // pixel density descriptor
-                return `${getAsset(srcParts[0], meta)} ${srcParts[1]} ${srcParts[2]}`;
+                return `${UrlProcessor.process(srcParts[0], meta, false, true)} ${srcParts[1]} ${srcParts[2]}`;
             default:
                 console.warn('Can not process image srcset: ' + src);
                 return src;
@@ -116,9 +116,5 @@ export class UrlProcessor {
 
 export function getUrl(url: string, meta: MetaData): string {
     return UrlProcessor.process(url, meta, false, false);
-}
-
-export function getAsset(url: string, meta: MetaData): string {
-    return UrlProcessor.process(url, meta, false, true);
 }
 
