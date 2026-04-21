@@ -19,7 +19,6 @@ import {LiteralUnion, TextComponent} from '@enonic-types/core';
 
 interface ExtraRichTextProps {
     nextMeta: MetaData;
-    renderInEditMode?: boolean;
 }
 
 const RichTextView = (props: RichTextViewProps) => {
@@ -36,21 +35,19 @@ const RichTextView = (props: RichTextViewProps) => {
         component={component}
         className={props.className}
         tag={props.tag}
-        replacer={wrapReplacer(props.customReplacer, props.meta, props.renderMacroInEditMode)}
-        renderInEditMode={props.renderMacroInEditMode ?? true}
+        replacer={wrapReplacer(props.customReplacer, props.meta)}
         Macro={MacroAdapter}
         Link={LinkAdapter}
         Image={ImageAdapter}
     />;
 };
 
-function wrapReplacer(nextReplacer: NextReplacer | undefined, meta: MetaData,
-    renderMacroInEditMode: boolean): ComponentsReplacer<ExtraRichTextProps> {
+function wrapReplacer(nextReplacer: NextReplacer | undefined, meta: MetaData): ComponentsReplacer<ExtraRichTextProps> {
     if (!nextReplacer) {
         return null;
     }
     return ({el, data}: { el: DOMNode, data: RichTextData, mode?: LiteralUnion<RequestMode> }) => {
-        return nextReplacer(el, data, meta, renderMacroInEditMode);
+        return nextReplacer(el, data, meta);
     };
 }
 
