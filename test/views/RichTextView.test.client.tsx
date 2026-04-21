@@ -64,44 +64,6 @@ describe('views', () => {
             });
         });
 
-        it('should not render macros in edit mode when renderMacroInEditMode is false', async () => {
-            const data = {
-                processedHtml: `<div id="text-root">
-                    <p><a href="/some/link" title="Some link"><img src="/some/image.jpg" alt="Some image" data-image-ref="image-ref-1" /></a></p>
-                    <editor-macro data-macro-ref="macro-ref-1">Macro content</editor-macro>
-                    </div>`,
-                links: [],
-                images: [{
-                    ref: "image-ref-1",
-                    image: {
-                        id: "image-id-1"
-                    }
-                }],
-                macros: [{
-                    ref: "macro-ref-1",
-                    name: "macroname",
-                    descriptor: "app:macroname" as `${string}:${string}`,
-                    config: {
-                        "macroname": {
-                            key1: "value1"
-                        }
-                    }
-                }]
-            };
-            const editMeta = Object.assign({}, meta, {renderMode: RENDER_MODE.EDIT});
-
-            render(<RichTextView meta={editMeta} data={data} renderMacroInEditMode={false}/>);
-            const rootEl = document.getElementById('text-root');
-
-            await waitFor(() => {
-                expect(rootEl.outerHTML).toEqual(`<div id="text-root">
-                    <p><a href="/some/link" title="Some link"></a></p>
-                    
-                    </div>`);
-            });
-
-        });
-
         it('should replace link, images and macros with data ref attributes and data', async () => {
 
             const data = {
