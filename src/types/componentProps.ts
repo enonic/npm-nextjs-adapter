@@ -33,7 +33,6 @@ export interface BaseMacroProps {
     children: ReactNode;
     data: Omit<MacroData, 'ref'>;
     meta: MetaData;
-    renderInEditMode?: boolean;
 }
 
 export interface BasePageProps {
@@ -129,8 +128,7 @@ export interface RegionsProps {
 export type Replacer = (
     domNode: DOMNode,
     data: RichTextData,
-    meta: MetaData,
-    renderMacroInEditMode: boolean
+    meta: MetaData
 ) => ReplacerResult;
 
 export type ReplacerResult = ReactElement | DOMNode;
@@ -140,6 +138,5 @@ export interface RichTextViewProps {
     meta: MetaData
     className?: string
     tag?: string
-    renderMacroInEditMode?: boolean
     customReplacer?: Replacer
 }

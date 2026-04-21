@@ -989,18 +989,18 @@ import StaticContent from '@enonic/nextjs-adapter/views/StaticContent';
 
 <br/>
 
-#### <a id="rich-text-view"></a>`<RichTextView className="css-class" tag="section" data={data} meta={meta}, renderMacroInEditMode="true", customReplacer={customReplacerFn}>`
+#### <a id="rich-text-view"></a>
+`<RichTextView className="css-class" tag="section" data={data} meta={meta} customReplacer={customReplacerFn}>`
 
 Tag for displaying contents of html area input types. Takes care of processing macros, URLs and images inside.
 
-| Argument                       | Type           | Description                                                                                       |
-|--------------------------------|----------------|---------------------------------------------------------------------------------------------------|
-| `data`                         | `RichTextData` | Rich text data                                                                                    |
-| `meta`                         | `MetaData`     | Runtime data returned by fetchContent method.                                                     |
-| `customReplacer`               | `Replacer`     | Function to do custom element processing. Not invoked for image, link and macro nodes. _Optional_ |
-| `className`                    | `String`       | Class name to add to the root html element. _Optional_                                            |
-| `renderMacroInEditMode = true` | `boolean`      | Flag passed to macros telling if they should render themselves in edit mode                       |
-| `tag = 'div'`                  | `String`       | Html tag to use as a root                                                                         |
+| Argument         | Type           | Description                                                                                       |
+|------------------|----------------|---------------------------------------------------------------------------------------------------|
+| `data`           | `RichTextData` | Rich text data                                                                                    |
+| `meta`           | `MetaData`     | Runtime data returned by fetchContent method.                                                     |
+| `customReplacer` | `Replacer`     | Function to do custom element processing. Not invoked for image, link and macro nodes. _Optional_ |
+| `className`      | `String`       | Class name to add to the root html element. _Optional_                                            |
+| `tag = 'div'`    | `String`       | Html tag to use as a root                                                                         |
 
 > **TIP!** There is a utility function [richTextQuery(fieldName)](#rich-text-query) generating part of the graphql query to
 > obtain `RichTextData` for html area input types.
@@ -1010,7 +1010,7 @@ Usage:
 ```tsx
 import RichTextView from '@enonic/nextjs-adapter/views/RichTextView';
 
-<RichTextView data={richTextData} meta={meta} tag="section" className="rich-text-view" renderMacroInEditMode="false"></RichTextView>
+<RichTextView data={richTextData} meta={meta} tag="section" className="rich-text-view"></RichTextView>
 ```
 
 <br/>

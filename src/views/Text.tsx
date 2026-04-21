@@ -13,7 +13,7 @@ interface Props {
 
 
 const DefaultTextView = ({component, meta, path}: Props) => (
-    <RichTextView data={component.value} meta={meta} renderMacroInEditMode={false}/>
+    <RichTextView data={component.value} meta={meta}/>
 );
 
 export default DefaultTextView;
