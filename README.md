@@ -339,29 +339,6 @@ const urlRelativeToViewer = getUrl('/some/content/url', meta);
 
 <br/>
 
-#### <a id="get-asset"></a>`getAsset(url: string, meta: MetaData) => string`
-
-Converts a local asset URL to relative one for current viewer (Next.js/Enonic XP). It doesn't append locales unlike the [getUrl()](#get-url).
-
-> **INFO:** For your URLs to work both in Enonic XP and Next.js you need to:
-> 1. Use relative URL to local asset
-> 2. Wrap them with `getAsset()` function in the views
-
-| Argument | Description                                             |
-|----------|---------------------------------------------------------|
-| `url`    | asset URL you want to transform                         |
-| `meta`   | Runtime data returned by [fetchContent](#fetch-content) |
-
-Usage:
-
-```tsx
-import {getAsset} from '@enonic/nextjs-adapter';
-
-const urlRelativeToViewer = getAsset('/some/asset/url', meta);
-```
-
-<br/>
-
 #### <a id="rich-text-query"></a>`richTextQuery(fieldName: string) => string`
 
 This is a utility function for querying for `RichTextData` needed for [RichTextView](#rich-text-view). It creates a graphql query string for
@@ -609,7 +586,7 @@ Helper singleton for processing URLs.
 Processes the absolute URL to become relative for the current viewer, while keeping in mind Next.js assets and Enonic XP binary content
 links
 
-> **NOTE:** There are convenience aliases to this function called [getUrl()](#get-url) and [getAsset()](#get-asset)
+> **NOTE:** There is a convenience alias to this function called [getUrl()](#get-url)
 
 | Argument     | Description                                                                  |
 |--------------|------------------------------------------------------------------------------|
