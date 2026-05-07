@@ -174,8 +174,11 @@ now take the EDIT branch instead of NEXT/LIVE.
 New public exports, safe to adopt incrementally:
 
 - `getContentBranch(context)` — resolves the XP branch for a request.
-- `encryptParams(value)` / `decryptParams(cipher)` — symmetric helpers for
-  encrypting URL params using the app's configured secret.
+- `encryptParams(params, secret)` / `decryptParams(blob, secret)` — symmetric
+  AES-256-GCM helpers for encrypting URL params. The caller supplies the
+  `secret` (typically `process.env.ENONIC_API_TOKEN`); it is hashed with
+  SHA-256 to derive the key, so any string length works. `decryptParams`
+  returns `null` for malformed, tampered, or wrong-secret inputs.
 
 ---
 

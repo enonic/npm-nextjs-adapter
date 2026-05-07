@@ -80,7 +80,10 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
         }
 
         // /////////////  FIRST GUILLOTINE CALL FOR METADATA     /////////////////
-        const metaResult = await fetchMetaData(contentApiUrl, `/${contentPathWithoutComponent}`, mapping, branch, outHeaders);
+        const metaPath = contentPathWithoutComponent.startsWith('/')
+                         ? contentPathWithoutComponent
+                         : `/${contentPathWithoutComponent}`;
+        const metaResult = await fetchMetaData(contentApiUrl, metaPath, mapping, branch, outHeaders);
         // ///////////////////////////////////////////////////////////////////////
 
         const {_id, _path, type} = metaResult.meta || {};
