@@ -27,7 +27,7 @@ import {fetchContent} from "@enonic/nextjs-adapter/server";
 import MainView from "@enonic/nextjs-adapter/views/MainView"
 
 // ...
-const props = await fetchContent(path, {
+const props = await fetchContent({
     contentPath: '/content/path',
     locale: 'en',
 });
@@ -44,13 +44,13 @@ They are available at `@enonic/nextjs-adapter/server`
 
 <br/>
 
-#### <a id="fetch-content"></a>`fetchContent(contentPath: string | string[], context: Context) => Promise<FetchContentResult>`
+#### <a id="fetch-content"></a>`fetchContent(context: Context) => Promise<FetchContentResult>`
 
 Fetches the content/component by path with component queries optimization, page structure as well as runtime info calculation. This is the
 main method for querying content.
 
-| Argument | Description       |
-|----------|-------------------|
+| Argument  | Description       |
+|-----------|-------------------|
 | `context` | Execution context |
 
 Usage:
@@ -85,27 +85,21 @@ type FetchContentResult = {
 
 <br/>
 
-#### <a id="fetch-guillotine"></a>`fetchGuillotine(apiUrl: string, mapping: LocaleMapping, options?: FetchOptions) => Promise<GuillotineResult>`
+#### <a id="fetch-guillotine"></a>`fetchGuillotine(contentApiUrl: string, options?: FetchOptions) => Promise<GuillotineResult>`
 
 Makes a custom request to Guillotine. Used by [fetchContent()](#fetch-content) method.
 
-| Argument  | Description                                       |
-|-----------|---------------------------------------------------|
-| `apiUrl`  | Guillotine API URL                                |
-| `mapping` | [Mapping](#locale-mapping-type) locale to project |
-| `options` | Request and Next.js config options _(Optional)_   |
+| Argument        | Description                                     |
+|-----------------|-------------------------------------------------|
+| `contentApiUrl` | Guillotine API URL                              |
+| `options`       | Request and Next.js config options _(Optional)_ |
 
 Usage:
 
 ```tsx
 import {fetchGuillotine} from '@enonic/nextjs-adapter/server';
-import {getLocaleMapping} from '@enonic/nextjs-adapter';
 
 const apiUrl = 'http://domain:8000/graphql/api';
-
-const mapping = getLocaleMapping({
-    contentPath: '/current/content/path',
-});
 
 const body = {
     query: 'qraphql query as string',
@@ -128,7 +122,7 @@ const opts = {
     }
 };
 
-const result = fetchGuillotine(apiUrl, mapping, opts);
+const result = fetchGuillotine(apiUrl, opts);
 ```
 
 Response type:
@@ -145,27 +139,21 @@ type GuillotineResult = {
 
 <br/>
 
-#### `fetchFromApi(apiUrl: string, mapping: LocaleMapping, options?: FetchOptions) => Promise<GuillotineResponseJson>`
+#### `fetchFromApi(apiUrl: string, options?: FetchOptions) => Promise<GuillotineResponseJson>`
 
 Makes custom third-party service request. Used by the [fetchGuillotine()](#fetch-guillotine) method.
 
-| Argument  | Description                                       |
-|-----------|---------------------------------------------------|
-| `apiUrl`  | Service API URL                                   |
-| `mapping` | [Mapping](#locale-mapping-type) locale to project |
-| `options` | Request and Next.js config options _(Optional)_   |
+| Argument  | Description                                     |
+|-----------|-------------------------------------------------|
+| `apiUrl`  | Service API URL                                 |
+| `options` | Request and Next.js config options _(Optional)_ |
 
 Usage:
 
 ```tsx
 import {fetchFromApi} from '@enonic/nextjs-adapter/server';
-import {getLocaleMapping} from '@enonic/nextjs-adapter';
 
 const apiUrl = 'http://domain:8000/graphql/api';
-
-const mapping = getLocaleMapping({
-    contentPath: '/current/content/path',
-});
 
 const body = {
     query: 'qraphql query as string',
@@ -188,22 +176,22 @@ const opts = {
     }
 };
 
-const result = fetchFromApi(apiUrl, mapping, opts);
+const result = fetchFromApi(apiUrl, opts);
 ```
 
 <br/>
 
-#### <a id="fetch-paths-for-all-locales"></a>`fetchContentPathsForAllLocales(path: string, query?: string, count?: number) => Promise<ContentPathItem[]>`
+#### <a id="fetch-paths-for-all-locales"></a>
+`fetchContentPathsForAllLocales(query?: string, countPerLocale?: number) => Promise<ContentPathItem[]>`
 
 Loads all content paths for all locales. Generally used for static site generation.
 
-| Argument | Description                                       |
-|----------|---------------------------------------------------|
-| `path`   | Root content path                                 |
-| `query`  | Request and Next.js config options _(Optional)_ * |
-| `count`  | Max result count _(Optional, defaults to 999)_    |
+| Argument         | Description                                               |
+|------------------|-----------------------------------------------------------|
+| `query`          | Custom GraphQL query _(Optional)_ *                       |
+| `countPerLocale` | Max result count per locale _(Optional, defaults to 999)_ |
 
-&ast; Default query gets up to `count` results, sorts them by `modifiedTime` and excludes following content types:
+&ast; Default query gets up to `countPerLocale` results, sorts them by `modifiedTime` and excludes following content types:
 
 ```
 "base:shortcut", 
@@ -218,22 +206,21 @@ Usage:
 ```tsx
 import {fetchContentPathsForAllLocales} from '@enonic/nextjs-adapter/server';
 
-const contentPaths = fetchContentPathsForLocale('/site-name', 'custom graphql query', 1001);
+const contentPaths = fetchContentPathsForAllLocales('custom graphql query', 1001);
 ```
 
 <br/>
 
-#### `fetchContentPathsForLocale(path: string, mapping: LocaleMapping, query?: string, count?: number) => Promise<ContentPathItem[]>`
+#### `fetchContentPathsForLocale(mapping: LocaleMapping, query?: string, count?: number) => Promise<ContentPathItem[]>`
 
 Loads all content paths for the current locale. Generally used for static site generation.
 Used by [fetchContentPathsForAllLocales()](#fetch-paths-for-all-locales)
 
-| Argument  | Description                                                                                         |
-|-----------|-----------------------------------------------------------------------------------------------------|
-| `path`    | Root content path                                                                                   |
-| `mapping` | [Mapping](#locale-mapping-type) locale to project                                                   |
-| `query`   | Request and Next.js config options _(Optional, [default value here](#fetch-paths-for-all-locales))_ |
-| `count`   | Max result count _(Optional, defaults to 999)_                                                      |
+| Argument  | Description                                                                           |
+|-----------|---------------------------------------------------------------------------------------|
+| `mapping` | [Mapping](#locale-mapping-type) locale to project                                     |
+| `query`   | Custom GraphQL query _(Optional, [default value here](#fetch-paths-for-all-locales))_ |
+| `count`   | Max result count _(Optional, defaults to 999)_                                        |
 
 Usage:
 
@@ -245,7 +232,7 @@ const mapping = getLocaleMapping({
     contentPath: '/current/content/path',
 });
 
-const contentPaths = fetchContentPathsForLocale('/', mapping, 'custom graphql query', 1001);
+const contentPaths = fetchContentPathsForLocale(mapping, 'custom graphql query', 1001);
 ```
 
 <br/>
@@ -368,7 +355,8 @@ const query = `query($path:ID!){
 
 #### `validateData(props: FetchContentResult) => void`
 
-Utility method to validate data returned by [fetchContent()](#fetch-content) method. Throws an error or notFound() if data is invalid. Also prevents shortcut content types from being rendered in preview/edit modes.
+Utility method to validate data returned by [fetchContent()](#fetch-content) method. Throws an error or calls Next.js `notFound()` if data
+is invalid. Also prevents shortcut content types from being rendered in preview/edit modes.
 
 | Argument | Description                 |
 |----------|-----------------------------|
@@ -380,12 +368,77 @@ Usage:
 import {fetchContent} from '@enonic/nextjs-adapter/server';
 import {validateData} from '@enonic/nextjs-adapter';
 
-const data = fetchContent({
+const data = await fetchContent({
     contentPath: '/path/to/content',
     locale: 'en',
 });
 
 validateData(data);
+```
+
+<br/>
+
+#### <a id="get-content-branch"></a>`getContentBranch(context?: Context) => string`
+
+Resolves the Enonic XP branch (`master` or `draft`) for the current request based on its render mode.
+Returns `master` for `LIVE` and `NEXT` render modes, and `draft` otherwise (e.g. `EDIT`, `PREVIEW`, `INLINE`).
+
+| Argument  | Description                   |
+|-----------|-------------------------------|
+| `context` | `Context` object _(Optional)_ |
+
+Usage:
+
+```tsx
+import {getContentBranch} from '@enonic/nextjs-adapter';
+
+const branch = getContentBranch({
+    contentPath: '/current/content/path',
+    locale: 'en',
+});
+```
+
+<br/>
+
+#### <a id="encrypt-params"></a>`encryptParams(params: Record<string, any>, secret: string) => string`
+
+Symmetrically encrypts a params object into a base64url string using AES-256-GCM. The `secret` is hashed with SHA-256
+to derive the key, so any string length works. Pair with [decryptParams()](#decrypt-params) to read the value back.
+
+| Argument | Description                                     |
+|----------|-------------------------------------------------|
+| `params` | Plain object to encrypt                         |
+| `secret` | Secret string used to derive the encryption key |
+
+Usage:
+
+```tsx
+import {encryptParams} from '@enonic/nextjs-adapter';
+
+const blob = encryptParams({userId: '123', role: 'editor'}, process.env.ENONIC_API_TOKEN);
+```
+
+<br/>
+
+#### <a id="decrypt-params"></a>`decryptParams(blob: string, secret: string) => Record<string, string> | null`
+
+Decrypts a base64url string produced by [encryptParams()](#encrypt-params). Returns `null` if the input is malformed,
+tampered with, or was encrypted with a different secret.
+
+| Argument | Description                                  |
+|----------|----------------------------------------------|
+| `blob`   | Base64url string produced by `encryptParams` |
+| `secret` | Same secret used during encryption           |
+
+Usage:
+
+```tsx
+import {decryptParams} from '@enonic/nextjs-adapter';
+
+const params = decryptParams(blob, process.env.ENONIC_API_TOKEN);
+if (params) {
+    // use params.userId, params.role, ...
+}
 ```
 
 <br/>
@@ -412,9 +465,12 @@ import {ComponentRegistry} from '@enonic/nextjs-adapter';
 
 const query = {
     query: 'graphql query',
-    variables: (path, context, config) => {
+    variables: ({path, siteKey, branch, project}, context, config) => {
         return {
-            path: path + '/some/processing'
+            path: path + '/some/processing',
+            siteKey,
+            branch,
+            project,
         };
     }
 }
@@ -431,6 +487,17 @@ Gets the common query definition.
 <a id="query-def"></a>Response type:
 
 ```tsx
+interface GlobalVariables {
+    path: string;
+    siteKey: string;
+    branch: string;
+    project: string;
+}
+
+type QueryGetter = (vars: GlobalVariables, context?: Context, config?: any) => string;
+
+type VariablesGetter = (vars: GlobalVariables, context?: Context, config?: any) => GlobalVariables & Record<string, any>;
+
 type SelectedQueryMaybeVariablesFunc =
     string |
     QueryGetter |
@@ -481,17 +548,17 @@ interface ComponentDefinition {
 
 <br/>
 
-#### `static addMacro(name: string, obj: ComponentDefinition): void`
+#### `static addMacro(name: string, obj: ComponentDefinitionParams): void`
 
-#### `static addPart(name: string, obj: ComponentDefinition): void`
+#### `static addPart(name: string, obj: ComponentDefinitionParams): void`
 
-#### `static addLayout(name: string, obj: ComponentDefinition): void`
+#### `static addLayout(name: string, obj: ComponentDefinitionParams): void`
 
-#### `static addCPage(name: string, obj: ComponentDefinition): void`
+#### `static addPage(name: string, obj: ComponentDefinitionParams): void`
 
-#### `static addContentType(name: string, obj: ComponentDefinition): void`
+#### `static addContentType(name: string, obj: ComponentDefinitionParams): void`
 
-#### `static addComponent(name: string, obj: ComponentDefinition): void`
+#### `static addComponent(name: string, obj: ComponentDefinitionParams): void`
 
 Saves the component definition in ComponentRegistry by name.
 
@@ -547,19 +614,19 @@ Response type: [component definition](#comp-def)
 
 <br/>
 
-#### `static getMacros(): ComponentDefinition[]`
+#### `static getMacros(): [string, ComponentDefinition][]`
 
-#### `static getParts(): ComponentDefinition[]`
+#### `static getParts(): [string, ComponentDefinition][]`
 
-#### `static getLayouts(): ComponentDefinition[]`
+#### `static getLayouts(): [string, ComponentDefinition][]`
 
-#### `static getPages(): ComponentDefinition[]`
+#### `static getPages(): [string, ComponentDefinition][]`
 
-#### `static getContentTypes(): ComponentDefinition[]`
+#### `static getContentTypes(): [string, ComponentDefinition][]`
 
-#### `static getComponents(): ComponentDefinition[]`
+#### `static getComponents(): [string, ComponentDefinition][]`
 
-Gets all component definitions stored in ComponentRegistry.
+Gets all component entries (`[name, definition]` tuples) stored in ComponentRegistry.
 
 > **NOTE:** Read [addComponent](#add-comp) note before using `getComponents`.
 
@@ -571,7 +638,7 @@ import {ComponentRegistry} from '@enonic/nextjs-adapter';
 const macros = ComponentRegistry.getMacros();
 ```
 
-Response type: List of [component definitions](#comp-def)
+Response type: list of `[name, ComponentDefinition]` tuples — see [component definition](#comp-def).
 
 <br/>
 
@@ -620,26 +687,6 @@ Usage:
 import {UrlProcessor} from '@enonic/nextjs-adapter';
 
 const url = UrlProcessor.processSrcSet('<srcset value>', meta);
-```
-
-<br/>
-
-#### `static setSiteKey(key: string): void`
-
-> **DEPRECATED:** It is automatically done by `nextjs-adapter` now and have no effect.
-
-Sets the site key value that is needed for correct absolute URL processing.
-
-| Argument | Description |
-|----------|-------------|
-| `key`    | Site key    |
-
-Usage:
-
-```tsx
-import {UrlProcessor} from '@enonic/nextjs-adapter';
-
-UrlProcessor.setSiteKey('<site key>');
 ```
 
 <br/>
@@ -761,7 +808,7 @@ const mapping = getLocaleMappingByLocale('en', true);
 
 <br/>
 
-#### `getRequestLocaleInfo(context: Context): LocaleMapping`
+#### `getRequestLocaleInfo(context: Context): LocaleInfo`
 
 Attempts to get the locale info from the request. Along with that it also returns the default locale and all configured locales.
 
@@ -880,9 +927,9 @@ There is also a number of utility constants and functions available at `@enonic/
 
 <br/>
 
-```tsx
-import {CATCH_ALL} from './constants';
+All of the following are exported from `@enonic/nextjs-adapter`:
 
+```tsx
 IS_DEV_MODE;                // True if current mode == development
 
 APP_NAME;                   // Name of the app defined in .env files
@@ -930,10 +977,9 @@ enum XP_COMPONENT_TYPE {    // Enum for XP component types
 
 // Sanitizes text according to graphql naming spec http://spec.graphql.org/October2021/#sec-Names
 const sanitizeGraphqlName = (text: string) => string;
-
-// Returns full content api URL with current project and branch appended
-const getContentApiUrl = (context: Context) => string;
 ```
+
+See also: [getContentBranch](#get-content-branch), [encryptParams](#encrypt-params), [decryptParams](#decrypt-params).
 
 ### Views
 
@@ -956,10 +1002,13 @@ Usage:
 
 ```tsx
 import MainView from '@enonic/nextjs-adapter/views/MainView';
-import fetchContent from '@enonic/nextjs-adapter';
+import {fetchContent} from '@enonic/nextjs-adapter/server';
 
 export async function getServerSideProps(context: Context) {
-    const props = fetchContent('/content/path', context);
+    const props = await fetchContent({
+        contentPath: '/content/path',
+        locale: 'en',
+    });
     return {
         props
     }
@@ -970,21 +1019,21 @@ export default MainView;
 
 <br/>
 
-#### `<StaticContent condition="true" tag="div">`
+#### `<StaticContent condition={true} element="div">`
 
 Tag for disabling client side hydration if the condition is true. This will remove interactivity from children.
 
 | Argument           | Type      | Description                        |
 |--------------------|-----------|------------------------------------|
 | `condition = true` | `Boolean` | Condition to trigger static output |
-| `tag = 'div'`      | `String`  | Html tag to use for static output  |
+| `element = 'div'`  | `String`  | Html tag to use for static output  |
 
 Usage:
 
 ```tsx
 import StaticContent from '@enonic/nextjs-adapter/views/StaticContent';
 
-<StaticContent condition={true} tag="div"> ...child elements... </StaticContent>
+<StaticContent condition={true} element="div"> ...child elements... </StaticContent>
 ```
 
 <br/>
@@ -1030,7 +1079,7 @@ All necessary data can be acquired by running [fetchContent()](#fetch-content)
 Usage:
 
 ```tsx
-import StaticContent from '@enonic/nextjs-adapter/views/StaticContent';
+import Regions from '@enonic/nextjs-adapter/views/Region';
 
-<StaticContent condition={true} tag="div"> ...child elements... </StaticContent>
+<Regions page={page} meta={meta} name="main" common={common}/>
 ```
