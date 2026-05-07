@@ -14,26 +14,21 @@ export class UrlProcessor {
     public static LINK_ATTR = 'data-link-ref';
     public static MACRO_ATTR = 'data-macro-ref';
 
-    private static IMG_ATMT_REGEXP = /_\/media:image|attachment\//;
+    private static IMG_ATMT_REGEXP = /\/_\/media:(image|attachment)\//;
 
     public static process(url: string, meta: MetaData, serverSide = false, isResource = false): string {
-        // console.debug(`UrlProcessor: renderMode=${meta?.renderMode}, serverSide=${serverSide}, isResource=${isResource}):`);
         if (this.startsWithHash(url) || this.isAbsolute(url) || !meta) {
             // do not process if:
             // - url starts with #
             // - url is absolute
             // - meta is absent
-            console.debug(`UrlProcessor [${meta?.renderMode}]: ${url} ==> same`);
             return url;
         }
 
         if (this.isAttachmentUrl(url)) {
             // XP resource, add api url host and base url
             const apiUrl = new URL(API_URL);
-            const result = `${apiUrl.origin}${url}`;
-
-            console.debug(`UrlProcessor [${meta?.renderMode}]: ${url} ==> ${result}`);
-            return result;
+            return `${apiUrl.origin}${url}`;
         }
 
         let result = this.normalizeBaseUrl(url, meta, isResource);
@@ -52,10 +47,7 @@ export class UrlProcessor {
                 result = addBasePath(result);
             }
         }
-        result = fixDoubleSlashes(result);
-
-        console.debug(`UrlProcessor [${meta?.renderMode}]: ${url} ==> ${result}`);
-        return result;
+        return fixDoubleSlashes(result);
     }
 
     private static normalizeBaseUrl(url: string, meta: MetaData, isResource: boolean) {

@@ -3,7 +3,7 @@ import {createHash, createDecipheriv} from 'crypto';
 const IV_LENGTH = 12;
 const TAG_LENGTH = 16;
 
-export function decryptParams(blob: string, secret: string): Record<string, string> | null {
+export function decryptParams(blob: string, secret: string): Record<string, any> | null {
     try {
         const key = createHash('sha256').update(secret).digest();
         const data = Buffer.from(blob, 'base64url');

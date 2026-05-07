@@ -420,7 +420,7 @@ const blob = encryptParams({userId: '123', role: 'editor'}, process.env.ENONIC_A
 
 <br/>
 
-#### <a id="decrypt-params"></a>`decryptParams(blob: string, secret: string) => Record<string, string> | null`
+#### <a id="decrypt-params"></a>`decryptParams(blob: string, secret: string) => Record<string, any> | null`
 
 Decrypts a base64url string produced by [encryptParams()](#encrypt-params). Returns `null` if the input is malformed,
 tampered with, or was encrypted with a different secret.
