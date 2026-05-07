@@ -53,9 +53,9 @@ function wrapReplacer(nextReplacer: NextReplacer | undefined, meta: MetaData): C
 
 function wrapData(data: RichTextData): ExtendedRichTextData {
     if (!data.macros || !data.macros.length) {
-        return data as ExtendedRichTextData;
+        return data;
     }
-    const macroComponents = data.macros.map(macroData => {
+    const macroComponents = data.macros.map((macroData): ComponentDataAndProps<MacroComponentData> => {
         return {
             component: {
                 type: 'macro',
@@ -68,7 +68,7 @@ function wrapData(data: RichTextData): ExtendedRichTextData {
                 descriptor: macroData.descriptor,
                 config: macroData.config || {}
             }
-        } as ComponentDataAndProps<MacroComponentData>;
+        };
     });
     return {
         ...data,
