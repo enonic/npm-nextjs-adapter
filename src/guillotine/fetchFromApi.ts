@@ -16,7 +16,7 @@ export async function fetchFromApi<Data = Record<string, unknown>>(
 
     let res: GuillotineResponse<Data>;
     try {
-        res = await fetch(apiUrl, opts as RequestInit);
+        res = await fetch(apiUrl, opts);
     } catch (e: any) {
         console.warn(apiUrl, e);
         throw new Error(JSON.stringify({
