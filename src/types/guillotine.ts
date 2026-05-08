@@ -147,7 +147,6 @@ interface Content {
     components?: Component[]
     attachments?: Attachment[]
     publish?: PublishInfo
-    pageUrl?: string
     site?: portal_Site
     parent?: Content
     children?: Content[]

@@ -147,7 +147,7 @@ describe('guillotine', () => {
                     get: {
                         data: {
                             target: {
-                                pageUrl: '/site/playground/2-column-test'
+                                _path: '/site/playground/2-column-test'
                             }
                         }
                     }
@@ -190,7 +190,7 @@ describe('guillotine', () => {
                     get: {
                         data: {
                             target: {
-                                pageUrl: '/site/redirect/page'
+                                _path: '/site/redirect/page'
                             },
                             parameters: [
                                 {
@@ -248,7 +248,7 @@ describe('guillotine', () => {
                     get: {
                         data: {
                             target: {
-                                pageUrl: '/site/playground/2-column-test'
+                                _path: '/site/playground/2-column-test'
                             }
                         }
                     }
@@ -291,7 +291,7 @@ describe('guillotine', () => {
                     get: {
                         data: {
                             target: {
-                                pageUrl: '/site/playground/2-column-test'
+                                _path: '/site/playground/2-column-test'
                             }
                         }
                     }
