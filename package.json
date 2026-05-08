@@ -102,7 +102,7 @@
     "url": "git+ssh://git@github.com:enonic/npm-nextjs-adapter.git"
   },
   "engines": {
-    "node": ">= 22.15.1",
+    "node": ">= 24.15.0",
     "npm": ">= 10.9.2"
   }
 }
