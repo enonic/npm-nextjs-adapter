@@ -10,16 +10,16 @@ import {UrlProcessor} from '../common/UrlProcessor';
 export function validateShortcut(props: FetchContentResult): void {
     const {data, meta, error} = props;
     const dataObj = data?.get?.data;
-    const pageUrl = dataObj?.target?.pageUrl;
+    const targetPath = dataObj?.target?._path;
     const parameters = dataObj?.parameters;
-    if (meta.type === 'base:shortcut' && pageUrl) {
+    if (meta.type === 'base:shortcut' && targetPath) {
         if (meta.renderMode !== RENDER_MODE.NEXT) {
             // do not show shortcut targets in preview/edit mode
             console.warn(404, `Shortcuts are not available in ${meta.renderMode} render mode`);
             notFound();
         }
 
-        let destination = UrlProcessor.process(pageUrl, meta, true);
+        let destination = UrlProcessor.process(targetPath, meta, true);
         if (parameters) {
             const searchParams = parameters.map(({name, value}) => `${encodeURIComponent(name)}=${encodeURIComponent(value)}`).join('&');
             destination += '?' + searchParams;

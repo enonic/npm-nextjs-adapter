@@ -4,7 +4,7 @@ export const getShortcutQuery = queryGuillotineWithPath(`get(key:$path) {
     ... on base_Shortcut {
       data {
         target {
-          pageUrl
+          _path
         }
         parameters {
           name
