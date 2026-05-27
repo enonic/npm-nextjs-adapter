@@ -18,7 +18,7 @@ export class UrlProcessor {
     public static LINK_ATTR = 'data-link-ref';
     public static MACRO_ATTR = 'data-macro-ref';
 
-    private static IMG_ATMT_REGEXP = /_\/image\/|_\/attachment\//;
+    private static IMG_ATMT_REGEXP = /\/_\/media:(image|attachment)\//;
     private static endSlashPattern = /\/+$/;
     private static startSlashPattern = /^\/+/;
     private static localhostPattern = /localhost/;
