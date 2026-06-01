@@ -169,7 +169,7 @@ describe('UrlProcessor', () => {
     describe('getUrl', () => {
         it("returns site root url when url is empty", () => {
             import('../src').then(({getUrl}) => {
-                expect(getUrl('', META)).toEqual('/no/site');
+                expect(getUrl('', META)).toEqual('/no/');
             });
         });
     });
@@ -211,7 +211,7 @@ describe('UrlProcessor', () => {
         }, {
             // language is added in next mode
             url: '/path',
-            expected: '/no/site/path',
+            expected: '/no/path',
             meta: {
                 ...META,
                 renderMode: RENDER_MODE.NEXT
@@ -219,7 +219,7 @@ describe('UrlProcessor', () => {
         }, {
             // double slashes are handled in next mode
             url: '//some//path/',
-            expected: '/no/site/some/path',
+            expected: '/no/some/path',
             meta: {
                 ...META,
                 renderMode: RENDER_MODE.NEXT

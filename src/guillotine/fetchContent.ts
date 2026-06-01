@@ -17,6 +17,7 @@ import {getRenderMode} from '../utils/getRenderMode';
 import {getXpBaseUrl} from '../utils/getXpBaseUrl';
 import {getRequestLocaleInfo} from '../utils/getRequestLocaleInfo';
 import {buildGuillotineRequestHeaders} from '../utils/buildGuillotineRequestHeaders';
+import {prependSitePath} from '../utils/prependSitePath';
 
 import {buildPage} from './buildPage';
 import {fetchMetaData} from './fetchMetaData';
@@ -80,9 +81,9 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
         }
 
         // /////////////  FIRST GUILLOTINE CALL FOR METADATA     /////////////////
-        const metaPath = contentPathWithoutComponent.startsWith('/')
-                         ? contentPathWithoutComponent
-                         : `/${contentPathWithoutComponent}`;
+        // Guillotine resolves content by its full path (incl. site name), but incoming paths are
+        // site-relative (the site name is stripped from urls upstream), so add it back for the query.
+        const metaPath = prependSitePath(contentPathWithoutComponent, mapping.site);
         const metaResult = await fetchMetaData(contentApiUrl, metaPath, mapping, branch, outHeaders);
         // ///////////////////////////////////////////////////////////////////////
 
