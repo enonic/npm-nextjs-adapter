@@ -59,8 +59,11 @@ export class UrlProcessor {
         if (result.charAt(0) !== '/') {
             result = '/' + result;
         }
-        if (!result.startsWith(meta.site)) {
-            result = `${meta.site}${result !== '/' ? result : ''}`;
+        // Drop the site-name prefix so urls are site-relative
+        // (e.g. /sitename/content/path -> /content/path)
+        if (meta.site && meta.site !== '/'
+            && (result === meta.site || result.startsWith(`${meta.site}/`))) {
+            result = result.substring(meta.site.length) || '/';
         }
 
         return result;
