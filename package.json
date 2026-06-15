@@ -63,7 +63,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
-    "@babel/preset-env": "^7.29.3",
+    "@babel/preset-env": "^7.29.7",
     "@edge-runtime/jest-environment": "^4.0.0",
     "@enonic-types/core": "^8.0.0-B4",
     "@enonic/eslint-config": "^2.3.0",
