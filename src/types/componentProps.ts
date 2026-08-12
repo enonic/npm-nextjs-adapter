@@ -11,7 +11,7 @@ import type {
     RichTextData,
     RegionTree
 } from './component';
-import type {ReactNode, ReactElement} from 'react';
+import type {ReactNode, ReactElement, ElementType} from 'react';
 
 
 export interface BaseComponentProps {
@@ -137,6 +137,6 @@ export interface RichTextViewProps {
     data: RichTextData
     meta: MetaData
     className?: string
-    tag?: string
+    tag?: ElementType
     customReplacer?: Replacer
 }
