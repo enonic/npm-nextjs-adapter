@@ -133,5 +133,39 @@ describe('views', () => {
                     </div>`);
             });
         });
+
+        describe('tag', () => {
+
+            const data = {
+                processedHtml: '<p>one</p><p>two</p>',
+                links: [],
+                macros: [],
+                images: []
+            };
+
+            it('should wrap the content in a section by default', async () => {
+                const {container} = render(<RichTextView meta={meta} data={data}/>);
+
+                await waitFor(() => {
+                    expect(container.innerHTML).toEqual('<section><p>one</p><p>two</p></section>');
+                });
+            });
+
+            it('should use the given intrinsic tag as the wrapper', async () => {
+                const {container} = render(<RichTextView meta={meta} data={data} tag="article" className="rich"/>);
+
+                await waitFor(() => {
+                    expect(container.innerHTML).toEqual('<article class="rich"><p>one</p><p>two</p></article>');
+                });
+            });
+
+            it('should render without a wrapping element when given a Fragment', async () => {
+                const {container} = render(<RichTextView meta={meta} data={data} tag={React.Fragment}/>);
+
+                await waitFor(() => {
+                    expect(container.innerHTML).toEqual('<p>one</p><p>two</p>');
+                });
+            });
+        });
     });
 });

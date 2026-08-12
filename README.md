@@ -1049,7 +1049,7 @@ Tag for displaying contents of html area input types. Takes care of processing m
 | `meta`           | `MetaData`     | Runtime data returned by fetchContent method.                                                     |
 | `customReplacer` | `Replacer`     | Function to do custom element processing. Not invoked for image, link and macro nodes. _Optional_ |
 | `className`      | `String`       | Class name to add to the root html element. _Optional_                                            |
-| `tag = 'div'`    | `String`       | Html tag to use as a root                                                                         |
+| `tag = 'section'` | `ElementType` | Element to use as a root. An html tag name, a component, or `Fragment` to render no root element at all. _Optional_ |
 
 > **TIP!** There is a utility function [richTextQuery(fieldName)](#rich-text-query) generating part of the graphql query to
 > obtain `RichTextData` for html area input types.
@@ -1060,6 +1060,16 @@ Usage:
 import RichTextView from '@enonic/nextjs-adapter/views/RichTextView';
 
 <RichTextView data={richTextData} meta={meta} tag="section" className="rich-text-view"></RichTextView>
+```
+
+To render the rich text without any wrapping element, pass `Fragment` as the tag. Note that `className` has
+nowhere to go in that case and is ignored, so apply styling to a surrounding element instead.
+
+```tsx
+import {Fragment} from 'react';
+import RichTextView from '@enonic/nextjs-adapter/views/RichTextView';
+
+<RichTextView data={richTextData} meta={meta} tag={Fragment}></RichTextView>
 ```
 
 <br/>
