@@ -1,8 +1,8 @@
-import type {PublishInfo} from '@enonic-types/core';
-import type {PageComponent, PageData} from './component';
-import type {MetaData} from './componentProps';
-import type {Context} from './next';
-import type {RecursivePartial} from './util';
+import type { PublishInfo } from '@enonic-types/core';
+import type { PageComponent, PageData } from './component';
+import type { MetaData } from './componentProps';
+import type { Context } from './next';
+import type { RecursivePartial } from './util';
 
 
 export interface GuillotineError {
@@ -289,9 +289,31 @@ interface Media {
 
 type MediaIntentType = 'download' | 'inline';
 
+interface AttachmentUrl {
+    url: string;
+    path: string;
+    queryString: string;
+    context: string;
+    id: string;
+    fingerprint: string;
+    name: string;
+    intent: MediaIntentType;
+}
+
+interface ImageUrl {
+    url: string;
+    path: string;
+    queryString: string;
+    context: string;
+    id: string;
+    fingerprint: string;
+    scale: string;
+    name: string;
+}
+
 interface media_Image extends Content {
-    mediaUrl: string
-    imageUrl: string
+    mediaUrl: AttachmentUrl;
+    imageUrl: ImageUrl;
     data: media_Image_Data
 }
 

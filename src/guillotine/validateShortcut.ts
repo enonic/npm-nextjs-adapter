@@ -1,16 +1,16 @@
-import type {FetchContentResult} from '../types';
+import type { FetchContentResult } from '../types';
 
 
-import {notFound, redirect, RedirectType} from 'next/navigation';
-import {RENDER_MODE} from '../common/constants';
-import {IS_DEV_MODE} from '../common/env';
-import {UrlProcessor} from '../common/UrlProcessor';
+import { notFound, redirect, RedirectType } from 'next/navigation';
+import { RENDER_MODE } from '../common/constants';
+import { IS_DEV_MODE } from '../common/env';
+import { UrlProcessor } from '../common/UrlProcessor';
 
 
 export function validateShortcut(props: FetchContentResult): void {
     const {data, meta, error} = props;
     const dataObj = data?.get?.data;
-    const targetPath = dataObj?.target?._path;
+    const targetPath = dataObj?.target?.pageUrl?.path;
     const parameters = dataObj?.parameters;
     if (meta.type === 'base:shortcut' && targetPath) {
         if (meta.renderMode !== RENDER_MODE.NEXT) {

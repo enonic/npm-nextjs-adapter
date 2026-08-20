@@ -1,10 +1,12 @@
-import {queryGuillotineWithPath} from '../guillotine/getMetaData';
+import { queryGuillotineWithPath } from '../guillotine/getMetaData';
 
 export const getShortcutQuery = queryGuillotineWithPath(`get(key:$path) {
     ... on base_Shortcut {
       data {
         target {
-          _path
+          pageUrl {
+            path
+          }
         }
         parameters {
           name

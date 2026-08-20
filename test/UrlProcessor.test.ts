@@ -1,8 +1,8 @@
-import type {ImageData, LinkData, MetaData} from '../src/types';
+import type { ImageData, LinkData, MetaData } from '../src/types';
 
-import {beforeAll, describe, expect, jest, test as it} from '@jest/globals';
-import {RENDER_MODE} from '../src/common/constants';
-import {setupServerEnv, META} from './constants';
+import { beforeAll, describe, expect, jest, test as it } from '@jest/globals';
+import { RENDER_MODE } from '../src/common/constants';
+import { setupServerEnv, META } from './constants';
 
 
 const warn = jest.fn();
@@ -167,9 +167,9 @@ describe('UrlProcessor', () => {
     });
 
     describe('getUrl', () => {
-        it("returns site root url when url is empty", () => {
+        it('returns locale root url when url is empty', () => {
             import('../src').then(({getUrl}) => {
-                expect(getUrl('', META)).toEqual('/no/');
+                expect(getUrl('', META)).toEqual('/no');
             });
         });
     });
@@ -193,17 +193,17 @@ describe('UrlProcessor', () => {
                 renderMode: RENDER_MODE.NEXT
             }
         }, {
-            // xp media urls are transformed to absolute
+            // xp media urls are treated as regular relative urls
             url: '/site/_/media:attachment/1234',
-            expected: 'http://localhost:8080/site/_/media:attachment/1234',
+            expected: '/no/site/_/media:attachment/1234',
             meta: {
                 ...META,
                 renderMode: RENDER_MODE.NEXT
             }
         }, {
-            // xp media urls are transformed to absolute
+            // xp media urls are treated as regular relative urls
             url: '/site/_/media:image/1234',
-            expected: 'http://localhost:8080/site/_/media:image/1234',
+            expected: '/no/site/_/media:image/1234',
             meta: {
                 ...META,
                 renderMode: RENDER_MODE.NEXT
@@ -239,13 +239,13 @@ describe('UrlProcessor', () => {
             });
         });
 
-        it("returns XP asset url with api url host and without language prefix when isResource is true", () => {
+        it('returns XP media url as-is without language prefix when isResource is true', () => {
             import('../src').then(({UrlProcessor}) => {
                 const url = '/_/media:image/image.jpg';
                 expect(UrlProcessor.process(url, {
                     ...META,
                     renderMode: RENDER_MODE.NEXT
-                }, false, true)).toEqual('http://localhost:8080/_/media:image/image.jpg');
+                }, false, true)).toEqual('/_/media:image/image.jpg');
             });
         });
 
@@ -270,14 +270,14 @@ describe('UrlProcessor', () => {
         it("works for srcset with a single src", () => {
             import('../src').then(({UrlProcessor}) => {
                 const srcset = '/_/media:image/elva-fairy-480w.jpg 480w 1x';
-                expect(UrlProcessor.processSrcSet(srcset, META)).toEqual('http://localhost:8080/_/media:image/elva-fairy-480w.jpg 480w 1x');
+                expect(UrlProcessor.processSrcSet(srcset, META)).toEqual('/_/media:image/elva-fairy-480w.jpg 480w 1x');
             });
         });
         it("works for srcset with a two srcs", () => {
             import('../src').then(({UrlProcessor}) => {
                 const srcset = '/_/media:attachment/elva-fairy-480w.jpg 480w 1x, /_/media:attachment/elva-fairy-800w.jpg 800w';
                 expect(UrlProcessor.processSrcSet(srcset, META)).toEqual(
-                    'http://localhost:8080/_/media:attachment/elva-fairy-480w.jpg 480w 1x, http://localhost:8080/_/media:attachment/elva-fairy-800w.jpg 800w');
+                    '/_/media:attachment/elva-fairy-480w.jpg 480w 1x, /_/media:attachment/elva-fairy-800w.jpg 800w');
             });
         });
         it("warns and returns srcset when it can't process the srcset", () => {
