@@ -1,10 +1,10 @@
-import type {FetchContentResult} from '../../src';
+import type { FetchContentResult } from '../../src';
 
 
-import {afterEach, beforeEach, describe, expect, jest, test as it} from '@jest/globals';
-import {setupServerEnv} from '../constants';
-import {RENDER_MODE, XP_COMPONENT_TYPE, XP_REQUEST_TYPE} from '../../src/common/constants';
-import {RedirectType} from 'next/navigation';
+import { afterEach, beforeEach, describe, expect, jest, test as it } from '@jest/globals';
+import { setupServerEnv } from '../constants';
+import { RENDER_MODE, XP_COMPONENT_TYPE, XP_REQUEST_TYPE } from '../../src/common/constants';
+import { RedirectType } from 'next/navigation';
 
 globalThis.console = {
     // error: console.error,
@@ -147,7 +147,9 @@ describe('guillotine', () => {
                     get: {
                         data: {
                             target: {
-                                _path: '/site/playground/2-column-test'
+                                pageUrl: {
+                                    path: '/playground/2-column-test',
+                                },
                             }
                         }
                     }
@@ -190,7 +192,9 @@ describe('guillotine', () => {
                     get: {
                         data: {
                             target: {
-                                _path: '/site/redirect/page'
+                                pageUrl: {
+                                    path: '/redirect/page',
+                                },
                             },
                             parameters: [
                                 {
@@ -248,7 +252,9 @@ describe('guillotine', () => {
                     get: {
                         data: {
                             target: {
-                                _path: '/site/playground/2-column-test'
+                                pageUrl: {
+                                    path: '/playground/2-column-test',
+                                },
                             }
                         }
                     }
@@ -291,7 +297,9 @@ describe('guillotine', () => {
                     get: {
                         data: {
                             target: {
-                                _path: '/site/playground/2-column-test'
+                                pageUrl: {
+                                    path: '/playground/2-column-test',
+                                },
                             }
                         }
                     }

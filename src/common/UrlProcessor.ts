@@ -1,8 +1,7 @@
-import type {ImageData, LinkData, MetaData} from '../types';
-import {RENDER_MODE} from './constants';
-import {fixDoubleSlashes} from '../utils/fixDoubleSlashes';
-import {addBasePath} from 'next/dist/client/add-base-path';
-import {API_URL} from './env';
+import type { ImageData, LinkData, MetaData } from '../types';
+import { RENDER_MODE } from './constants';
+import { fixDoubleSlashes } from '../utils/fixDoubleSlashes';
+import { addBasePath } from 'next/dist/client/add-base-path';
 
 export class UrlProcessor {
 
@@ -14,8 +13,6 @@ export class UrlProcessor {
     public static LINK_ATTR = 'data-link-ref';
     public static MACRO_ATTR = 'data-macro-ref';
 
-    private static IMG_ATMT_REGEXP = /\/_\/media:(image|attachment)\//;
-
     public static process(url: string, meta: MetaData, serverSide = false, isResource = false): string {
         if (this.startsWithHash(url) || this.isAbsolute(url) || !meta) {
             // do not process if:
@@ -25,19 +22,13 @@ export class UrlProcessor {
             return url;
         }
 
-        if (this.isAttachmentUrl(url)) {
-            // XP resource, add api url host and base url
-            const apiUrl = new URL(API_URL);
-            return `${apiUrl.origin}${url}`;
-        }
-
-        let result = this.normalizeBaseUrl(url, meta, isResource);
+        let result = url;
 
         if (!isResource && meta.locale !== meta.defaultLocale) {
             // append locale if it's not the default one
             // to avoid additional middleware redirection
             // NB: don't add locale to resource urls
-            result = `/${meta.locale}${result}`;
+            result = `/${meta.locale}${url}`;
         }
 
         // only add basePath and locale in next mode
@@ -48,25 +39,6 @@ export class UrlProcessor {
             }
         }
         return fixDoubleSlashes(result);
-    }
-
-    private static normalizeBaseUrl(url: string, meta: MetaData, isResource: boolean) {
-        if (isResource) {
-            return url;
-        }
-
-        let result = url;
-        if (result.charAt(0) !== '/') {
-            result = '/' + result;
-        }
-        // Drop the site-name prefix so urls are site-relative
-        // (e.g. /sitename/content/path -> /content/path)
-        if (meta.site && meta.site !== '/'
-            && (result === meta.site || result.startsWith(`${meta.site}/`))) {
-            result = result.substring(meta.site.length) || '/';
-        }
-
-        return result;
     }
 
     public static isMediaLink(ref: string, linkData: LinkData[]): boolean {
@@ -94,10 +66,6 @@ export class UrlProcessor {
                 return src;
             }
         }).join(', ');
-    }
-
-    private static isAttachmentUrl(url: string): boolean {
-        return this.IMG_ATMT_REGEXP.test(url);
     }
 
     private static startsWithHash(url: string): boolean {

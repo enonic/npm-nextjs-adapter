@@ -1,6 +1,6 @@
-import {ComponentRegistry} from '../../common/ComponentRegistry';
-import {configQuery} from './configQuery';
-import {indent} from '../../utils/indent';
+import { ComponentRegistry } from '../../common/ComponentRegistry';
+import { configQuery } from './configQuery';
+import { indent } from '../../utils/indent';
 
 
 const macroConfigQuery = (): string => {
@@ -8,7 +8,7 @@ const macroConfigQuery = (): string => {
 };
 
 export const richTextQuery = (fieldName: string) => {
-    return `${fieldName}(processHtml:{type:absolute, imageWidths:[400, 800, 1200], imageSizes:"(max-width: 400px) 400px, (max-width: 800px) 800px, 1200px"}) {
+    return `${fieldName}(processHtml:{imageWidths:[400, 800, 1200], imageSizes:"(max-width: 400px) 400px, (max-width: 800px) 800px, 1200px"}) {
     processedHtml
     macros {
         ref
@@ -27,7 +27,9 @@ export const richTextQuery = (fieldName: string) => {
             content {
                 _id
                 ... on media_Image {
-                    mediaUrl(type: absolute)
+                    mediaUrl {
+                        url
+                    }
                 }
             }
             intent
@@ -38,7 +40,9 @@ export const richTextQuery = (fieldName: string) => {
         image {
             _id
             ... on media_Image {
-                imageUrl(scale: "width(768)", type:absolute)
+                imageUrl(scale: "width(768)") {
+                    url
+                }
             }
         }
         style {
