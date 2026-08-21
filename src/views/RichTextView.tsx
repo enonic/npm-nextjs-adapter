@@ -1,9 +1,8 @@
-import type {MetaData, RichTextViewProps, Replacer as NextReplacer, RichTextData, MacroData} from '../types';
+import type { MetaData, PageUrl, RichTextViewProps, Replacer as NextReplacer, RichTextData, MacroData } from '../types';
 
-import {getUrl, UrlProcessor} from '../common/UrlProcessor';
 import BaseMacro from './BaseMacro';
 import Link from 'next/link';
-import {useMemo} from 'react';
+import { useMemo } from 'react';
 import type {
     MacroComponentParams,
     LinkComponentParams,
@@ -11,11 +10,11 @@ import type {
     Replacer as ComponentsReplacer,
     ExtendedRichTextData,
     ComponentDataAndProps,
-    MacroComponentData
+    MacroComponentData,
 } from '@enonic/react-components';
-import {RichText, RichTextMetaData} from '@enonic/react-components';
-import type {DOMNode} from 'html-react-parser';
-import {LiteralUnion, TextComponent} from '@enonic-types/core';
+import { RichText, RichTextMetaData } from '@enonic/react-components';
+import type { DOMNode } from 'html-react-parser';
+import { LiteralUnion, TextComponent } from '@enonic-types/core';
 
 interface ExtraRichTextProps {
     nextMeta: MetaData;
@@ -83,12 +82,12 @@ function MacroAdapter(props: MacroComponentParams<ExtraRichTextProps>) {
 }
 
 function LinkAdapter(props: LinkComponentParams<ExtraRichTextProps>) {
-    return <Link href={getUrl(props.content?._path || props.href, props.nextMeta)}>{props.children}</Link>;
+    const pageUrl = props.content?.pageUrl as unknown as PageUrl | undefined;
+    return <Link href={pageUrl?.path || props.href} data-content-path={props.content?._path}>{props.children}</Link>;
 }
 
 function ImageAdapter(props: ImageComponentParams<ExtraRichTextProps>) {
-    const srcSet = props.srcSet?.length ? UrlProcessor.processSrcSet(props.srcSet, props.nextMeta) : undefined;
-    return <img src={getUrl(props.src, props.nextMeta)} style={props.style} alt={props.alt} sizes={props.sizes} srcSet={srcSet}/>;
+    return <img src={props.src} style={props.style} alt={props.alt} sizes={props.sizes} srcSet={props.srcSet}/>;
 }
 
 function toRichTextMetaData(meta: MetaData): RichTextMetaData {

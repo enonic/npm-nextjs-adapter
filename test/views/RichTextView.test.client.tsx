@@ -1,11 +1,11 @@
-import {afterEach as afterEachTestInDescribe, describe, expect, jest, test as it, beforeAll} from '@jest/globals';
+import { afterEach as afterEachTestInDescribe, describe, expect, jest, test as it, beforeAll } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import {cleanup, render, waitFor} from '@testing-library/react'
-import * as React from 'react'
-import {XP_REQUEST_TYPE, RENDER_MODE} from '../../src/common/constants';
-import {setupClientEnv} from '../constants';
-import {ComponentRegistry} from '../../src/common/ComponentRegistry';
-import type {MacroProps} from '../../src/types';
+import { cleanup, render, waitFor } from '@testing-library/react';
+import * as React from 'react';
+import { XP_REQUEST_TYPE, RENDER_MODE } from '../../src/common/constants';
+import { setupClientEnv } from '../constants';
+import { ComponentRegistry } from '../../src/common/ComponentRegistry';
+import type { MacroProps } from '../../src/types';
 
 
 describe('views', () => {
@@ -76,7 +76,10 @@ describe('views', () => {
                     ref: "link-ref-1",
                     uri: "/some/link",
                     content: {
-                        _path: "/some/path/link",
+                        '_path': '/some/path/link',
+                        pageUrl: {
+                            path: '/path/link',
+                        },
                     },
                     media: {
                         content: {
@@ -127,8 +130,8 @@ describe('views', () => {
 
             await waitFor(() => {
                 expect(rootEl.outerHTML).toEqual(`<div id="text-root">
-                    <p>Some text before <a href="/no/some/path/link">the link</a> and some text after.</p>
-                    <figure><a href="/no/some/image"><img alt="Some image" src="/no/some/image.jpg"></a><figcaption>Some caption</figcaption></figure>
+                    <p>Some text before <a data-content-path="/some/path/link" href="/path/link">the link</a> and some text after.</p>
+                    <figure><a href="/some/image"><img alt="Some image" src="/some/image.jpg"></a><figcaption>Some caption</figcaption></figure>
                     <div><strong>Child content</strong> of the macro.</div>
                     </div>`);
             });

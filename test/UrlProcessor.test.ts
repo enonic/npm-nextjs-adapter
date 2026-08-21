@@ -167,9 +167,9 @@ describe('UrlProcessor', () => {
     });
 
     describe('getUrl', () => {
-        it('returns locale root url when url is empty', () => {
+        it('returns url unchanged when url is empty', () => {
             import('../src').then(({getUrl}) => {
-                expect(getUrl('', META)).toEqual('/no');
+                expect(getUrl('', META)).toEqual('');
             });
         });
     });
@@ -193,33 +193,33 @@ describe('UrlProcessor', () => {
                 renderMode: RENDER_MODE.NEXT
             }
         }, {
-            // xp media urls are treated as regular relative urls
+            // xp media urls are returned unchanged
             url: '/site/_/media:attachment/1234',
-            expected: '/no/site/_/media:attachment/1234',
+            expected: '/site/_/media:attachment/1234',
             meta: {
                 ...META,
                 renderMode: RENDER_MODE.NEXT
             }
         }, {
-            // xp media urls are treated as regular relative urls
+            // xp media urls are returned unchanged
             url: '/site/_/media:image/1234',
-            expected: '/no/site/_/media:image/1234',
+            expected: '/site/_/media:image/1234',
             meta: {
                 ...META,
                 renderMode: RENDER_MODE.NEXT
             }
         }, {
-            // language is added in next mode
+            // relative urls are returned unchanged in next mode
             url: '/path',
-            expected: '/no/path',
+            expected: '/path',
             meta: {
                 ...META,
                 renderMode: RENDER_MODE.NEXT
             }
         }, {
-            // double slashes are handled in next mode
+            // double slashes are returned unchanged in next mode
             url: '//some//path/',
-            expected: '/no/some/path',
+            expected: '//some//path/',
             meta: {
                 ...META,
                 renderMode: RENDER_MODE.NEXT
@@ -280,11 +280,11 @@ describe('UrlProcessor', () => {
                     '/_/media:attachment/elva-fairy-480w.jpg 480w 1x, /_/media:attachment/elva-fairy-800w.jpg 800w');
             });
         });
-        it("warns and returns srcset when it can't process the srcset", () => {
+        it('warns about deprecation and returns srcset unchanged', () => {
             import('../src').then(({UrlProcessor}) => {
                 const srcset = 'src width pixel notsupported';
                 expect(UrlProcessor.processSrcSet(srcset, META)).toEqual(srcset);
-                expect(warn).toHaveBeenCalledWith(`Can not process image srcset: ${srcset}`);
+                expect(warn).toHaveBeenCalledWith('processSrcSet() is deprecated. No need to process urls anymore!');
             });
         });
     }); // processSrcSet

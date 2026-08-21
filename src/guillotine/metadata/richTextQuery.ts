@@ -22,6 +22,9 @@ export const richTextQuery = (fieldName: string) => {
         content {
             _path
             _id
+            pageUrl {
+                path
+            }
         }
         media {
             content {

@@ -237,7 +237,7 @@ describe('guillotine', () => {
                 expect(redirect).not.toHaveBeenCalled();
                 moduleName.validateData(fetchContentResult);
                 expect(notFound).not.toHaveBeenCalled();
-                expect(redirect).toHaveBeenCalledWith("/no/redirect/page?intValue=1&boolValue=true&strValue=string",
+                expect(redirect).toHaveBeenCalledWith('/redirect/page?intValue=1&boolValue=true&strValue=string',
                     RedirectType.replace);
             });
         });

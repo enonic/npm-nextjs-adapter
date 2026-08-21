@@ -122,6 +122,12 @@ export interface Component {
 
 type ComponentType = 'page' | 'layout' | 'image' | 'part' | 'text' | 'fragment';
 
+export interface PageUrl {
+    url: string;
+    path: string;
+    queryString: string;
+}
+
 interface Content {
     _id: string // !
     _name: string // !
@@ -143,6 +149,7 @@ interface Content {
     x?: ExtraData
     xAsJson?: JSON
     pageAsJson?: JSON
+    pageUrl?: PageUrl;
     pageTemplate?: Content
     components?: Component[]
     attachments?: Attachment[]
