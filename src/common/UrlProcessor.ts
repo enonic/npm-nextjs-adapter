@@ -1,7 +1,4 @@
 import type { ImageData, LinkData, MetaData } from '../types';
-import { RENDER_MODE } from './constants';
-import { fixDoubleSlashes } from '../utils/fixDoubleSlashes';
-import { addBasePath } from 'next/dist/client/add-base-path';
 
 export class UrlProcessor {
 
@@ -13,32 +10,9 @@ export class UrlProcessor {
     public static LINK_ATTR = 'data-link-ref';
     public static MACRO_ATTR = 'data-macro-ref';
 
+    /** * @deprecated No need to process urls anymore! */
     public static process(url: string, meta: MetaData, serverSide = false, isResource = false): string {
-        if (this.startsWithHash(url) || this.isAbsolute(url) || !meta) {
-            // do not process if:
-            // - url starts with #
-            // - url is absolute
-            // - meta is absent
-            return url;
-        }
-
-        let result = url;
-
-        if (!isResource && meta.locale !== meta.defaultLocale) {
-            // append locale if it's not the default one
-            // to avoid additional middleware redirection
-            // NB: don't add locale to resource urls
-            result = `/${meta.locale}${url}`;
-        }
-
-        // only add basePath and locale in next mode
-        if (meta.renderMode === RENDER_MODE.NEXT) {
-            if (!serverSide) {
-                // no need for baseurl and basepath on server
-                result = addBasePath(result);
-            }
-        }
-        return fixDoubleSlashes(result);
+        return url;
     }
 
     public static isMediaLink(ref: string, linkData: LinkData[]): boolean {
@@ -51,33 +25,16 @@ export class UrlProcessor {
         return Array.isArray(imageData) && !!imageData.find(data => data.ref === ref)?.image;
     }
 
+    /** * @deprecated No need to process urls anymore! */
     public static processSrcSet(srcset: string, meta: MetaData): string {
-        return srcset.split(/, */g).map(src => {
-            const srcParts = src.trim().split(' ');
-            switch (srcParts.length) {
-            case 1: // src only
-                return UrlProcessor.process(src, meta, false, true);
-            case 2: // width descriptor
-                return `${UrlProcessor.process(srcParts[0], meta, false, true)} ${srcParts[1]}`;
-            case 3: // pixel density descriptor
-                return `${UrlProcessor.process(srcParts[0], meta, false, true)} ${srcParts[1]} ${srcParts[2]}`;
-            default:
-                console.warn('Can not process image srcset: ' + src);
-                return src;
-            }
-        }).join(', ');
-    }
-
-    private static startsWithHash(url: string): boolean {
-        return url?.charAt(0) == '#';
-    }
-
-    private static isAbsolute(url: string): boolean {
-        return /^(?:ht|f)tps?:\/\/[^ :\r\n\t]+/.test(url);
+        console.warn('processSrcSet() is deprecated. No need to process urls anymore!');
+        return srcset;
     }
 }
 
+/** * @deprecated No need to process urls anymore! */
 export function getUrl(url: string, meta: MetaData): string {
+    console.warn('getUrl() is deprecated. No need to process urls anymore!');
     return UrlProcessor.process(url, meta, false, false);
 }
 
