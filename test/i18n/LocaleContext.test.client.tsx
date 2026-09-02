@@ -1,9 +1,8 @@
-import {afterEach, beforeAll, describe, expect, jest, test as it} from '@jest/globals';
+import { afterEach, beforeAll, describe, expect, jest, test as it } from '@jest/globals';
 import '@testing-library/jest-dom/jest-globals';
-import {cleanup, render, screen, waitFor} from '@testing-library/react'
-import * as React from 'react'
-import {PHRASES_EN, PHRASES_NO} from './testData';
-import {setupClientEnv} from '../constants';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import * as React from 'react';
+import { PHRASES_EN, PHRASES_NO } from './testData';
 
 
 globalThis.console = {
@@ -43,8 +42,6 @@ describe('i18n', () => {
         jest.mock('@phrases/no.json', () => (PHRASES_NO), {
             virtual: true
         });
-
-        setupClientEnv();
     });
 
     afterEach(() => {

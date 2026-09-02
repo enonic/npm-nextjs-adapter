@@ -60,8 +60,8 @@ consumed by Next.js).
       assembled.
     - `UrlProcessor` — transforms URLs between Enonic XP and Next.js contexts, handling base paths, locales, and render modes.
     - `constants.ts` — enums (`RENDER_MODE`, `XP_COMPONENT_TYPE`, `XP_REQUEST_TYPE`), header names, and the static-paths GraphQL query.
-    - `env.ts` — reads required environment variables (`ENONIC_API`, `ENONIC_APP_NAME`, `ENONIC_MAPPINGS`) with server/client awareness (
-      `NEXT_PUBLIC_` prefix for client). Throws on missing values.
+  - `env.ts` — reads required environment variables (`ENONIC_API`, `ENONIC_APP_NAME`, `ENONIC_MAPPINGS`). They are server-side only:
+    validated (throws on missing values) only when `window` is undefined, and resolve to `undefined` in the browser.
 
 - **`guillotine/`** — Server-side data fetching pipeline (the largest module):
     - `fetchContent.ts` — the primary entry point. Performs a **two-phase Guillotine call**: first fetches metadata (content type,
@@ -100,8 +100,8 @@ consumed by Next.js).
   content + component data in a single request.
 - **Server/client boundary**: `src/client.ts` is marked with `'use client'` directive. Server-only code uses Next.js `headers()` and
   `draftMode()`.
-- **Environment variables** are required at module load time — `ENONIC_API`, `ENONIC_APP_NAME`, `ENONIC_MAPPINGS` must be set (prefixed with
-  `NEXT_PUBLIC_` for client-side access).
+- **Environment variables** are required at module load time on the server — `ENONIC_API`, `ENONIC_APP_NAME`, `ENONIC_MAPPINGS` must be set.
+  No `NEXT_PUBLIC_` variants are needed; client bundles never read these values.
 
 ### Peer Dependencies
 

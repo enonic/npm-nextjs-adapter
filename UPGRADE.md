@@ -179,6 +179,11 @@ New public exports, safe to adopt incrementally:
   `secret` (typically `process.env.ENONIC_API_TOKEN`); it is hashed with
   SHA-256 to derive the key, so any string length works. `decryptParams`
   returns `null` for malformed, tampered, or wrong-secret inputs.
+- `NEXT_PUBLIC_ENONIC_API`, `NEXT_PUBLIC_ENONIC_APP_NAME`,
+  `NEXT_PUBLIC_ENONIC_MAPPINGS` and `NEXT_PUBLIC_ENONIC_API_TOKEN` are no
+  longer read. `ENONIC_API`, `ENONIC_APP_NAME` and `ENONIC_MAPPINGS` are
+  validated on the server only and resolve to `undefined` in the browser, so
+  the `NEXT_PUBLIC_` mirrors can be removed from `.env`.
 
 ---
 
@@ -196,3 +201,4 @@ New public exports, safe to adopt incrementally:
    `(domNode, data, meta)` signature.
 7. Audit `meta.renderMode === 'edit'` branches — draft-mode requests will
    now hit them.
+8. Remove the `NEXT_PUBLIC_ENONIC_*` lines from `.env`.

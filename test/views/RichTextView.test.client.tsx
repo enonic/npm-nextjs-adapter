@@ -3,7 +3,6 @@ import '@testing-library/jest-dom/jest-globals';
 import { cleanup, render, waitFor } from '@testing-library/react';
 import * as React from 'react';
 import { XP_REQUEST_TYPE, RENDER_MODE } from '../../src/common/constants';
-import { setupClientEnv } from '../constants';
 import { ComponentRegistry } from '../../src/common/ComponentRegistry';
 import type { MacroProps } from '../../src/types';
 
@@ -30,7 +29,6 @@ describe('views', () => {
         };
 
         beforeAll(async () => {
-            setupClientEnv();
             await import('../../src/views/RichTextView').then((module) => {
                 RichTextView = module.default;
             });
