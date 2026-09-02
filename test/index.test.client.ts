@@ -1,5 +1,5 @@
-import {afterEach, describe, expect, jest, test as it} from '@jest/globals';
-import {ENONIC_APP_NAME, setupClientEnv, META} from './constants';
+import { afterEach, describe, expect, jest, test as it } from '@jest/globals';
+import { META } from './constants';
 
 
 globalThis.console = {
@@ -18,45 +18,19 @@ describe('index (CLIENT)', () => {
         jest.resetModules();
     });
 
-    it('returns process.env.NEXT_PUBLIC_ENONIC_APP_NAME (CLIENT)', () => {
+    it('does not require ENONIC_* env vars on the client (CLIENT)', async () => {
+        jest.replaceProperty(process, 'env', {});
 
-        setupClientEnv();
+        const { APP_NAME } = await import('../src');
 
-        import('../src').then((moduleName) => {
-            expect(moduleName.APP_NAME).toEqual(ENONIC_APP_NAME);
-        });
+        expect(APP_NAME).toBeUndefined();
     });
 
-    it('throws when process.env.NEXT_PUBLIC_ENONIC_APP_NAME is missing (CLIENT)', () => {
+    it('should process urls same way as on the server (CLIENT)', async () => {
+        const { UrlProcessor } = await import('../src');
 
-        setupClientEnv({
-            NEXT_PUBLIC_ENONIC_APP_NAME: undefined
-            });
-
-            expect(import('../src'))
-                .rejects.toThrow(Error("Environment variable 'NEXT_PUBLIC_ENONIC_APP_NAME' is missing (from .env?)"));
-        }
-    );
-
-    it('throws when process.env.NEXT_PUBLIC_ENONIC_API is missing (CLIENT)', () => {
-
-        setupClientEnv({
-            NEXT_PUBLIC_ENONIC_API: undefined
-        });
-
-            expect(import('../src'))
-                .rejects.toThrow(Error("Environment variable 'NEXT_PUBLIC_ENONIC_API' is missing (from .env?)"));
-        }
-    );
-
-    it('should process urls same way as on the server (CLIENT)', () => {
-
-            setupClientEnv();
-
-            import('../src').then(({UrlProcessor}) => {
-                // absolute urls are now returned as-is
-                expect(UrlProcessor.process('https://localhost:8080/some/test/url', META)).toEqual('https://localhost:8080/some/test/url');
-            });
-        }
-    );
+        // absolute urls are now returned as-is
+        expect(UrlProcessor.process('https://localhost:8080/some/test/url', META)).toEqual(
+            'https://localhost:8080/some/test/url');
+    });
 }); // describe index
