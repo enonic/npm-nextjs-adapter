@@ -1,7 +1,7 @@
-import { ComponentRegistry } from '../common/ComponentRegistry';
-import { configQuery } from './metadata/configQuery';
-import { richTextQuery } from './metadata/richTextQuery';
-import { indent } from '../utils/indent';
+import {ComponentRegistry} from '../common/ComponentRegistry';
+import {configQuery} from './metadata/configQuery';
+import {richTextQuery} from './metadata/richTextQuery';
+import {indent} from '../utils/indent';
 
 
 const partConfigQuery = (): string => {

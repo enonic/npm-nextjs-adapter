@@ -1,8 +1,8 @@
-import type { PublishInfo } from '@enonic-types/core';
-import type { PageComponent, PageData } from './component';
-import type { MetaData } from './componentProps';
-import type { Context } from './next';
-import type { RecursivePartial } from './util';
+import type {PublishInfo} from '@enonic-types/core';
+import type {PageComponent, PageData} from './component';
+import type {MetaData} from './componentProps';
+import type {Context} from './next';
+import type {RecursivePartial} from './util';
 
 
 export interface GuillotineError {

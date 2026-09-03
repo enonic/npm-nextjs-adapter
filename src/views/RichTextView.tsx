@@ -1,8 +1,8 @@
-import type { MetaData, PageUrl, RichTextViewProps, Replacer as NextReplacer, RichTextData, MacroData } from '../types';
+import type {MetaData, PageUrl, RichTextViewProps, Replacer as NextReplacer, RichTextData, MacroData} from '../types';
 
 import BaseMacro from './BaseMacro';
 import Link from 'next/link';
-import { useMemo } from 'react';
+import {useMemo} from 'react';
 import type {
     MacroComponentParams,
     LinkComponentParams,
@@ -10,11 +10,11 @@ import type {
     Replacer as ComponentsReplacer,
     ExtendedRichTextData,
     ComponentDataAndProps,
-    MacroComponentData,
+    MacroComponentData
 } from '@enonic/react-components';
-import { RichText, RichTextMetaData } from '@enonic/react-components';
-import type { DOMNode } from 'html-react-parser';
-import { LiteralUnion, TextComponent } from '@enonic-types/core';
+import {RichText, RichTextMetaData} from '@enonic/react-components';
+import type {DOMNode} from 'html-react-parser';
+import {LiteralUnion, TextComponent} from '@enonic-types/core';
 
 interface ExtraRichTextProps {
     nextMeta: MetaData;

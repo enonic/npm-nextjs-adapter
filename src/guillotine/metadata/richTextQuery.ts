@@ -1,6 +1,6 @@
-import { ComponentRegistry } from '../../common/ComponentRegistry';
-import { configQuery } from './configQuery';
-import { indent } from '../../utils/indent';
+import {ComponentRegistry} from '../../common/ComponentRegistry';
+import {configQuery} from './configQuery';
+import {indent} from '../../utils/indent';
 
 
 const macroConfigQuery = (): string => {

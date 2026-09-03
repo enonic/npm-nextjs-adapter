@@ -1,10 +1,10 @@
-import type { FetchContentResult } from '../types';
+import type {FetchContentResult} from '../types';
 
 
-import { notFound, redirect, RedirectType } from 'next/navigation';
-import { RENDER_MODE } from '../common/constants';
-import { IS_DEV_MODE } from '../common/env';
-import { UrlProcessor } from '../common/UrlProcessor';
+import {notFound, redirect, RedirectType} from 'next/navigation';
+import {RENDER_MODE} from '../common/constants';
+import {IS_DEV_MODE} from '../common/env';
+import {UrlProcessor} from '../common/UrlProcessor';
 
 
 export function validateShortcut(props: FetchContentResult): void {
