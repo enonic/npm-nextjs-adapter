@@ -1,4 +1,4 @@
-import type { ImageData, LinkData, MetaData } from '../types';
+import type {ImageData, LinkData, MetaData} from '../types';
 
 export class UrlProcessor {
 
