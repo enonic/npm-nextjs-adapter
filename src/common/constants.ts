@@ -77,6 +77,8 @@ export const RENDER_MODE_HEADER = 'content-studio-mode';
 export const SITE_CONTENTTYPE_NAME = 'portal:site';
 
 // URI parameter marking that a request is for a preview for CS. MUST MATCH THE VALUE OF 'FROM_XP_PARAM' on XP side.
+export const FROM_XP_PARAM = 'xp';
+
 export const XP_BASE_URL_HEADER = 'xpbaseurl';
 
 // TODO: Use these instead of hardcoded strings everywhere

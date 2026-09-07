@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    // ES2017+ keeps async/await native: Next.js requires literal async functions in 'use server' modules
+    "target": "ES2017",
     "lib": [
       // Compilation and tests could be split into server and client parts, but
       // since fetch and Headers exist both in Node 18+ and dom env, lets keep
@@ -46,7 +47,8 @@
   // tsconfig.json file.
   "include": [
     "src/views/**/*.ts*",
-    "src/utils/**/*.ts*"
+    "src/utils/**/*.ts*",
+    "src/types/*.d.ts"
   ],
 
   // Specifies an array of filenames or patterns that should be skipped when

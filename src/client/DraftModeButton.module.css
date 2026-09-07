@@ -1,0 +1,43 @@
+.button {
+    --draft-mode-bg: #000;
+    --draft-mode-bg-hover: #1a1a1a;
+    --draft-mode-border: #333;
+    --draft-mode-border-hover: #555;
+    --draft-mode-fg: #eee;
+    --draft-mode-fg-hover: #fff;
+
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 9999;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 14px;
+    border: 1px solid var(--draft-mode-border);
+    border-radius: 9999px;
+    background: var(--draft-mode-bg);
+    color: var(--draft-mode-fg);
+    font: 13px/1 system-ui, sans-serif;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+.button > * {
+    color: var(--draft-mode-fg);
+}
+
+.button:hover {
+    background: var(--draft-mode-bg-hover);
+    border-color: var(--draft-mode-border-hover);
+    color: var(--draft-mode-fg-hover);
+}
+
+.button:disabled {
+    cursor: wait;
+    opacity: 0.6;
+}
+
+.button:hover > * {
+    color: var(--draft-mode-fg-hover);
+}

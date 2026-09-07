@@ -41,7 +41,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cpy '**/*.module.css' ../dist --cwd=src",
     "clean": "del-cli dist/ enonic-nextjs-adapter-*.tgz",
     "check:types": "tsc --noEmit",
     "madge": "madge -i docs/madge.png -x '(constants|env)\\.ts' src/index.ts",

@@ -11,6 +11,7 @@ export {ComponentRegistry} from './common/ComponentRegistry';
 
 export {
     CATCH_ALL,
+    FROM_XP_PARAM,
     JSESSIONID_HEADER,
     PORTAL_COMPONENT_ATTRIBUTE,
     PORTAL_REGION_ATTRIBUTE,

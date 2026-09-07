@@ -638,7 +638,7 @@ import {ComponentRegistry} from '@enonic/nextjs-adapter';
 const macros = ComponentRegistry.getMacros();
 ```
 
-Response type: list of `[name, ComponentDefinition]` tuples — see [component definition](#comp-def).
+Response type: list of `[name, ComponentDefinition]` tuples â see [component definition](#comp-def).
 
 <br/>
 
@@ -1035,6 +1035,32 @@ import StaticContent from '@enonic/nextjs-adapter/views/StaticContent';
 
 <StaticContent condition={true} element="div"> ...child elements... </StaticContent>
 ```
+
+<br/>
+
+#### `<DraftModeIndicator label="Draft">`
+
+Floating badge in the bottom-right corner, styled like the Next.js dev indicator, for leaving Next.js draft mode. It renders only when `draftMode().isEnabled` is true, and hides itself inside iframes (i.e. in Content Studio). The label defaults to `Draft`, is followed by a `✕` glyph, and can be localized by the caller, e.g. with `I18n.localize()`. Clicking it runs a Server Action that calls `draftMode().disable()` and then reloads the page without the `xp` query parameter (the Content Studio preview marker, which would otherwise make the proxy re-enable draft mode), so content is served from the `master` branch again. The badge ships its own CSS module; its colors can be overridden through the `--draft-mode-*` custom properties set on the button.
+
+| Argument                    | Type                  | Description                                                              |
+|-----------------------------|-----------------------|--------------------------------------------------------------------------|
+| `label = 'Draft'`           | `String`              | Badge text, e.g. a localized phrase                                      |
+
+Usage:
+
+```tsx
+import {I18n, IS_DEV_MODE} from '@enonic/nextjs-adapter';
+import DraftModeIndicator from '@enonic/nextjs-adapter/views/DraftModeIndicator';
+
+// Root layout: render it conditionally (here: only under `next dev`) directly inside <body>,
+// not inside <StaticContent> (which disables hydration)
+<body>
+    {children}
+    {IS_DEV_MODE && <DraftModeIndicator label={I18n.localize('draft-mode')}/>}
+</body>
+```
+
+Requires `transpilePackages: ['@enonic/nextjs-adapter']` in `next.config.js` so that Next.js compiles the bundled Server Action.
 
 <br/>
 

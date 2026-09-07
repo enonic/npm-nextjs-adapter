@@ -15,6 +15,10 @@ const commonConfig = {
         'src/**/*.{ts,tsx}'
     ],
     injectGlobals: false,
+    moduleNameMapper: {
+        // next/jest maps CSS modules at the top level only, which project configs do not inherit
+        '^.+\\.module\\.(css|sass|scss)$': 'next/dist/build/jest/object-proxy.js'
+    },
     transformIgnorePatterns: ["/node_modules/(?!gqlmin)"],
     transform: {
         "^.+\\.tsx?$": [

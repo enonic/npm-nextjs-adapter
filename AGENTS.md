@@ -18,7 +18,7 @@ The library is published to npm with three entry points:
 ## Build, Test, and Lint Commands
 
 ```sh
-npm run build        # TypeScript compilation (tsc) to dist/
+npm run build        # TypeScript compilation (tsc) to dist/ + copies CSS modules
 npm test             # Jest tests with coverage (cleans coverage dir first)
 npm run lint         # ESLint (quiet mode, cached) on src/
 npm run lint:fix     # ESLint with auto-fix
@@ -51,7 +51,7 @@ The `gqlmin` package must be listed in `transformIgnorePatterns` exceptions sinc
 
 `tsconfig.json` explicitly lists four entry-point files (`src/index.ts`, `src/client.ts`, `src/server.ts`, `src/baseMappings.ts`) and
 includes `src/views/**` and `src/utils/**` via glob. Output goes to `dist/` with declarations and source maps. JSX is set to `"preserve"` (
-consumed by Next.js).
+consumed by Next.js). CSS modules under `src/` are copied into `dist/` by `cpy` after `tsc`.
 
 ### Source Layout (`src/`)
 
@@ -80,6 +80,7 @@ consumed by Next.js).
     - `Region` / `Regions` — renders page regions with their child components.
     - `RichTextView` — renders HTML area content with macro, image, and link processing.
     - `StaticContent` — disables client-side hydration for its children.
+    - `DraftModeIndicator` — floating button that exits Next.js draft mode; consumers gate it, e.g. `{IS_DEV_MODE && <DraftModeIndicator/>}` (server view + `client/DraftModeButton` + `server/disableDraftMode` Server Action).
     - `macros/` — default macro views (`DefaultMacro`, `DisableMacro`).
 
 - **`baseMappings.ts`** — registers default component definitions (base pages, parts, layouts, fragments, text, macros) in
@@ -98,7 +99,8 @@ consumed by Next.js).
   `.addLayout(...)`, etc. Consumer apps register their own components at import time, and `baseMappings.ts` registers the built-in defaults.
 - **Two-phase fetch in `fetchContent`**: metadata call discovers the content type and page structure, then a combined query fetches all
   content + component data in a single request.
-- **Server/client boundary**: `src/client.ts` is marked with `'use client'` directive. Server-only code uses Next.js `headers()` and
+- **Server/client boundary**: `src/client.ts` is marked with `'use client'` directive. `src/client/` holds
+  client components, `src/server/disableDraftMode.ts` is the only `'use server'` module (async exports only). Server-only code uses Next.js `headers()` and
   `draftMode()`.
 - **Environment variables** are required at module load time on the server — `ENONIC_API`, `ENONIC_APP_NAME`, `ENONIC_MAPPINGS` must be set.
   No `NEXT_PUBLIC_` variants are needed; client bundles never read these values.

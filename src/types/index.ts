@@ -60,3 +60,10 @@ export interface StaticContentProps extends Record<string, any> {
     element?: string;
     condition: boolean;
 }
+
+export interface DraftModeButtonProps {
+    action: () => Promise<void>;
+    label: string;
+}
+
+export type DraftModeIndicatorProps = Partial<Omit<DraftModeButtonProps, 'action'>>;
