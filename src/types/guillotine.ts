@@ -296,7 +296,7 @@ interface Media {
 
 type MediaIntentType = 'download' | 'inline';
 
-interface AttachmentUrl {
+export interface AttachmentUrl {
     url: string;
     path: string;
     queryString: string;
@@ -307,7 +307,7 @@ interface AttachmentUrl {
     intent: MediaIntentType;
 }
 
-interface ImageUrl {
+export interface ImageUrl {
     url: string;
     path: string;
     queryString: string;

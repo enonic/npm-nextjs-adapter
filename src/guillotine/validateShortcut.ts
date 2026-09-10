@@ -4,22 +4,21 @@ import type {FetchContentResult} from '../types';
 import {notFound, redirect, RedirectType} from 'next/navigation';
 import {RENDER_MODE} from '../common/constants';
 import {IS_DEV_MODE} from '../common/env';
-import {UrlProcessor} from '../common/UrlProcessor';
+import {pageUrl} from './urls';
 
 
 export function validateShortcut(props: FetchContentResult): void {
     const {data, meta, error} = props;
     const dataObj = data?.get?.data;
-    const targetPath = dataObj?.target?.pageUrl?.path;
     const parameters = dataObj?.parameters;
-    if (meta.type === 'base:shortcut' && targetPath) {
+    let destination = pageUrl(dataObj?.target?.pageUrl, meta);
+    if (meta.type === 'base:shortcut' && destination) {
         if (meta.renderMode !== RENDER_MODE.NEXT) {
             // do not show shortcut targets in preview/edit mode
             console.warn(404, `Shortcuts are not available in ${meta.renderMode} render mode`);
             notFound();
         }
 
-        let destination = UrlProcessor.process(targetPath, meta, true);
         if (parameters) {
             const searchParams = parameters.map(({name, value}) => `${encodeURIComponent(name)}=${encodeURIComponent(value)}`).join('&');
             destination += '?' + searchParams;

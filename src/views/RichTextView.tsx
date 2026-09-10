@@ -2,6 +2,8 @@ import type {MetaData, PageUrl, RichTextViewProps, Replacer as NextReplacer, Ric
 
 import BaseMacro from './BaseMacro';
 import Link from 'next/link';
+import {pageUrl} from '../guillotine/urls';
+import {getMediaSrcSet, getMediaUrl} from '../utils/getMediaUrl';
 import {useMemo} from 'react';
 import type {
     MacroComponentParams,
@@ -82,12 +84,17 @@ function MacroAdapter(props: MacroComponentParams<ExtraRichTextProps>) {
 }
 
 function LinkAdapter(props: LinkComponentParams<ExtraRichTextProps>) {
-    const pageUrl = props.content?.pageUrl as unknown as PageUrl | undefined;
-    return <Link href={pageUrl?.path || props.href} data-content-path={props.content?._path}>{props.children}</Link>;
+    const contentUrl = pageUrl(props.content?.pageUrl as unknown as PageUrl | undefined, props.nextMeta);
+    if (contentUrl) {
+        return <Link href={contentUrl} data-content-path={props.content?._path}>{props.children}</Link>;
+    }
+    // media and external links keep the href from processedHtml, media ones get the media base URL
+    return <a href={getMediaUrl(props.href)} target={props.target} title={props.title}>{props.children}</a>;
 }
 
 function ImageAdapter(props: ImageComponentParams<ExtraRichTextProps>) {
-    return <img src={props.src} style={props.style} alt={props.alt} sizes={props.sizes} srcSet={props.srcSet}/>;
+    const srcSet = props.srcSet && getMediaSrcSet(props.srcSet);
+    return <img src={getMediaUrl(props.src)} style={props.style} alt={props.alt} sizes={props.sizes} srcSet={srcSet}/>;
 }
 
 function toRichTextMetaData(meta: MetaData): RichTextMetaData {

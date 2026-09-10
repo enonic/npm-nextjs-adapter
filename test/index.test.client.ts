@@ -1,5 +1,4 @@
-import { afterEach, describe, expect, jest, test as it } from '@jest/globals';
-import { META } from './constants';
+import { beforeEach, describe, expect, jest, test as it } from '@jest/globals';
 
 
 globalThis.console = {
@@ -14,23 +13,29 @@ globalThis.console = {
 
 describe('index (CLIENT)', () => {
 
-    afterEach(() => {
+    beforeEach(() => {
         jest.resetModules();
+        jest.replaceProperty(process, 'env', {});
     });
 
     it('does not require ENONIC_* env vars on the client (CLIENT)', async () => {
-        jest.replaceProperty(process, 'env', {});
-
         const { APP_NAME } = await import('../src');
 
         expect(APP_NAME).toBeUndefined();
     });
 
-    it('should process urls same way as on the server (CLIENT)', async () => {
-        const { UrlProcessor } = await import('../src');
+    it('leaves media urls untouched on the client, where no media base is known (CLIENT)', async () => {
+        const { imageUrl } = await import('../src');
 
-        // absolute urls are now returned as-is
-        expect(UrlProcessor.process('https://localhost:8080/some/test/url', META)).toEqual(
-            'https://localhost:8080/some/test/url');
+        expect(imageUrl({
+            url: '/api/media:image/hmdb/id:fp/width-500/a.jpg',
+            path: '/media:image/hmdb/id:fp/width-500/a.jpg',
+            queryString: '',
+            context: 'hmdb',
+            id: 'id',
+            fingerprint: 'fp',
+            scale: 'width-500',
+            name: 'a.jpg'
+        })).toEqual('/media:image/hmdb/id:fp/width-500/a.jpg');
     });
 }); // describe index

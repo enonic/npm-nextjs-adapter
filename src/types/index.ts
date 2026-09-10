@@ -5,6 +5,7 @@ export type * from './componentProps';
 export type * from './guillotine';
 export type * from './i18n';
 export type * from './next';
+export type * from './urls';
 export type * from './util';
 
 

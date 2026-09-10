@@ -38,7 +38,6 @@ export {sanitizeGraphqlName} from './utils/sanitizeGraphqlName';
 export {encryptParams} from './utils/encryptParams';
 export {decryptParams} from './utils/decryptParams';
 
-export {
-    UrlProcessor,
-    getUrl
-} from './common/UrlProcessor';
+export {attachmentUrlQuery, imageUrlQuery, mediaUrlQuery, pageUrlQuery} from './guillotine/urlQueries';
+export {attachmentUrl, imageUrl, mediaUrl, pageUrl} from './guillotine/urls';
+export {localizeMappings} from './utils/localizeMappings';

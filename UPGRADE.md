@@ -36,8 +36,10 @@ All locales and branches share a single Guillotine endpoint.
 
 **Migration**
 
-Read `process.env.ENONIC_API` directly, or rely on `fetchContent` to route
-the request for you.
+Rely on `fetchContent` to route the request for you. If you need the endpoint
+yourself, it is `ENONIC_API` (the XP API root, e.g.
+`http://localhost:8080/api`) + `/` + `GUILLOTINE_API` (default
+`com.enonic.app.guillotine:graphql`).
 
 ---
 
@@ -65,8 +67,7 @@ without reaching into locale mappings.
 **Migration**
 
 Replace `meta.apiUrl` reads with the appropriate new field. `meta.site`
-holds the site path previously derived from the locale mapping and is what
-`UrlProcessor` uses for base-URL normalization.
+holds the site path previously derived from the locale mapping.
 
 ---
 
@@ -118,16 +119,26 @@ const getVars: VariablesGetter = (vars) => ({...vars, extra: 'x'});
 
 ---
 
-### 5. `UrlProcessor.setSiteKey` removed
+### 5. `UrlProcessor` and `getUrl` removed
 
 **Why**
 
-The site key is now carried on `meta.site` per-request, so a global setter is no longer needed.
+Guillotine 9 returns URL objects (`{url, path, queryString, ...}`) instead
+of strings, so URLs are built from their parts: media URLs from
+`ENONIC_MEDIA_CDN` (default `ENONIC_API`) + `path`, page URLs from the
+locale (omitted for the default locale) + site-relative `path`.
 
 **Migration**
 
-Remove all `UrlProcessor.setSiteKey(...)` calls. The site key comes from
-`meta.site`.
+Query URL fields with `imageUrlQuery(args)`, `mediaUrlQuery()`,
+`attachmentUrlQuery()` and `pageUrlQuery()` (they select every field), and
+render the results with `imageUrl(data)`, `mediaUrl(data)`,
+`attachmentUrl(data)` and `pageUrl(data, meta)`; they only need `path`
+(`queryString` is optional). `RichTextView` rewrites `processedHtml` URLs itself. In
+`/api/mappings`, return
+`localizeMappings(mappings, localeMapping)` so targets of non-default locales carry the prefix.
+Remove `UrlProcessor.setSiteKey(...)`, `UrlProcessor.process(...)` and
+`getUrl(...)` calls.
 
 ---
 
@@ -184,18 +195,21 @@ New public exports, safe to adopt incrementally:
   longer read. `ENONIC_API`, `ENONIC_APP_NAME` and `ENONIC_MAPPINGS` are
   validated on the server only and resolve to `undefined` in the browser, so
   the `NEXT_PUBLIC_` mirrors can be removed from `.env`.
+- `ENONIC_API` now holds the XP API root instead of the Guillotine endpoint;
+  the optional `GUILLOTINE_API` and `ENONIC_MEDIA_CDN` complete it.
 
 ---
 
 ## Suggested upgrade checklist
 
 1. Replace `getAsset(url, meta)` with the plain `url`.
-2. Replace `getContentApiUrl(...)` with reads of `process.env.ENONIC_API`.
+2. Remove `getContentApiUrl(...)`; point `ENONIC_API` at the XP API root.
 3. Replace `meta.apiUrl` with `meta.project` / `meta.site` / `meta.branch`.
 4. Update every registered `QueryGetter` / `VariablesGetter` / common query
    to destructure `{path, siteKey, branch, project}`; returned variables
    must include the full `GlobalVariables` shape.
-5. Remove any `UrlProcessor.setSiteKey(...)` calls.
+5. Replace `UrlProcessor` / `getUrl` usage with the `*UrlQuery()` / `*Url()`
+   pairs and add `localizeMappings()` to `/api/mappings`.
 6. Remove `renderInEditMode` on `BaseMacro` and `renderMacroInEditMode` on
    `RichTextView`; update custom `Replacer` functions to the new
    `(domNode, data, meta)` signature.

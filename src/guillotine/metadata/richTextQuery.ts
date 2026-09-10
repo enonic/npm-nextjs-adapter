@@ -1,6 +1,7 @@
 import {ComponentRegistry} from '../../common/ComponentRegistry';
 import {configQuery} from './configQuery';
 import {indent} from '../../utils/indent';
+import {imageUrlQuery, mediaUrlQuery, pageUrlQuery} from '../urlQueries';
 
 
 const macroConfigQuery = (): string => {
@@ -22,17 +23,13 @@ export const richTextQuery = (fieldName: string) => {
         content {
             _path
             _id
-            pageUrl {
-                path
-            }
+            ${pageUrlQuery()}
         }
         media {
             content {
                 _id
                 ... on media_Image {
-                    mediaUrl {
-                        url
-                    }
+                    ${mediaUrlQuery()}
                 }
             }
             intent
@@ -43,9 +40,7 @@ export const richTextQuery = (fieldName: string) => {
         image {
             _id
             ... on media_Image {
-                imageUrl(scale: "width(768)") {
-                    url
-                }
+                ${imageUrlQuery({scale: 'width(768)'})}
             }
         }
         style {

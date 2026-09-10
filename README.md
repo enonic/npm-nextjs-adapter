@@ -303,26 +303,50 @@ They are available at `@enonic/nextjs-adapter`
 
 <br/>
 
-#### <a id="get-url"></a>`getUrl(url: string, meta: MetaData) => string`
+#### <a id="url-helpers"></a>Guillotine URL helpers
 
-Converts a site-relative or absolute URL to relative one for current viewer (Next.js/Enonic XP). Also takes care of locale if needed.
+Every Guillotine `*Url` field comes with two functions: `*UrlQuery(args)` builds the GraphQL selection for the field, and `*Url(result)`
+turns the returned object into the final URL string.
 
-> **INFO:** For your URLs to work both in Enonic XP and Next.js you need to:
-> 1. Query site-relative or absolute URLs from guillotine
-> 2. Wrap them with `getUrl()` function in the views
+| Field           | Query builder                             | String function       |
+|-----------------|-------------------------------------------|-----------------------|
+| `imageUrl`      | `imageUrlQuery(args: ImageUrlArgs)`       | `imageUrl(data)`      |
+| `mediaUrl`      | `mediaUrlQuery(args?: MediaUrlArgs)`      | `mediaUrl(data)`      |
+| `attachmentUrl` | `attachmentUrlQuery(args?: MediaUrlArgs)` | `attachmentUrl(data)` |
+| `pageUrl`       | `pageUrlQuery(args?: PageUrlArgs)`        | `pageUrl(data, meta)` |
 
-| Argument | Description                                             |
-|----------|---------------------------------------------------------|
-| `url`    | URL you want to transform                               |
-| `meta`   | Runtime data returned by [fetchContent](#fetch-content) |
+The query builders accept the same arguments as the Guillotine field (`scale`, `quality`, `background`, `format`, `filter`, `params` for
+`imageUrl`; `download`, `params` for `mediaUrl`/`attachmentUrl`; `params` for `pageUrl`) and select every field of the returned object:
+`url`, `path`, `queryString`, `context`, `id`, `fingerprint`, `name`, plus `scale` for images and `intent` for media and attachments
+(`pageUrl` has `url`, `path` and `queryString`).
+Media functions return absolute URLs pointing at the XP media API (`ENONIC_MEDIA_CDN`, defaulting to `ENONIC_API`). `pageUrl` returns a
+relative path for the Next.js router, prefixed with the locale unless it is the default locale (`meta.locale` vs `meta.defaultLocale`);
+`meta` is the runtime data returned by [fetchContent](#fetch-content). Pass `{locale}` alone to always prefix, e.g. for `revalidatePath`.
+The string functions take that object (`ImageUrl`, `AttachmentUrl` or `PageUrl` from the adapter types) and return `undefined` when given `undefined`;
+All four append `queryString` to `path` and need only `path` (`queryString` is optional), so links without a Guillotine object can
+pass a bare `{path}`, e.g. `pageUrl({path: '/'}, meta)` for the site root.
 
 Usage:
 
 ```tsx
-import {getUrl} from '@enonic/nextjs-adapter';
+import {imageUrlQuery, pageUrlQuery, imageUrl, pageUrl} from '@enonic/nextjs-adapter';
 
-const urlRelativeToViewer = getUrl('/some/content/url', meta);
+const query = `
+  photos {
+    ... on media_Image {
+      ${imageUrlQuery({scale: 'width(500)'})}
+    }
+  }
+  parent {
+    ${pageUrlQuery()}
+  }`;
+
+<img src={imageUrl(photo.imageUrl)}/>
+<Link href={pageUrl(parent.pageUrl, meta)}>Back</Link>
 ```
+
+`localizeMappings(mappings: UrlMappingRule[], mapping: LocaleMapping) => UrlMappingRule[]` prefixes `/api/mappings` targets with the
+mapping's locale unless it is the default one, leaving sources untouched.
 
 <br/>
 
@@ -639,97 +663,6 @@ const macros = ComponentRegistry.getMacros();
 ```
 
 Response type: list of `[name, ComponentDefinition]` tuples â see [component definition](#comp-def).
-
-<br/>
-
-### `UrlProcessor`
-
-Helper singleton for processing URLs.
-
-<br/>
-
-#### <a id="process"></a>`static process(url: string, meta: MetaData, serverSide = false, isResource = false): string`
-
-Processes the absolute URL to become relative for the current viewer, while keeping in mind Next.js assets and Enonic XP binary content
-links
-
-> **NOTE:** There is a convenience alias to this function called [getUrl()](#get-url)
-
-| Argument     | Description                                                                  |
-|--------------|------------------------------------------------------------------------------|
-| `url`        | Absolute URL                                                                 |
-| `meta`       | Runtime data returned by [fetchContent](#fetch-content)                      |
-| `serverSide` | Whether URL is going to be used on the server side _(Skips adding basePath)_ |
-| `isResource` | Whether URL is a resource _(Skips adding locale)_                            |
-
-Usage:
-
-```tsx
-import {UrlProcessor} from '@enonic/nextjs-adapter';
-
-const url = UrlProcessor.process('http://www.some.site.com/url/to/content', meta, true, false);
-```
-
-<br/>
-
-#### `static processSrcSet(srcset: string, meta: MetaData): string`
-
-Processes the image srcset attribute to transform each URL with [`process`](#process) method
-
-| Argument | Description                                             |
-|----------|---------------------------------------------------------|
-| `srcset` | Value of the srcset attribute                           |
-| `meta`   | Runtime data returned by [fetchContent](#fetch-content) |
-
-Usage:
-
-```tsx
-import {UrlProcessor} from '@enonic/nextjs-adapter';
-
-const url = UrlProcessor.processSrcSet('<srcset value>', meta);
-```
-
-<br/>
-
-#### `static isMediaLink(ref: string, linkData: LinkData[]): boolean`
-
-Checks if link data array contains link with provided ref. Positive result means that this is a link to Enonic XP content.
-
-> **NOTE:** link data array is contained in response of the query generated by [richTextQuery('fieldName')](#rich-text-query)
-
-| Argument   | Description     |
-|------------|-----------------|
-| `ref`      | Link ref        |
-| `linkData` | Link data array |
-
-Usage:
-
-```tsx
-import {UrlProcessor} from '@enonic/nextjs-adapter';
-
-UrlProcessor.isMediaLink('<link ref>', linkData);
-```
-
-<br/>
-
-#### `static isContentImage(ref: string, imageData: ImageData[]): boolean`
-
-Checks if image data array contains image with provided ref. Positive response means that this is an Enonic XP image.
-
-> **NOTE:** image data array is contained in response of the query generated by [richTextQuery('fieldName')](#rich-text-query)
-
-| Argument    | Description      |
-|-------------|------------------|
-| `ref`       | Image ref        |
-| `imageData` | Image data array |
-
-Usage:
-
-```tsx
-import {UrlProcessor} from '@enonic/nextjs-adapter';
-
-UrlProcessor.isContentImage('<image ref>', imageData);
-```
 
 <br/>
 

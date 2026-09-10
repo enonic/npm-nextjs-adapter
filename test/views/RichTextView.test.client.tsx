@@ -128,7 +128,7 @@ describe('views', () => {
 
             await waitFor(() => {
                 expect(rootEl.outerHTML).toEqual(`<div id="text-root">
-                    <p>Some text before <a data-content-path="/some/path/link" href="/path/link">the link</a> and some text after.</p>
+                    <p>Some text before <a data-content-path="/some/path/link" href="/no/path/link">the link</a> and some text after.</p>
                     <figure><a href="/some/image"><img alt="Some image" src="/some/image.jpg"></a><figcaption>Some caption</figcaption></figure>
                     <div><strong>Child content</strong> of the macro.</div>
                     </div>`);
