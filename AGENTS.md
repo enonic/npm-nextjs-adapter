@@ -58,12 +58,20 @@ consumed by Next.js). CSS modules under `src/` are copied into `dist/` by `cpy` 
 - **`common/`** — Core singletons and constants used throughout:
     - `ComponentRegistry` — static registry mapping component names to definitions (views, queries, processors). Central to how pages are
       assembled.
-    - `UrlProcessor` — transforms URLs between Enonic XP and Next.js contexts, handling base paths, locales, and render modes.
     - `constants.ts` — enums (`RENDER_MODE`, `XP_COMPONENT_TYPE`, `XP_REQUEST_TYPE`), header names, and the static-paths GraphQL query.
-  - `env.ts` — reads required environment variables (`ENONIC_API`, `ENONIC_APP_NAME`, `ENONIC_MAPPINGS`). They are server-side only:
-    validated (throws on missing values) only when `window` is undefined, and resolve to `undefined` in the browser.
+  - `env.ts` — reads the environment. Required: `ENONIC_API` (XP API root, e.g. `http://localhost:8080/api`), `ENONIC_APP_NAME`,
+    `ENONIC_MAPPINGS`. Optional: `GUILLOTINE_API` (descriptor appended to the root, default `com.enonic.app.guillotine:graphql`, giving
+    `GUILLOTINE_URL`) and `ENONIC_MEDIA_CDN` (media base, default `ENONIC_API`, giving `MEDIA_URL`). Server-side only: validated (throws
+    on missing values) only when `window` is undefined, and resolve to `undefined`/`''` in the browser. Do not import `env.ts` from
+    modules that `constants.ts` reaches (e.g. `richTextQuery`), or every consumer would need the env set at import time.
 
 - **`guillotine/`** — Server-side data fetching pipeline (the largest module):
+    - `urlQueries.ts` — env-free `imageUrlQuery()`, `mediaUrlQuery()`, `attachmentUrlQuery()`, `pageUrlQuery()` builders that select
+      every field of the Guillotine 9 `ImageUrl` / `AttachmentUrl` / `PageUrl` types; used by `richTextQuery` and the shortcut query.
+    - `urls.ts` — matching `imageUrl()`, `mediaUrl()`, `attachmentUrl()`, `pageUrl(data, meta)` string functions (absolute media URL
+      from `MEDIA_URL` + `path` + `queryString`; relative page URL prefixed with the locale unless it is the default one). Backed by the internal, non-exported
+      `utils/getMediaUrl.ts` (also `getMediaSrcSet`, used by `RichTextView`) and `utils/getPageUrl.ts`; `utils/localizeMappings.ts`
+      (prefixes `/api/mappings` targets of non-default locales) is exported.
     - `fetchContent.ts` — the primary entry point. Performs a **two-phase Guillotine call**: first fetches metadata (content type,
       components tree), then builds an optimized combined query for content + component data in a single request.
     - The pipeline: `fetchMetaData` → `restrictComponentsToPath` → `processComponentConfig` → `collectComponentDescriptors` →
@@ -102,8 +110,9 @@ consumed by Next.js). CSS modules under `src/` are copied into `dist/` by `cpy` 
 - **Server/client boundary**: `src/client.ts` is marked with `'use client'` directive. `src/client/` holds
   client components, `src/server/disableDraftMode.ts` is the only `'use server'` module (async exports only). Server-only code uses Next.js `headers()` and
   `draftMode()`.
-- **Environment variables** are required at module load time on the server — `ENONIC_API`, `ENONIC_APP_NAME`, `ENONIC_MAPPINGS` must be set.
-  No `NEXT_PUBLIC_` variants are needed; client bundles never read these values.
+- **Environment variables** are required at module load time on the server — `ENONIC_API`, `ENONIC_APP_NAME`, `ENONIC_MAPPINGS` must be set;
+  `GUILLOTINE_API` and `ENONIC_MEDIA_CDN` are optional. No `NEXT_PUBLIC_` variants are needed; client bundles never read these values,
+  so URL helpers must run in server components and pass results down as props.
 
 ### Peer Dependencies
 

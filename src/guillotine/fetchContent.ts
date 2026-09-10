@@ -10,7 +10,7 @@ import {
     XP_REQUEST_TYPE,
     RENDER_MODE_HEADER
 } from '../common/constants';
-import {APP_NAME, APP_NAME_DASHED, IS_DEV_MODE, API_URL} from '../common/env';
+import {APP_NAME, APP_NAME_DASHED, IS_DEV_MODE, GUILLOTINE_URL} from '../common/env';
 import {getContentBranch} from '../utils/getContentBranch';
 import {getLocaleMapping} from '../utils/getLocaleMapping';
 import {getRenderMode} from '../utils/getRenderMode';
@@ -66,7 +66,7 @@ export async function fetchContent(context: Context): Promise<FetchContentResult
         locales
     });
     const xpBaseUrl = getXpBaseUrl(context);
-    const contentApiUrl = API_URL;
+    const contentApiUrl = GUILLOTINE_URL;
     const mapping = getLocaleMapping(context);
     const renderMode = getRenderMode(context);
     const branch = getContentBranch(context);

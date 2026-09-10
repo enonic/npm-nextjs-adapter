@@ -2,7 +2,7 @@ import { ENV_VARS, XP_REQUEST_TYPE, RENDER_MODE, XP_COMPONENT_TYPE } from '../sr
 import { jest } from '@jest/globals';
 import type { MetaData } from '../src';
 
-export const ENONIC_API = 'http://localhost:8080/site';
+export const ENONIC_API = 'http://localhost:8080/api';
 export const ENONIC_APP_NAME = 'com.enonic.app.enonic';
 export const ENONIC_APP_NAME_UNDERSCORED = ENONIC_APP_NAME.replace(/\./g, '_');
 export const ENONIC_MAPPINGS = 'en:project/site,no:prosjekt/nettsted';

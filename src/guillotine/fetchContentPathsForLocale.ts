@@ -2,7 +2,7 @@ import type {ContentApiBaseBody, ContentPathItem, GuillotineResult, LocaleMappin
 
 
 import {GET_STATIC_PATHS_QUERY} from '../common/constants';
-import {API_URL} from '../common/env';
+import {GUILLOTINE_URL} from '../common/env';
 import {getContentBranch} from '../utils/getContentBranch';
 import {fetchGuillotine} from './fetchGuillotine';
 
@@ -12,7 +12,7 @@ export async function fetchContentPathsForLocale(
     query: string = GET_STATIC_PATHS_QUERY,
     count = 999
 ): Promise<ContentPathItem[]> {
-    const contentApiUrl = API_URL;
+    const contentApiUrl = GUILLOTINE_URL;
     const body: ContentApiBaseBody = {
         query,
         variables: {

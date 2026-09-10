@@ -1,11 +1,18 @@
-import {ENV_VARS} from './constants';
+import {DEFAULT_GUILLOTINE_API, ENV_VARS} from './constants';
+import {stripOutsideSlashes, stripTrailingSlashes} from '../utils/fixDoubleSlashes';
 
 const isServer = typeof window === 'undefined';
 
 // IMPORTANT:
 // NEXT_PUBLIC_ vars should be explicitly referenced to be made available on the client side (substituted with constants) !!!
-/** URL to the guillotine API (server-side only) */
-export const API_URL = process.env[ENV_VARS.API_URL];
+/** Absolute URL to the Enonic XP API root (server-side only) */
+export const API_URL = stripTrailingSlashes(process.env[ENV_VARS.API_URL] || '');
+
+/** URL to the Guillotine GraphQL endpoint: API_URL + GUILLOTINE_API (server-side only) */
+export const GUILLOTINE_URL = API_URL && `${API_URL}/${stripOutsideSlashes(process.env[ENV_VARS.GUILLOTINE_API] || DEFAULT_GUILLOTINE_API)}`;
+
+/** Absolute URL to the media API root, defaults to API_URL (server-side only) */
+export const MEDIA_URL = stripTrailingSlashes(process.env[ENV_VARS.MEDIA_URL] || '') || API_URL;
 
 /** Optional utility value - defining in one place the name of the target app (the app that defines the content types, the app name is therefore part of the content type strings used both in typeselector and in query introspections) (server-side only) */
 export const APP_NAME = process.env[ENV_VARS.APP_NAME];

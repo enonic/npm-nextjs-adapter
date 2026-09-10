@@ -4,9 +4,13 @@ export enum ENV_VARS {
     MAPPINGS = 'ENONIC_MAPPINGS',
     API_TOKEN = 'ENONIC_API_TOKEN',
     API_URL = 'ENONIC_API',
+    GUILLOTINE_API = 'GUILLOTINE_API',
+    MEDIA_URL = 'ENONIC_MEDIA_CDN',
     APP_NAME = 'ENONIC_APP_NAME',
     LOG = 'ENONIC_LOGGING'
 }
+
+export const DEFAULT_GUILLOTINE_API = 'com.enonic.app.guillotine:graphql';
 
 export const FRAGMENT_CONTENTTYPE_NAME = 'portal:fragment';
 export const FRAGMENT_DEFAULT_REGION_NAME = 'fragment';
