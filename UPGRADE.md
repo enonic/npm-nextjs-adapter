@@ -134,7 +134,11 @@ Query URL fields with `imageUrlQuery(args)`, `mediaUrlQuery()`,
 `attachmentUrlQuery()` and `pageUrlQuery()` (they select every field), and
 render the results with `imageUrl(data)`, `mediaUrl(data)`,
 `attachmentUrl(data)` and `pageUrl(data, meta)`; they only need `path`
-(`queryString` is optional). `RichTextView` rewrites `processedHtml` URLs itself. In
+(`queryString` is optional). `RichTextView` rewrites `processedHtml` URLs itself. Client components that build media URLs, import `_mappings.ts` or read the locale mappings still need the `NEXT_PUBLIC_*`
+copies (`NEXT_PUBLIC_ENONIC_API`, `NEXT_PUBLIC_ENONIC_MEDIA_CDN`, `NEXT_PUBLIC_ENONIC_APP_NAME`, `NEXT_PUBLIC_ENONIC_MAPPINGS`);
+purely server-rendered sites can drop them. `richTextQuery()` now spreads the named
+fragments `RichTextMacros`, `RichTextLinks` and `RichTextImages`; `fetchGuillotine()` defines them once per document, and documents sent
+with another HTTP client need `richTextFragments()` appended (or `withRichTextFragments(query)`). In
 `/api/mappings`, return
 `localizeMappings(mappings, localeMapping)` so targets of non-default locales carry the prefix.
 Remove `UrlProcessor.setSiteKey(...)`, `UrlProcessor.process(...)` and
@@ -190,11 +194,11 @@ New public exports, safe to adopt incrementally:
   `secret` (typically `process.env.ENONIC_API_TOKEN`); it is hashed with
   SHA-256 to derive the key, so any string length works. `decryptParams`
   returns `null` for malformed, tampered, or wrong-secret inputs.
-- `NEXT_PUBLIC_ENONIC_API`, `NEXT_PUBLIC_ENONIC_APP_NAME`,
-  `NEXT_PUBLIC_ENONIC_MAPPINGS` and `NEXT_PUBLIC_ENONIC_API_TOKEN` are no
-  longer read. `ENONIC_API`, `ENONIC_APP_NAME` and `ENONIC_MAPPINGS` are
-  validated on the server only and resolve to `undefined` in the browser, so
-  the `NEXT_PUBLIC_` mirrors can be removed from `.env`.
+- `NEXT_PUBLIC_ENONIC_API_TOKEN` is no longer read: the secret stays on the server.
+  `NEXT_PUBLIC_ENONIC_API`, `NEXT_PUBLIC_ENONIC_MEDIA_CDN`, `NEXT_PUBLIC_ENONIC_APP_NAME` and
+  `NEXT_PUBLIC_ENONIC_MAPPINGS` are read in the browser only; keep the ones your client
+  components need (media URLs, `_mappings.ts` imported client-side, locale helpers) and drop
+  the rest from `.env`.
 - `ENONIC_API` now holds the XP API root instead of the Guillotine endpoint;
   the optional `GUILLOTINE_API` and `ENONIC_MEDIA_CDN` complete it.
 

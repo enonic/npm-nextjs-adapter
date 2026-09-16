@@ -2,6 +2,7 @@ import type {FetchOptions, GuillotineResult} from '../types';
 import gqlmin from 'gqlmin';
 
 import {fetchFromApi} from './fetchFromApi';
+import {withRichTextFragments} from './metadata/richTextQuery';
 
 const XP_ERROR_PATTERN = '/_/error/';
 
@@ -31,8 +32,8 @@ export async function fetchGuillotine<Data = Record<string, unknown>>(
                 }
             }
         } else {
-            // Minify the query to avoid hitting 200k space limit
-            body.query = gqlmin(body.query);
+            // Define the rich text fragments once, then minify the query to avoid hitting 200k space limit
+            body.query = gqlmin(withRichTextFragments(body.query));
         }
     }
 

@@ -19,7 +19,7 @@ export function validateShortcut(props: FetchContentResult): void {
             notFound();
         }
 
-        if (parameters) {
+        if (parameters?.length) {
             const searchParams = parameters.map(({name, value}) => `${encodeURIComponent(name)}=${encodeURIComponent(value)}`).join('&');
             destination += '?' + searchParams;
         }

@@ -24,7 +24,7 @@ export {
 } from './common/constants';
 
 
-export {richTextQuery} from './guillotine/metadata/richTextQuery';
+export {richTextQuery, richTextFragments, withRichTextFragments} from './guillotine/metadata/richTextQuery';
 export {validateData} from './guillotine/validateData';
 
 export {I18n} from './i18n/i18n';

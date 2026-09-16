@@ -355,6 +355,17 @@ mapping's locale unless it is the default one, leaving sources untouched.
 This is a utility function for querying for `RichTextData` needed for [RichTextView](#rich-text-view). It creates a graphql query string for
 HTML area input type with given field name.
 
+> **NOTE!** On the server the adapter reads `ENONIC_API`, `ENONIC_MEDIA_CDN`, `ENONIC_APP_NAME` and `ENONIC_MAPPINGS`. In the browser
+> it reads the `NEXT_PUBLIC_ENONIC_API`, `NEXT_PUBLIC_ENONIC_MEDIA_CDN`, `NEXT_PUBLIC_ENONIC_APP_NAME` and `NEXT_PUBLIC_ENONIC_MAPPINGS`
+> copies, so define the ones your client components need (e.g. `NEXT_PUBLIC_ENONIC_API=$ENONIC_API` for `imageUrl()` in a client
+> component, `NEXT_PUBLIC_ENONIC_APP_NAME` when `_mappings.ts` is imported client-side). Without them media URLs stay relative and
+> the locale helpers throw in the browser.
+
+The macro configs, links and images are selected through the named fragments `RichTextMacros`, `RichTextLinks` and `RichTextImages`, so a
+document with many rich text fields stays small. `fetchGuillotine()` (and therefore `fetchContent()`) appends the fragment definitions once
+per document. If you send such a query with your own HTTP client, append `richTextFragments()` to it yourself, or pass the document
+through `withRichTextFragments(query)`.
+
 | Argument    | Description          |
 |-------------|----------------------|
 | `fieldName` | HTML area field name |

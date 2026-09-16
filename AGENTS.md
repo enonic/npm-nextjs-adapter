@@ -77,7 +77,9 @@ consumed by Next.js). CSS modules under `src/` are copied into `dist/` by `cpy` 
     - The pipeline: `fetchMetaData` → `restrictComponentsToPath` → `processComponentConfig` → `collectComponentDescriptors` →
       `combineMultipleQueries` → `fetchContentData` → `applyProcessors` → `buildPage` → `createMetaData`.
     - `combineMultipleQueries.ts` — merges content-type, common, and per-component queries into one GraphQL request with aliased fields.
-    - `fetchGuillotine.ts` — Guillotine-specific fetch wrapper; minifies queries with `gqlmin` before sending.
+    - `fetchGuillotine.ts` — Guillotine-specific fetch wrapper; appends the rich text fragment definitions a document spreads
+      (`withRichTextFragments`) and minifies queries with `gqlmin` before sending. `richTextQuery()` only spreads `RichTextMacros`,
+      `RichTextLinks` and `RichTextImages`, so pages with dozens of rich text fields stay under graphql-java's 15,000-token limit.
     - `fetchFromApi.ts` — generic HTTP fetch to any API.
     - `metadata/` — GraphQL query fragments for fetching component metadata and rich text data.
 
