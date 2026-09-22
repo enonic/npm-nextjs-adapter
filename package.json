@@ -55,7 +55,7 @@
     "test": "jest --no-cache --coverage"
   },
   "dependencies": {
-    "@enonic/react-components": "^7.0.0",
+    "@enonic/react-components": "^7.1.0-beta.1",
     "@formatjs/intl-localematcher": "^0.9.0",
     "gqlmin": "^0.3.2",
     "negotiator": "^1.1.0",
