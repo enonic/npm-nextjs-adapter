@@ -35,10 +35,7 @@ const RichTextView = (props: RichTextViewProps) => {
         nextMeta={props.meta}
         component={component}
         className={props.className}
-        // RichTextParams types tag as `string`, but it is passed straight to
-        // createElement, which accepts any ElementType — including Fragment.
-        // Cast until @enonic/react-components widens the prop upstream.
-        tag={props.tag as string}
+        tag={props.tag}
         replacer={wrapReplacer(props.customReplacer, props.meta)}
         Macro={MacroAdapter}
         Link={LinkAdapter}
