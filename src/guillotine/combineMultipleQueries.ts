@@ -6,7 +6,7 @@ const ALIAS_PREFIX = 'request';
 const GRAPHQL_FRAGMENTS_REGEXP = /fragment\s+.+\s+on\s+.+\s*{[\s\w{}().,:"'`]+}/;
 
 // const GUILLOTINE_QUERY_REGEXP = /^\s*query\s*(?:\((.*)*\))?\s*{\s*guillotine\s*{((?:.|\s)+)}\s*}\s*$/;
-const GUILLOTINE_QUERY_REGEXP = /^\s*query\s*(?:\(([^)]*)\))?\s*{\s*((?:.|\s)+)\s*}\s*$/;
+const GUILLOTINE_QUERY_REGEXP = /^\s*query(?:\s+[_A-Za-z]\w*)?\s*(?:\(([^)]*)\))?\s*{\s*((?:.|\s)+)\s*}\s*$/;
 
 const GLOBAL_PARAMS = [{key: 'path', type: 'ID!'}, {key: 'siteKey', type: 'String'}, {key: 'project', type: 'String'},
     {key: 'branch', type: 'String'}];
