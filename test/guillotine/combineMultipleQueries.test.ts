@@ -111,6 +111,33 @@ describe('guillotine', () => {
             });
         });
 
+        it('should accept queries with an operation name', () => {
+            const {
+                query,
+                variables
+            } = combineMultipleQueries([{
+                type: REGISTERED_PART,
+                component: PART_COMPONENT,
+                queryAndVariables: {
+                    query: 'query GetX{guillotine(project:$project){x}}',
+                }
+            }, {
+                type: REGISTERED_PART,
+                component: PART_COMPONENT,
+                queryAndVariables: {
+                    query: 'query Get_Y2 ($someVar:String){guillotine(branch:$branch){y(arg:$someVar)}}',
+                    variables: {
+                        someVar: 'value3'
+                    }
+                }
+            }]);
+            expect(ws(query)).toEqual(
+                'query ($project:String, $request1_someVar:String, $branch:String) { request0:guillotine(project:$project){x} request1:guillotine(branch:$branch){y(arg:$request1_someVar)} }');
+            expect(variables).toEqual({
+                request1_someVar: 'value3'
+            });
+        });
+
         it('should handle fragment and guillotine queries', () => {
             const {
                 query,
