@@ -53,7 +53,7 @@ describe('guillotine', () => {
                 expect(result.query).toEqual('query');
                 expect(result.variables.path).toEqual('path');
                 expect(result.variables.project).toEqual('project');
-                expect(result.variables.siteKey).toEqual('/site');
+                expect(result.variables.scopeKey).toEqual('/site');
                 expect(result.variables.branch).toEqual('master');
             });
         });
@@ -74,7 +74,7 @@ describe('guillotine', () => {
                 expect(result.variables.another).toEqual('value');
                 expect(result.variables.path).toEqual('path2');
                 expect(result.variables.project).toEqual('project');
-                expect(result.variables.siteKey).toEqual('/site');
+                expect(result.variables.scopeKey).toEqual('/site');
                 expect(result.variables.branch).toEqual('master');
             });
         });
@@ -98,7 +98,7 @@ describe('guillotine', () => {
                 expect(result.variables.another).toEqual('value');
                 expect(result.variables.path).toEqual('path2');
                 expect(result.variables.project).toEqual('project');
-                expect(result.variables.siteKey).toEqual('/site');
+                expect(result.variables.scopeKey).toEqual('/site');
                 expect(result.variables.branch).toEqual('master');
             });
         });
@@ -152,7 +152,7 @@ describe('guillotine', () => {
                 expect(result.query).toEqual('query');
                 expect(result.variables.path).toEqual('path');
                 expect(result.variables.project).toEqual('project');
-                expect(result.variables.siteKey).toEqual('/site');
+                expect(result.variables.scopeKey).toEqual('/site');
                 expect(result.variables.branch).toEqual('master');
             });
         });

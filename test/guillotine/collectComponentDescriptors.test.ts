@@ -99,7 +99,7 @@ describe('guillotine', () => {
                 expect(result[0].queryAndVariables.query).toEqual(PART_QUERY);
                 expect(result[0].queryAndVariables.variables.path).toEqual(xpContentPath);
                 expect(result[0].queryAndVariables.variables).toHaveProperty('project');
-                expect(result[0].queryAndVariables.variables).toHaveProperty('siteKey');
+                expect(result[0].queryAndVariables.variables).toHaveProperty('scopeKey');
                 expect(result[0].queryAndVariables.variables).toHaveProperty('branch');
                 expect(result[0].type).toEqual({
                     catchAll: PART_CATCH_ALL,
@@ -125,7 +125,7 @@ describe('guillotine', () => {
                 expect(result[0].queryAndVariables.query).toEqual(PART_QUERY);
                 expect(result[0].queryAndVariables.variables.path).toEqual(xpContentPath);
                 expect(result[0].queryAndVariables.variables).toHaveProperty('project');
-                expect(result[0].queryAndVariables.variables).toHaveProperty('siteKey');
+                expect(result[0].queryAndVariables.variables).toHaveProperty('scopeKey');
                 expect(result[0].queryAndVariables.variables).toHaveProperty('branch');
                 expect(result[0].type).toEqual({
                     catchAll: PART_CATCH_ALL,

@@ -1,11 +1,8 @@
 import type {XP_COMPONENT_TYPE} from '../common/constants';
 import type {Context} from './next';
-import type {
-    RichTextData as CompsRichTextData,
-    LinkData as CompsLinkData,
-    ImageData as CompsImageData,
-    MacroData as CompsMacroData
-} from '@enonic/react-components';
+import type {RichTextData} from '@enonic/react-components';
+
+export type {RichTextData, LinkData, ImageData, MacroData, MacroConfig} from '@enonic/react-components';
 
 // Differs from ComponentDefinition to avoid storing catchAll on all components
 // catchAll is calculated in getType instead
@@ -48,20 +45,12 @@ export interface FragmentData {
     }
 }
 
-export type ImageData = CompsImageData;
-
 export interface LayoutData {
     descriptor: string;
     config?: any;
 
     [customKeysFromQuery: string]: any;
 }
-
-export type LinkData = CompsLinkData;
-
-export type MacroConfig = Record<string, any>;
-
-export type MacroData = CompsMacroData;
 
 export interface PageComponent {
     [key: string]: any; // keeps ts happy when accessing component data field by XP_COMPONENT_TYPE type
@@ -102,9 +91,18 @@ export interface QueryAndVariables {
     variables?: Record<string, any>
 }
 
+export interface RichTextQueryOptions {
+    /** Responsive image widths. Defaults to [400, 800, 1200]. */
+    imageWidths?: number[];
+    /** HTML sizes expression. Defaults to the adapter's 400/800/1200px breakpoints. */
+    imageSizes?: string;
+    /** Primary image width. Omitted by default, preserving Guillotine's default of 768px. */
+    imageSrcWidth?: number;
+}
+
 export interface GlobalVariables {
     path: string;
-    siteKey: string;
+    scopeKey: string;
     branch: string;
     project: string;
 }
@@ -121,8 +119,6 @@ export type SelectedQueryMaybeVariablesFunc =
     | [string | QueryGetter, VariablesGetter];
 
 export type RegionTree = Record<string, PageRegion>;
-
-export type RichTextData = CompsRichTextData;
 
 export interface TextData {
     value: RichTextData;

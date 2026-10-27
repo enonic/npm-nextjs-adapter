@@ -38,7 +38,7 @@ export function getQueryAndVariables(
     let variables: GlobalVariables = {
         path,
         project: mapping.project,
-        siteKey: mapping.site,
+        scopeKey: mapping.site,
         branch
     };
 

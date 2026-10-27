@@ -6,6 +6,23 @@ This document lists end-user API changes for the next major release of `@enonic/
 
 ## Breaking changes
 
+### Guillotine 9 rich-text URL parts
+
+Use Guillotine 9.0.0+ on XP 8.1.0+. Internal URLs in `processedHtml` are
+placeholders, not addresses to use directly. `richTextQuery()` now selects
+`Link.pageUrl`, `Link.fragment`, `Link.media.mediaUrl`, `Image.src`, and
+`Image.srcset`. `RichTextView` resolves these parts to locale-aware page links
+and absolute media URLs, including responsive image candidates and downloads.
+It renders unresolved links without an `href` and omits unresolved images.
+
+Custom rich-text queries must select these fields too. `RichTextData`,
+`LinkData`, `ImageData`, `MacroData`, and `MacroConfig` are re-exported directly
+from `@enonic/react-components`. URL fields accept strings or source-neutral
+URL parts; the adapter resolves parts at render time and leaves strings unchanged.
+Reference entries and the data passed to custom replacers are not rewritten.
+Applications providing macros and image styles must be configured on the
+selected site or project.
+
 ### 1. `getAsset` removed
 
 **Why**
@@ -77,7 +94,7 @@ holds the site path previously derived from the locale mapping.
 -export type QueryGetter = (path: string, context?: Context, config?: any) => string;
 +export interface GlobalVariables {
 +    path: string;
-+    siteKey: string;
++    scopeKey: string;
 +    branch: string;
 +    project: string;
 +}
@@ -95,7 +112,7 @@ holds the site path previously derived from the locale mapping.
 
 **Why**
 
-Guillotine queries now require `siteKey`, `branch`, and `project` as
+Guillotine queries now require `scopeKey`, `branch`, and `project` as
 variables to resolve content against the correct project and branch (see
 #3). Passing these alongside `path` lets user-defined queries reference
 them directly.
@@ -112,8 +129,8 @@ ComponentRegistry.setCommonQuery((path) => `query($path:ID!){...}`);
 const getVars: VariablesGetter = (path) => ({path, extra: 'x'});
 
 // after
-ComponentRegistry.setCommonQuery(({path, siteKey, branch, project}) =>
-    `query($path:ID!, $siteKey:ID!, $branch:String!, $project:String!){...}`);
+ComponentRegistry.setCommonQuery(({path, scopeKey, branch, project}) =>
+    `query($path:ID!, $scopeKey:String, $branch:String, $project:String){ guillotine(scopeKey:$scopeKey, project:$project, branch:$branch){...} }`);
 const getVars: VariablesGetter = (vars) => ({...vars, extra: 'x'});
 ```
 
@@ -123,7 +140,7 @@ const getVars: VariablesGetter = (vars) => ({...vars, extra: 'x'});
 
 **Why**
 
-Guillotine 9 returns URL objects (`{url, path, queryString, ...}`) instead
+Guillotine 9 returns URL objects (`{path, queryString, ...}`) instead
 of strings, so URLs are built from their parts: media URLs from
 `ENONIC_MEDIA_CDN` (default `ENONIC_API`) + `path`, page URLs from the
 locale (omitted for the default locale) + site-relative `path`.
@@ -184,6 +201,28 @@ now take the EDIT branch instead of NEXT/LIVE.
 
 ---
 
+### 8. Guillotine 9 (XP 8.1+) required
+
+**Why**
+
+Guillotine 9 renames `siteKey` to `scopeKey`, removes the `params` argument on
+media URLs and drops the non-DSL search fields. See the
+[Guillotine upgrade guide](https://developer.enonic.com/docs/guillotine/next/upgrade).
+
+**Migration**
+
+- `GlobalVariables.siteKey` is now `scopeKey`; rename it in custom
+  queries and variables getters: `guillotine(scopeKey: $scopeKey, project: $project, branch: $branch)`.
+- `ImageUrlArgs` / `MediaUrlArgs` no longer accept `params` (`PageUrlArgs` still does);
+  `scale` is optional.
+- Removed from the types: `HeadlessCms.query`, `HeadlessCms.queryConnection`,
+  `QueryContentConnection`; use `queryDsl` / `queryDslConnection`.
+  `ContentType.displayName` is now `title`; `Attachment.attachmentUrl` is an `AttachmentUrl` object.
+- Queries are no longer limited to the site: add a `_path` constraint to `queryDsl` queries
+  that must stay inside the site.
+
+---
+
 ## Non-breaking changes
 
 New public exports, safe to adopt incrementally:
@@ -210,7 +249,7 @@ New public exports, safe to adopt incrementally:
 2. Remove `getContentApiUrl(...)`; point `ENONIC_API` at the XP API root.
 3. Replace `meta.apiUrl` with `meta.project` / `meta.site` / `meta.branch`.
 4. Update every registered `QueryGetter` / `VariablesGetter` / common query
-   to destructure `{path, siteKey, branch, project}`; returned variables
+   to destructure `{path, scopeKey, branch, project}`; returned variables
    must include the full `GlobalVariables` shape.
 5. Replace `UrlProcessor` / `getUrl` usage with the `*UrlQuery()` / `*Url()`
    pairs and add `localizeMappings()` to `/api/mappings`.
@@ -220,3 +259,5 @@ New public exports, safe to adopt incrementally:
 7. Audit `meta.renderMode === 'edit'` branches — draft-mode requests will
    now hit them.
 8. Remove the `NEXT_PUBLIC_ENONIC_*` lines from `.env`.
+9. Upgrade to XP 8.1+ / Guillotine 9, rename `siteKey` to `scopeKey` in custom
+   queries and drop `params` from media URL query args.

@@ -1,7 +1,8 @@
 import {ComponentRegistry} from '../../common/ComponentRegistry';
 import {configQuery} from './configQuery';
 import {indent} from '../../utils/indent';
-import {imageUrlQuery, mediaUrlQuery, pageUrlQuery} from '../urlQueries';
+import {IMAGE_URL_FIELDS, imageUrlQuery, mediaUrlQuery, pageUrlQuery, toGraphqlLiteral} from '../urlQueries';
+import type {RichTextQueryOptions} from '../../types';
 
 
 // Fragments on Guillotine's rich text member types: spread by every rich text field, defined once per document
@@ -13,8 +14,13 @@ const macroConfigQuery = (): string => {
     return configQuery(ComponentRegistry.getMacros(), false, false);
 };
 
-export const richTextQuery = (fieldName: string) => {
-    return `${fieldName}(processHtml:{imageWidths:[400, 800, 1200], imageSizes:"(max-width: 400px) 400px, (max-width: 800px) 800px, 1200px"}) {
+export const richTextQuery = (fieldName: string, options: RichTextQueryOptions = {}) => {
+    const processHtml = {
+        imageWidths: options.imageWidths ?? [400, 800, 1200],
+        imageSizes: options.imageSizes ?? '(max-width: 400px) 400px, (max-width: 800px) 800px, 1200px',
+        ...(options.imageSrcWidth !== undefined ? {imageSrcWidth: options.imageSrcWidth} : {})
+    };
+    return `${fieldName}(processHtml:${toGraphqlLiteral(processHtml)}) {
     processedHtml
     macros {
         ...${RICH_TEXT_MACROS_FRAGMENT}
@@ -37,30 +43,32 @@ const fragmentDefinitions = (): [string, string][] => [
     [RICH_TEXT_LINKS_FRAGMENT, `fragment ${RICH_TEXT_LINKS_FRAGMENT} on Link {
     ref
     uri
+    fragment
+    ${pageUrlQuery()}
     content {
         _path
         _id
-        ${pageUrlQuery()}
     }
     media {
+        ${mediaUrlQuery()}
         content {
             _id
-            ... on media_Image {
-                ${mediaUrlQuery()}
-            }
         }
         intent
     }
 }`],
     [RICH_TEXT_IMAGES_FRAGMENT, `fragment ${RICH_TEXT_IMAGES_FRAGMENT} on Image {
     ref
+    src ${IMAGE_URL_FIELDS}
+    srcset {
+        width
+        ${imageUrlQuery()}
+    }
     image {
         _id
-        ... on media_Image {
-            ${imageUrlQuery({scale: 'width(768)'})}
-        }
     }
     style {
+        application
         name
         aspectRatio
         filter

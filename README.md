@@ -2,6 +2,8 @@
 
 > NextJS adapter with Guillotine support and basic views
 
+Requires Enonic XP 8.1+ with Guillotine 9.
+
 ## Installation
 
 ```bash
@@ -99,7 +101,7 @@ Usage:
 ```tsx
 import {fetchGuillotine} from '@enonic/nextjs-adapter/server';
 
-const apiUrl = 'http://domain:8000/graphql/api';
+const apiUrl = 'http://domain:8080/api/com.enonic.app.guillotine:graphql';
 
 const body = {
     query: 'qraphql query as string',
@@ -115,7 +117,7 @@ const headers = {
 const opts = {
     body,
     headers,
-    method: 'GET',
+    method: 'POST',
     next: {
         revalidate: 60,
         tags: ['tag1', 'tag2'],
@@ -315,10 +317,10 @@ turns the returned object into the final URL string.
 | `attachmentUrl` | `attachmentUrlQuery(args?: MediaUrlArgs)` | `attachmentUrl(data)` |
 | `pageUrl`       | `pageUrlQuery(args?: PageUrlArgs)`        | `pageUrl(data, meta)` |
 
-The query builders accept the same arguments as the Guillotine field (`scale`, `quality`, `background`, `format`, `filter`, `params` for
-`imageUrl`; `download`, `params` for `mediaUrl`/`attachmentUrl`; `params` for `pageUrl`) and select every field of the returned object:
-`url`, `path`, `queryString`, `context`, `id`, `fingerprint`, `name`, plus `scale` for images and `intent` for media and attachments
-(`pageUrl` has `url`, `path` and `queryString`).
+The query builders accept the same arguments as the Guillotine field (`scale`, `quality`, `background`, `format`, `filter` for
+`imageUrl`; `download` for `mediaUrl`/`attachmentUrl`; `params` for `pageUrl`) and select every field of the returned object:
+`path`, `queryString`, `context`, `id`, `fingerprint`, `name`, plus `scale` for images and `intent` for media and attachments
+(`pageUrl` has `baseUrl`, `path` and `queryString`).
 Media functions return absolute URLs pointing at the XP media API (`ENONIC_MEDIA_CDN`, defaulting to `ENONIC_API`). `pageUrl` returns a
 relative path for the Next.js router, prefixed with the locale unless it is the default locale (`meta.locale` vs `meta.defaultLocale`);
 `meta` is the runtime data returned by [fetchContent](#fetch-content). Pass `{locale}` alone to always prefix, e.g. for `revalidatePath`.
@@ -350,7 +352,7 @@ mapping's locale unless it is the default one, leaving sources untouched.
 
 <br/>
 
-#### <a id="rich-text-query"></a>`richTextQuery(fieldName: string) => string`
+#### <a id="rich-text-query"></a>`richTextQuery(fieldName: string, options?: RichTextQueryOptions) => string`
 
 This is a utility function for querying for `RichTextData` needed for [RichTextView](#rich-text-view). It creates a graphql query string for
 HTML area input type with given field name.
@@ -369,14 +371,41 @@ through `withRichTextFragments(query)`.
 | Argument    | Description          |
 |-------------|----------------------|
 | `fieldName` | HTML area field name |
+| `options`   | Optional per-field image settings passed to Guillotine's `processHtml` input. Each omitted setting independently retains its current behavior. |
+
+`RichTextQueryOptions` is exported by the adapter:
+
+| Option | Type | Default when omitted |
+|--------|------|----------------------|
+| `imageWidths` | `number[]` | `[400, 800, 1200]` for responsive `srcset` candidates. |
+| `imageSizes` | `string` | `"(max-width: 400px) 400px, (max-width: 800px) 800px, 1200px"` for the HTML `sizes` attribute. |
+| `imageSrcWidth` | `number` | Not sent; Guillotine retains its default primary image width of 768px. |
+
+Passing an empty array or string is an explicit override, not an omitted option.
+These settings apply at query time, not as rendering props. Different fields in the same document can use different settings
+while sharing the same fragment definitions.
+
+```ts
+import {richTextQuery, type RichTextQueryOptions} from '@enonic/nextjs-adapter';
+
+// Only the primary source width changes; responsive widths and sizes keep their defaults.
+const bioQuery = richTextQuery('bio', {imageSrcWidth: 640});
+
+const imageOptions: RichTextQueryOptions = {
+    imageWidths: [320, 640, 960],
+    imageSizes: '(max-width: 640px) 100vw, 640px',
+    imageSrcWidth: 640
+};
+const textQuery = richTextQuery('text', imageOptions);
+```
 
 Usage:
 
 ```tsx
 import {richTextQuery} from '@enonic/nextjs-adapter';
 
-const query = `query($path:ID!){
-    guillotine {
+const query = `query($path:ID!, $scopeKey:String, $project:String, $branch:String){
+    guillotine(scopeKey: $scopeKey, project: $project, branch: $branch) {
         get(key:$path) {
             _path
             type
@@ -500,10 +529,10 @@ import {ComponentRegistry} from '@enonic/nextjs-adapter';
 
 const query = {
     query: 'graphql query',
-    variables: ({path, siteKey, branch, project}, context, config) => {
+    variables: ({path, scopeKey, branch, project}, context, config) => {
         return {
             path: path + '/some/processing',
-            siteKey,
+            scopeKey,
             branch,
             project,
         };
@@ -524,7 +553,7 @@ Gets the common query definition.
 ```tsx
 interface GlobalVariables {
     path: string;
-    siteKey: string;
+    scopeKey: string;
     branch: string;
     project: string;
 }
@@ -1012,6 +1041,10 @@ Requires `transpilePackages: ['@enonic/nextjs-adapter']` in `next.config.js` so 
 `<RichTextView className="css-class" tag="section" data={data} meta={meta} customReplacer={customReplacerFn}>`
 
 Tag for displaying contents of html area input types. Takes care of processing macros, URLs and images inside.
+
+`RichTextData`, `LinkData`, `ImageData`, `MacroData`, and `MacroConfig` are shared with and re-exported from
+`@enonic/react-components`. Rich-text URL values can be strings (used unchanged) or URL parts (resolved by the adapter using its
+locale and media configuration). The adapter renders the original reference entries without rewriting their data.
 
 | Argument         | Type           | Description                                                                                       |
 |------------------|----------------|---------------------------------------------------------------------------------------------------|

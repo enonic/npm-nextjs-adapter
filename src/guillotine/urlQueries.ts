@@ -1,11 +1,11 @@
 import type {ImageUrlArgs, MediaUrlArgs, PageUrlArgs} from '../types';
 
 // Every field of the Guillotine 9 result types, so callers can build their own URLs from the parts
-const IMAGE_URL_FIELDS = '{ url path queryString context id fingerprint scale name }';
-const ATTACHMENT_URL_FIELDS = '{ url path queryString context id fingerprint name intent }';
-const PAGE_URL_FIELDS = '{ url path queryString }';
+export const IMAGE_URL_FIELDS = '{ path queryString context id fingerprint scale name }';
+export const ATTACHMENT_URL_FIELDS = '{ path queryString context id fingerprint name intent }';
+export const PAGE_URL_FIELDS = '{ baseUrl path queryString }';
 
-export const imageUrlQuery = (args: ImageUrlArgs): string => `imageUrl${toGraphqlArgs(args)} ${IMAGE_URL_FIELDS}`;
+export const imageUrlQuery = (args?: ImageUrlArgs): string => `imageUrl${toGraphqlArgs(args)} ${IMAGE_URL_FIELDS}`;
 
 export const mediaUrlQuery = (args?: MediaUrlArgs): string => `mediaUrl${toGraphqlArgs(args)} ${ATTACHMENT_URL_FIELDS}`;
 
@@ -18,7 +18,7 @@ function toGraphqlArgs(args: object = {}): string {
     return entries.length ? `(${entries.map(([key, value]) => `${key}: ${toGraphqlLiteral(value)}`).join(', ')})` : '';
 }
 
-function toGraphqlLiteral(value: unknown): string {
+export function toGraphqlLiteral(value: unknown): string {
     if (Array.isArray(value)) {
         return `[${value.map(toGraphqlLiteral).join(', ')}]`;
     }

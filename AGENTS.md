@@ -6,7 +6,8 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
 
 `@enonic/nextjs-adapter` is an npm library that bridges Next.js applications with Enonic XP's Guillotine GraphQL API. It provides
 server-side data fetching, client-side locale context, URL processing, a component registry, and a set of React views for rendering Enonic
-XP content (pages, parts, layouts, macros, fragments, rich text).
+XP content (pages, parts, layouts, macros, fragments, rich text). Targets XP 8.1+ with Guillotine 9: queries pass
+`scopeKey`, `project` and `branch` as `guillotine(...)` arguments.
 
 The library is published to npm with three entry points:
 
