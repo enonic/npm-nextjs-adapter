@@ -43,8 +43,9 @@ ${indent(partConfigQuery(), 4)}
 image {
     caption
     image {
-      imageUrl(scale: "width-768") {
-        url
+      imageUrl(scale: "width(768)") {
+        path
+        queryString
       }
     }
 }`;
@@ -73,8 +74,8 @@ ${indent(pageFragment || '', 4)}
 
 export function queryGuillotine(query: string, args?: Record<string, string>): string {
     const argsString = args && Object.entries(args).map(([name, type]) => `${name}: ${type}`);
-    return `query($siteKey: String, $project: String, $branch: String${argsString ? ', ' + argsString.join(', ') : ''}) {
-              guillotine(siteKey: $siteKey, project: $project, branch: $branch) {
+    return `query($scopeKey: String, $project: String, $branch: String${argsString ? ', ' + argsString.join(', ') : ''}) {
+              guillotine(scopeKey: $scopeKey, project: $project, branch: $branch) {
                 ${query}
               }
             }`;

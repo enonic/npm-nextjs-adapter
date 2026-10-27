@@ -16,7 +16,7 @@ export const fetchMetaData = async (
         query: getMetaQuery(pageFragmentQuery()),
         variables: {
             path: contentPath,
-            siteKey: mapping.site,
+            scopeKey: mapping.site,
             project: mapping.project,
             branch
         }

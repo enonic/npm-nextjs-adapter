@@ -28,7 +28,6 @@ describe('index (CLIENT)', () => {
         const { imageUrl } = await import('../src');
 
         expect(imageUrl({
-            url: '/api/media:image/hmdb/id:fp/width-500/a.jpg',
             path: '/media:image/hmdb/id:fp/width-500/a.jpg',
             queryString: '',
             context: 'hmdb',

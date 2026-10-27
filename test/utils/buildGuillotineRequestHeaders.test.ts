@@ -16,7 +16,7 @@ describe('utils', () => {
             jest.resetModules();
             process.env = {
                 ...OLD_ENV,
-                ENONIC_API: 'http://localhost:8080/site',
+                ENONIC_API: 'http://localhost:8080/api',
                 ENONIC_APP_NAME
             };
             import('../../src/utils/buildGuillotineRequestHeaders').then((moduleName) => {
@@ -48,7 +48,7 @@ describe('utils', () => {
             jest.resetModules();
             process.env = {
                 ...OLD_ENV,
-                ENONIC_API: 'http://localhost:8080/site',
+                ENONIC_API: 'http://localhost:8080/api',
                 ENONIC_APP_NAME
             };
             import('../../src/utils/buildGuillotineRequestHeaders').then((moduleName) => {
@@ -79,7 +79,7 @@ describe('utils', () => {
             jest.resetModules();
             process.env = {
                 ...OLD_ENV,
-                ENONIC_API: 'http://localhost:8080/site',
+                ENONIC_API: 'http://localhost:8080/api',
                 ENONIC_APP_NAME
             };
             import('../../src/utils/buildGuillotineRequestHeaders').then((moduleName) => {

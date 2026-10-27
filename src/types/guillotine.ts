@@ -104,7 +104,7 @@ interface Attachment {
     label: string
     size: number
     mimeType: string
-    attachmentUrl: string
+    attachmentUrl: AttachmentUrl
 }
 
 type DateTime = string;
@@ -123,7 +123,7 @@ export interface Component {
 type ComponentType = 'page' | 'layout' | 'image' | 'part' | 'text' | 'fragment';
 
 export interface PageUrl {
-    url: string;
+    baseUrl: string;
     path: string;
     queryString: string;
 }
@@ -174,7 +174,7 @@ interface ContentEdge {
 
 interface ContentType {
     name: string
-    displayName: string
+    title: string
     description: string
     superType: string
     abstract: boolean
@@ -222,8 +222,6 @@ export interface HeadlessCms {
     getSite?: portal_Site
     getType?: ContentType
     getTypes?: ContentType[]
-    query?: Content[]
-    queryConnection?: QueryContentConnection
     queryDsl?: Content[]
     queryDslConnection?: QueryDSLContentConnection
 }
@@ -237,6 +235,13 @@ interface Image {
     image: Content
     ref: string
     style: ImageStyle
+    src: ImageUrl | null
+    srcset: ImageSource[]
+}
+
+interface ImageSource {
+    width: number
+    imageUrl: ImageUrl
 }
 
 interface ImageComponentData {
@@ -246,6 +251,7 @@ interface ImageComponentData {
 }
 
 interface ImageStyle {
+    application: string
     name: string
     aspectRatio: string
     filter: string
@@ -263,6 +269,8 @@ interface LayoutComponentData {
 interface Link {
     ref: string
     uri: string
+    pageUrl: PageUrl | null
+    fragment: string
     media: Media
     content: Content
 }
@@ -292,12 +300,12 @@ interface MacroConfig {
 interface Media {
     content: Content
     intent: MediaIntentType
+    mediaUrl: AttachmentUrl | null
 }
 
 type MediaIntentType = 'download' | 'inline';
 
 export interface AttachmentUrl {
-    url: string;
     path: string;
     queryString: string;
     context: string;
@@ -308,7 +316,6 @@ export interface AttachmentUrl {
 }
 
 export interface ImageUrl {
-    url: string;
     path: string;
     queryString: string;
     context: string;
@@ -386,11 +393,8 @@ interface PrincipalKey {
     principalId: string
 }
 
-interface QueryContentConnection extends ContentConnection {
+interface QueryDSLContentConnection extends ContentConnection {
     aggregationsAsJson: JSON
-}
-
-interface QueryDSLContentConnection extends QueryContentConnection {
     highlightAsJson: JSON
 }
 

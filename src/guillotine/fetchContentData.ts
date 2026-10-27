@@ -16,7 +16,7 @@ export const fetchContentData = async <Content = Record<string, unknown>>(
         query,
         variables: {
             path: contentPath,
-            siteKey: mapping.site,
+            scopeKey: mapping.site,
             project: mapping.project,
             branch
         }

@@ -26,7 +26,7 @@ export function attachmentUrl(data?: UrlParts<AttachmentUrl> | null): string | u
 export function pageUrl(data: UrlParts<PageUrl>, meta: PageUrlMeta): string;
 export function pageUrl(data: UrlParts<PageUrl> | null | undefined, meta: PageUrlMeta): string | undefined;
 export function pageUrl(data: UrlParts<PageUrl> | null | undefined, meta: PageUrlMeta): string | undefined {
-    return data ? getPageUrl(data.path + (data.queryString || ''), meta) : undefined;
+    return data ? getPageUrl(data.path, meta) + (data.queryString || '') : undefined;
 }
 
 function toMediaUrl(data?: UrlParts<MediaUrlResult> | null): string | undefined {

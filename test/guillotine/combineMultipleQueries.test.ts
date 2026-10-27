@@ -65,7 +65,7 @@ describe('guillotine', () => {
                 type: REGISTERED_PART,
                 component: PART_COMPONENT,
                 queryAndVariables: {
-                    query: 'query{guillotine(project:$project,siteKey:$siteKey){get(key:$path){x}}}',
+                    query: 'query{guillotine(project:$project,scopeKey:$scopeKey){get(key:$path){x}}}',
                 }
             }, {
                 type: REGISTERED_PART,
@@ -78,7 +78,7 @@ describe('guillotine', () => {
                 }
             }]);
             expect(ws(query)).toEqual(
-                'query ($path:ID!, $siteKey:String, $project:String, $request1_someVar:String, $branch:String) { request0:guillotine(project:$project,siteKey:$siteKey){get(key:$path){x}} request1:guillotine(branch:$branch,foo:$bar){x} }');
+                'query ($path:ID!, $scopeKey:String, $project:String, $request1_someVar:String, $branch:String) { request0:guillotine(project:$project,scopeKey:$scopeKey){get(key:$path){x}} request1:guillotine(branch:$branch,foo:$bar){x} }');
             expect(variables).toEqual({
                 request1_bar: 'value3'
             });

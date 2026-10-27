@@ -4,17 +4,15 @@ import type {AttachmentUrl, ImageUrl, PageUrl} from './guillotine';
 export type GraphqlJson = Record<string, unknown>;
 
 export interface ImageUrlArgs {
-    scale: string;
+    scale?: string;
     quality?: number;
     background?: string;
     format?: string;
     filter?: string;
-    params?: GraphqlJson;
 }
 
 export interface MediaUrlArgs {
     download?: boolean;
-    params?: GraphqlJson;
 }
 
 export interface PageUrlArgs {

@@ -19,7 +19,7 @@ globalThis.console = {
 
 const QUERY = `{
     guillotine {
-        query(first: 1) {
+        queryDsl(first: 1) {
             valid
         }
     }
@@ -29,7 +29,7 @@ const FETCH_GUILLOTINE_PARAMS_VALID: [
     string,
     FetchOptions?,
 ] = [
-    'http://localhost:8080/site',
+    'http://localhost:8080/api/com.enonic.app.guillotine:graphql',
     {
         cache: 'no-store',
         next: {

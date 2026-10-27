@@ -51,7 +51,7 @@ describe('guillotine', () => {
 
     describe('fetchContentData', () => {
         it('should return an error when query is empty', () => {
-            const contentApiUrl = 'http://localhost:8080/site/site-name/master';
+            const contentApiUrl = 'http://localhost:8080/api/com.enonic.app.guillotine:graphql';
             const xpContentPath = '/xpContentPath'
             const mapping: LocaleMapping = {
                 default: true,
@@ -73,7 +73,7 @@ describe('guillotine', () => {
         });
 
         it('should return an error when query is empty', () => {
-            const contentApiUrl = 'http://localhost:8080/site/site-name/master';
+            const contentApiUrl = 'http://localhost:8080/api/com.enonic.app.guillotine:graphql';
             const xpContentPath = '/xpContentPath'
             const mapping: LocaleMapping = {
                 default: true,

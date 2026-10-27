@@ -54,7 +54,7 @@ query($path:ID!){
           dateofbirth
           photos {
            ... on media_Image {
-              imageUrl: imageUrl(type: absolute, scale: "width(500)")
+              imageUrl(scale: "width(500)") { path queryString }
               attachments {
                 name
               }
@@ -63,7 +63,7 @@ query($path:ID!){
         }
       }
       parent {
-        _path(type: siteRelative)
+        _path
       }
     }
   }

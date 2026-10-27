@@ -23,7 +23,7 @@ const FETCH_FROM_API_PARAMS_VALID: [
     LocaleMapping,
     { body: ContentApiBaseBody }
 ] = [
-    'http://localhost:8080/site/enonic-homepage/master',
+    'http://localhost:8080/api/com.enonic.app.guillotine:graphql',
     {
         default: true,
         project: 'enonic-homepage',
@@ -34,7 +34,7 @@ const FETCH_FROM_API_PARAMS_VALID: [
         body: {
             query: `{
                         guillotine {
-                            query(first: 1) {
+                            queryDsl(first: 1) {
                                 valid
                             }
                         }

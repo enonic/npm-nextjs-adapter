@@ -16,40 +16,47 @@ describe('guillotine/urls', () => {
 
     describe('query builders', () => {
         it('imageUrlQuery emits scale only', () => {
-            expect(queries.imageUrlQuery({scale: 'width(500)'})).toEqual('imageUrl(scale: "width(500)") { url path queryString context id fingerprint scale name }');
+            expect(queries.imageUrlQuery({scale: 'width(500)'})).toEqual('imageUrl(scale: "width(500)") { path queryString context id fingerprint scale name }');
         });
 
-        it('imageUrlQuery emits every argument and params as a GraphQL object literal', () => {
+        it('imageUrlQuery emits every argument', () => {
             expect(queries.imageUrlQuery({
                 scale: 'block(200,200)',
                 quality: 80,
                 background: 'ffffff',
                 format: 'webp',
                 filter: 'blur(3)',
-                params: {foo: 'bar', n: 1, list: [1, 'a'], nested: {ok: true}}
-            })).toEqual('imageUrl(scale: "block(200,200)", quality: 80, background: "ffffff", format: "webp", filter: "blur(3)", '
-                + 'params: {foo: "bar", n: 1, list: [1, "a"], nested: {ok: true}}) { url path queryString context id fingerprint scale name }');
+            })).toEqual('imageUrl(scale: "block(200,200)", quality: 80, background: "ffffff", format: "webp", filter: "blur(3)") '
+                + '{ path queryString context id fingerprint scale name }');
+        });
+
+        it('imageUrlQuery emits no parentheses without args', () => {
+            expect(queries.imageUrlQuery()).toEqual('imageUrl { path queryString context id fingerprint scale name }');
         });
 
         it('imageUrlQuery skips undefined arguments', () => {
-            expect(queries.imageUrlQuery({scale: 'width(1)', quality: undefined})).toEqual('imageUrl(scale: "width(1)") { url path queryString context id fingerprint scale name }');
+            expect(queries.imageUrlQuery({scale: 'width(1)', quality: undefined})).toEqual('imageUrl(scale: "width(1)") { path queryString context id fingerprint scale name }');
         });
 
         it('mediaUrlQuery and attachmentUrlQuery emit no parentheses without args', () => {
-            expect(queries.mediaUrlQuery()).toEqual('mediaUrl { url path queryString context id fingerprint name intent }');
-            expect(queries.attachmentUrlQuery()).toEqual('attachmentUrl { url path queryString context id fingerprint name intent }');
-            expect(queries.mediaUrlQuery({download: true})).toEqual('mediaUrl(download: true) { url path queryString context id fingerprint name intent }');
+            expect(queries.mediaUrlQuery()).toEqual('mediaUrl { path queryString context id fingerprint name intent }');
+            expect(queries.attachmentUrlQuery()).toEqual('attachmentUrl { path queryString context id fingerprint name intent }');
+            expect(queries.mediaUrlQuery({download: true})).toEqual('mediaUrl(download: true) { path queryString context id fingerprint name intent }');
         });
 
         it('pageUrlQuery selects path only', () => {
-            expect(queries.pageUrlQuery()).toEqual('pageUrl { url path queryString }');
-            expect(queries.pageUrlQuery({params: {a: 'b'}})).toEqual('pageUrl(params: {a: "b"}) { url path queryString }');
+            expect(queries.pageUrlQuery()).toEqual('pageUrl { baseUrl path queryString }');
+            expect(queries.pageUrlQuery({params: {a: 'b'}})).toEqual('pageUrl(params: {a: "b"}) { baseUrl path queryString }');
+        });
+
+        it('pageUrlQuery emits params as a GraphQL object literal', () => {
+            expect(queries.pageUrlQuery({params: {foo: 'bar', n: 1, list: [1, 'a'], nested: {ok: true}}}))
+                .toEqual('pageUrl(params: {foo: "bar", n: 1, list: [1, "a"], nested: {ok: true}}) { baseUrl path queryString }');
         });
     });
 
     describe('string functions', () => {
         const image: ImageUrl = {
-            url: '/api/media:image/hmdb/id:fp/width-500/photo.jpg',
             path: '/media:image/hmdb/id:fp/width-500/photo.jpg',
             queryString: '',
             context: 'hmdb',
@@ -59,7 +66,6 @@ describe('guillotine/urls', () => {
             name: 'photo.jpg'
         };
         const attachment = (queryString: string): AttachmentUrl => ({
-            url: '/api/media:attachment/hmdb/id:fp/file.pdf' + queryString,
             path: '/media:attachment/hmdb/id:fp/file.pdf',
             queryString,
             context: 'hmdb',
@@ -68,7 +74,7 @@ describe('guillotine/urls', () => {
             name: 'file.pdf',
             intent: queryString ? 'download' : 'inline'
         });
-        const page = (path: string): PageUrl => ({url: path, path, queryString: ''});
+        const page = (path: string): PageUrl => ({baseUrl: '', path, queryString: ''});
 
         it('imageUrl, mediaUrl and attachmentUrl prepend the media base URL to path and queryString', () => {
             expect(urls.imageUrl(image)).toEqual('http://localhost:8080/api/media:image/hmdb/id:fp/width-500/photo.jpg');
@@ -88,6 +94,7 @@ describe('guillotine/urls', () => {
             expect(urls.pageUrl(page('/persons/lea'), no)).toEqual('/no/persons/lea');
             expect(urls.pageUrl(page(''), en)).toEqual('/');
             expect(urls.pageUrl({path: '/'}, no)).toEqual('/no');
+            expect(urls.pageUrl({path: '', queryString: '?a=1'}, no)).toEqual('/no?a=1');
             expect(urls.pageUrl({path: '/persons/lea', queryString: '?a=1'}, no)).toEqual('/no/persons/lea?a=1');
             expect(urls.pageUrl({path: '/persons/lea'}, {locale: 'en'})).toEqual('/en/persons/lea');
             expect(urls.pageUrl(undefined, no)).toBeUndefined();

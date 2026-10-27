@@ -20,7 +20,7 @@ export async function fetchContentPathsForLocale(
             pathRegex: `/content${mapping.site}/*`,
             count,
             project: mapping.project,
-            siteKey: mapping.site,
+            scopeKey: mapping.site,
             branch: getContentBranch()
         }
     };
