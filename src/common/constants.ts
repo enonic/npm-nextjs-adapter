@@ -59,7 +59,7 @@ export enum GUILLOTINE_REQUEST_HEADERS {
     DEFAULT_LOCALE = 'default-locale'
 }
 
-export const JSESSIONID_HEADER = 'jsessionid';
+export const JSESSIONID_HEADER = 'JSESSIONID';
 
 export const PAGE_TEMPLATE_CONTENTTYPE_NAME = 'portal:page-template';
 export const PAGE_TEMPLATE_FOLDER = 'portal:template-folder';

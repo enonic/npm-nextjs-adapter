@@ -1,6 +1,7 @@
 import type {Context} from '../../src/types';
 
 import {afterAll, describe, expect, jest, test as it} from '@jest/globals';
+import {JSESSIONID_HEADER} from '../../src/common/constants';
 import {ENONIC_APP_NAME} from '../constants';
 
 
@@ -23,7 +24,7 @@ describe('utils', () => {
                 const context: Context = {
                     headers: {
                         get(name: string) {
-                            if (name === 'jsessionid') {
+                            if (name === JSESSIONID_HEADER) {
                                 return '1234';
                             }
                             console.error('headers get name', name);
@@ -36,7 +37,7 @@ describe('utils', () => {
                     locale: 'en',
                     locales: ['en', 'no']
                 })).toEqual({
-                    'Cookie': 'jsessionid=1234',
+                    'Cookie': `${JSESSIONID_HEADER}=1234`,
                     'default-locale': 'en',
                     locale: 'en',
                     locales: '["en","no"]'
@@ -55,7 +56,7 @@ describe('utils', () => {
                 const context: Context = {
                     headers: {
                         get(name: string) {
-                            if (name === 'jsessionid') {
+                            if (name === JSESSIONID_HEADER) {
                                 return undefined;
                             }
                             console.error('headers get name', name);
