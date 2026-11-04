@@ -1,24 +1,24 @@
-import type {AttachmentUrl, ImageUrl, MediaUrlResult, PageUrl, PageUrlMeta, UrlParts} from '../types';
+import type {AttachmentUrl, ImageUrl, MediaUrlMeta, MediaUrlResult, PageUrl, PageUrlMeta, UrlParts} from '../types';
 
-import {getMediaUrl} from '../utils/getMediaUrl';
+import {getMediaProxyUrl, getMediaUrl} from '../utils/getMediaUrl';
 import {getPageUrl} from '../utils/getPageUrl';
 
-export function imageUrl(data: UrlParts<ImageUrl>): string;
-export function imageUrl(data?: UrlParts<ImageUrl> | null): string | undefined;
-export function imageUrl(data?: UrlParts<ImageUrl> | null): string | undefined {
-    return toMediaUrl(data);
+export function imageUrl(data: UrlParts<ImageUrl>, meta: MediaUrlMeta): string;
+export function imageUrl(data: UrlParts<ImageUrl> | null | undefined, meta: MediaUrlMeta): string | undefined;
+export function imageUrl(data: UrlParts<ImageUrl> | null | undefined, meta: MediaUrlMeta): string | undefined {
+    return toMediaUrl(data, meta);
 }
 
-export function mediaUrl(data: UrlParts<AttachmentUrl>): string;
-export function mediaUrl(data?: UrlParts<AttachmentUrl> | null): string | undefined;
-export function mediaUrl(data?: UrlParts<AttachmentUrl> | null): string | undefined {
-    return toMediaUrl(data);
+export function mediaUrl(data: UrlParts<AttachmentUrl>, meta: MediaUrlMeta): string;
+export function mediaUrl(data: UrlParts<AttachmentUrl> | null | undefined, meta: MediaUrlMeta): string | undefined;
+export function mediaUrl(data: UrlParts<AttachmentUrl> | null | undefined, meta: MediaUrlMeta): string | undefined {
+    return toMediaUrl(data, meta);
 }
 
-export function attachmentUrl(data: UrlParts<AttachmentUrl>): string;
-export function attachmentUrl(data?: UrlParts<AttachmentUrl> | null): string | undefined;
-export function attachmentUrl(data?: UrlParts<AttachmentUrl> | null): string | undefined {
-    return toMediaUrl(data);
+export function attachmentUrl(data: UrlParts<AttachmentUrl>, meta: MediaUrlMeta): string;
+export function attachmentUrl(data: UrlParts<AttachmentUrl> | null | undefined, meta: MediaUrlMeta): string | undefined;
+export function attachmentUrl(data: UrlParts<AttachmentUrl> | null | undefined, meta: MediaUrlMeta): string | undefined {
+    return toMediaUrl(data, meta);
 }
 
 // Public URL: no prefix for the default locale. Pass {locale} without defaultLocale for the always-prefixed route path.
@@ -29,6 +29,10 @@ export function pageUrl(data: UrlParts<PageUrl> | null | undefined, meta: PageUr
     return data ? getPageUrl(data.path, meta) + (data.queryString || '') : undefined;
 }
 
-function toMediaUrl(data?: UrlParts<MediaUrlResult> | null): string | undefined {
-    return data ? getMediaUrl(data.path + (data.queryString || '')) : undefined;
+function toMediaUrl(data: UrlParts<MediaUrlResult> | null | undefined, meta: MediaUrlMeta): string | undefined {
+    if (!data) {
+        return undefined;
+    }
+    const url = data.path + (data.queryString || '');
+    return meta.branch === 'draft' ? getMediaProxyUrl(url) : getMediaUrl(url);
 }

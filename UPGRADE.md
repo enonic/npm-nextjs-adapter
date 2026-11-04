@@ -149,9 +149,10 @@ locale (omitted for the default locale) + site-relative `path`.
 
 Query URL fields with `imageUrlQuery(args)`, `mediaUrlQuery()`,
 `attachmentUrlQuery()` and `pageUrlQuery()` (they select every field), and
-render the results with `imageUrl(data)`, `mediaUrl(data)`,
-`attachmentUrl(data)` and `pageUrl(data, meta)`; they only need `path`
-(`queryString` is optional). `RichTextView` rewrites `processedHtml` URLs itself. Client components that build media URLs, import `_mappings.ts` or read the locale mappings still need the `NEXT_PUBLIC_*`
+render the results with `imageUrl(data, meta)`, `mediaUrl(data, meta)`,
+`attachmentUrl(data, meta)` and `pageUrl(data, meta)`; they only need `path`
+(`queryString` is optional). The required `meta.branch` selects the authenticated Next.js media proxy for draft content and the configured
+media API for live content. `RichTextView` rewrites `processedHtml` URLs itself. Client components that build media URLs, import `_mappings.ts` or read the locale mappings still need the `NEXT_PUBLIC_*`
 copies (`NEXT_PUBLIC_ENONIC_API`, `NEXT_PUBLIC_ENONIC_MEDIA_CDN`, `NEXT_PUBLIC_ENONIC_APP_NAME`, `NEXT_PUBLIC_ENONIC_MAPPINGS`);
 purely server-rendered sites can drop them. `richTextQuery()` now spreads the named
 fragments `RichTextMacros`, `RichTextLinks` and `RichTextImages`; `fetchGuillotine()` defines them once per document, and documents sent

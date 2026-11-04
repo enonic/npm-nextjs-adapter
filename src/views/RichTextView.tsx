@@ -3,6 +3,7 @@ import type {MetaData, RichTextViewProps, Replacer as NextReplacer, RichTextData
 import BaseMacro from './BaseMacro';
 import Link from 'next/link';
 import {mediaUrl, pageUrl} from '../guillotine/urls';
+import {getMediaProxyUrl} from '../utils/getMediaUrl';
 import {useMemo} from 'react';
 import type {
     MacroComponentParams,
@@ -84,24 +85,25 @@ function LinkAdapter(props: LinkComponentParams<ExtraRichTextProps>) {
         return <Link href={contentUrl + (data.fragment || '')} data-content-path={data.content?._path} target={props.target} title={props.title}>{props.children}</Link>;
     }
     // Referenced HTML URLs are placeholders, including when the reference cannot be resolved.
-    const href = data ? resolveMediaUrl(data.media?.mediaUrl) : props.href;
+    const href = data ? resolveMediaUrl(data.media?.mediaUrl, props.nextMeta) : props.href;
     return <a href={href} target={props.target} title={props.title}>{props.children}</a>;
 }
 
 function ImageAdapter(props: ImageComponentParams<ExtraRichTextProps>) {
-    const src = resolveMediaUrl(props.data?.src);
+    const src = resolveMediaUrl(props.data?.src, props.nextMeta);
     if (!src) {
         return null;
     }
     const srcSet = props.data.srcset?.map((source) => {
-        const url = resolveMediaUrl(source.imageUrl);
+        const url = resolveMediaUrl(source.imageUrl, props.nextMeta);
         return url ? `${url} ${source.width}w` : undefined;
     }).filter(Boolean).join(', ');
     return <img src={src} style={props.style} alt={props.alt} sizes={props.sizes} srcSet={srcSet}/>;
 }
 
-function resolveMediaUrl(value?: UrlValue | null): string | undefined {
-    return typeof value === 'string' ? value : mediaUrl(value);
+function resolveMediaUrl(value: UrlValue | null | undefined, meta: MetaData): string | undefined {
+    const url = typeof value === 'string' ? value : mediaUrl(value, meta);
+    return url && meta.branch === 'draft' ? getMediaProxyUrl(url) : url;
 }
 
 function toRichTextMetaData(meta: MetaData): RichTextMetaData {

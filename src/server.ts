@@ -3,3 +3,5 @@ export {fetchContentPathsForAllLocales} from './guillotine/fetchContentPathsForA
 export {fetchContentPathsForLocale} from './guillotine/fetchContentPathsForLocale';
 export {fetchFromApi} from './guillotine/fetchFromApi';
 export {fetchGuillotine} from './guillotine/fetchGuillotine';
+export {proxyMedia} from './server/proxyMedia';
+export type {ProxyMediaOptions} from './server/proxyMedia';

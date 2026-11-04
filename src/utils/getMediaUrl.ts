@@ -1,6 +1,7 @@
 import {MEDIA_URL} from '../common/env';
 
 const MEDIA_MARKER = '/media:';
+const MEDIA_PROXY_PATH = '/api/media';
 
 /** Absolute media URL from a Guillotine `path` or any XP media `url` (server-side only, passthrough on the client) */
 export function getMediaUrl(urlOrPath: string): string {
@@ -9,6 +10,12 @@ export function getMediaUrl(urlOrPath: string): string {
         return urlOrPath;
     }
     return MEDIA_URL + urlOrPath.slice(index);
+}
+
+/** Same-origin URL for authenticated draft media requests. */
+export function getMediaProxyUrl(urlOrPath: string): string {
+    const index = urlOrPath.indexOf(MEDIA_MARKER);
+    return index < 0 ? urlOrPath : MEDIA_PROXY_PATH + urlOrPath.slice(index);
 }
 
 export function getMediaSrcSet(srcSet: string): string {

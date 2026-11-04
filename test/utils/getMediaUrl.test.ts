@@ -29,6 +29,14 @@ describe('utils', () => {
             expect(mod.getMediaUrl('https://example.com/page')).toEqual('https://example.com/page');
         });
 
+        it('builds same-origin proxy urls for draft media', () => {
+            expect(mod.getMediaProxyUrl('/media:image/hmdb/id:fp/width-500/a.jpg?quality=80'))
+                .toEqual('/api/media/media:image/hmdb/id:fp/width-500/a.jpg?quality=80');
+            expect(mod.getMediaProxyUrl('https://xp.example.com/api/media:attachment/hmdb/id:fp/a.pdf?download'))
+                .toEqual('/api/media/media:attachment/hmdb/id:fp/a.pdf?download');
+            expect(mod.getMediaProxyUrl('/images/logo.svg')).toEqual('/images/logo.svg');
+        });
+
         it('rewrites every candidate of a srcset', () => {
             expect(mod.getMediaSrcSet('/api/media:image/a/b/width-400/x.jpg 400w, /api/media:image/a/b/width-800/x.jpg 800w'))
                 .toEqual('http://localhost:8080/api/media:image/a/b/width-400/x.jpg 400w, http://localhost:8080/api/media:image/a/b/width-800/x.jpg 800w');

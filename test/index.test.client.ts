@@ -35,6 +35,6 @@ describe('index (CLIENT)', () => {
             fingerprint: 'fp',
             scale: 'width-500',
             name: 'a.jpg'
-        })).toEqual('/media:image/hmdb/id:fp/width-500/a.jpg');
+        }, {branch: 'master'})).toEqual('/media:image/hmdb/id:fp/width-500/a.jpg');
     });
 }); // describe index

@@ -25,6 +25,9 @@ export type MediaUrlResult = ImageUrl | AttachmentUrl;
 /** Object returned by pageUrlQuery() */
 export type PageUrlResult = PageUrl;
 
+/** Meta for media URL functions: draft media is routed through the authenticated Next.js proxy */
+export type MediaUrlMeta = Pick<MetaData, 'branch'>;
+
 /** Meta for pageUrl(): the locale prefix is omitted when `locale` equals `defaultLocale`; without `defaultLocale` it is always added */
 export type PageUrlMeta = Pick<MetaData, 'locale'> & Partial<Pick<MetaData, 'defaultLocale'>>;
 

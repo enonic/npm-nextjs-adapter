@@ -256,6 +256,36 @@ describe('views', () => {
             });
         });
 
+        it('routes structured media URL objects through the proxy in draft', async () => {
+            const data: RichTextData = {
+                processedHtml: '<a data-link-ref="file" href="placeholder">File</a><img data-image-ref="photo" src="placeholder"/>',
+                links: [{
+                    ref: 'file',
+                    uri: 'file',
+                    media: {
+                        content: null,
+                        intent: 'download',
+                        mediaUrl: {path: '/media:attachment/project/file:fp/file.pdf', queryString: '?download'}
+                    }
+                }],
+                images: [{
+                    ref: 'photo',
+                    image: null,
+                    src: {path: '/media:image/project/photo:fp/full/photo.jpg', queryString: '?v=1'},
+                    srcset: [{width: 400, imageUrl: {path: '/media:image/project/photo:fp/width-400/photo.jpg'}}]
+                }]
+            };
+            const {container} = render(<RichTextView meta={{...meta, branch: 'draft'}} data={data}/>);
+            await waitFor(() => {
+                expect(container.querySelector('a')).toHaveAttribute(
+                    'href', '/api/media/media:attachment/project/file:fp/file.pdf?download');
+                expect(container.querySelector('img')).toHaveAttribute(
+                    'src', '/api/media/media:image/project/photo:fp/full/photo.jpg?v=1');
+                expect(container.querySelector('img')).toHaveAttribute(
+                    'srcset', '/api/media/media:image/project/photo:fp/width-400/photo.jpg 400w');
+            });
+        });
+
         it('resolves images without macros and keeps the original data available to custom replacers', async () => {
             const data: RichTextData = {
                 processedHtml: `<div><img data-image-ref="photo" src="placeholder" alt="Photo" sizes="100vw"/></div>`,

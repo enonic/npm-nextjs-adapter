@@ -75,16 +75,28 @@ describe('guillotine/urls', () => {
             intent: queryString ? 'download' : 'inline'
         });
         const page = (path: string): PageUrl => ({baseUrl: '', path, queryString: ''});
+        const live = {branch: 'master'};
 
         it('imageUrl, mediaUrl and attachmentUrl prepend the media base URL to path and queryString', () => {
-            expect(urls.imageUrl(image)).toEqual('http://localhost:8080/api/media:image/hmdb/id:fp/width-500/photo.jpg');
-            expect(urls.mediaUrl(attachment('?download'))).toEqual('http://localhost:8080/api/media:attachment/hmdb/id:fp/file.pdf?download');
-            expect(urls.attachmentUrl(attachment(''))).toEqual('http://localhost:8080/api/media:attachment/hmdb/id:fp/file.pdf');
+            expect(urls.imageUrl(image, live)).toEqual('http://localhost:8080/api/media:image/hmdb/id:fp/width-500/photo.jpg');
+            expect(urls.mediaUrl(attachment('?download'), live)).toEqual('http://localhost:8080/api/media:attachment/hmdb/id:fp/file.pdf?download');
+            expect(urls.attachmentUrl(attachment(''), live)).toEqual('http://localhost:8080/api/media:attachment/hmdb/id:fp/file.pdf');
+        });
+
+        it('routes draft media through the same-origin proxy', () => {
+            const draft = {branch: 'draft'};
+            expect(urls.imageUrl(image, draft)).toEqual('/api/media/media:image/hmdb/id:fp/width-500/photo.jpg');
+            expect(urls.mediaUrl(attachment('?download'), draft)).toEqual('/api/media/media:attachment/hmdb/id:fp/file.pdf?download');
+            expect(urls.attachmentUrl(attachment(''), draft)).toEqual('/api/media/media:attachment/hmdb/id:fp/file.pdf');
+        });
+
+        it('keeps live media direct', () => {
+            expect(urls.imageUrl(image, live)).toEqual('http://localhost:8080/api/media:image/hmdb/id:fp/width-500/photo.jpg');
         });
 
         it('media functions pass undefined through', () => {
-            expect(urls.imageUrl(undefined)).toBeUndefined();
-            expect(urls.mediaUrl(null)).toBeUndefined();
+            expect(urls.imageUrl(undefined, live)).toBeUndefined();
+            expect(urls.mediaUrl(null, live)).toBeUndefined();
         });
 
         it('pageUrl prefixes non-default locales, appends the query string and accepts a bare path', () => {

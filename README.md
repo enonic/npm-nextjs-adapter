@@ -312,18 +312,19 @@ turns the returned object into the final URL string.
 
 | Field           | Query builder                             | String function       |
 |-----------------|-------------------------------------------|-----------------------|
-| `imageUrl`      | `imageUrlQuery(args: ImageUrlArgs)`       | `imageUrl(data)`      |
-| `mediaUrl`      | `mediaUrlQuery(args?: MediaUrlArgs)`      | `mediaUrl(data)`      |
-| `attachmentUrl` | `attachmentUrlQuery(args?: MediaUrlArgs)` | `attachmentUrl(data)` |
+| `imageUrl`      | `imageUrlQuery(args: ImageUrlArgs)`       | `imageUrl(data, meta)`      |
+| `mediaUrl`      | `mediaUrlQuery(args?: MediaUrlArgs)`      | `mediaUrl(data, meta)`      |
+| `attachmentUrl` | `attachmentUrlQuery(args?: MediaUrlArgs)` | `attachmentUrl(data, meta)` |
 | `pageUrl`       | `pageUrlQuery(args?: PageUrlArgs)`        | `pageUrl(data, meta)` |
 
 The query builders accept the same arguments as the Guillotine field (`scale`, `quality`, `background`, `format`, `filter` for
 `imageUrl`; `download` for `mediaUrl`/`attachmentUrl`; `params` for `pageUrl`) and select every field of the returned object:
 `path`, `queryString`, `context`, `id`, `fingerprint`, `name`, plus `scale` for images and `intent` for media and attachments
 (`pageUrl` has `baseUrl`, `path` and `queryString`).
-Media functions return absolute URLs pointing at the XP media API (`ENONIC_MEDIA_CDN`, defaulting to `ENONIC_API`). `pageUrl` returns a
-relative path for the Next.js router, prefixed with the locale unless it is the default locale (`meta.locale` vs `meta.defaultLocale`);
-`meta` is the runtime data returned by [fetchContent](#fetch-content). Pass `{locale}` alone to always prefix, e.g. for `revalidatePath`.
+Media functions use `meta.branch` to return the authenticated `/api/media` proxy path for draft content and an absolute XP media URL
+(`ENONIC_MEDIA_CDN`, defaulting to `ENONIC_API`) for live content. `pageUrl` returns a relative path for the Next.js router, prefixed with
+the locale unless it is the default locale (`meta.locale` vs `meta.defaultLocale`). `meta` is the runtime data returned by
+[fetchContent](#fetch-content). Pass `{locale}` alone to `pageUrl` to always prefix, e.g. for `revalidatePath`.
 The string functions take that object (`ImageUrl`, `AttachmentUrl` or `PageUrl` from the adapter types) and return `undefined` when given `undefined`;
 All four append `queryString` to `path` and need only `path` (`queryString` is optional), so links without a Guillotine object can
 pass a bare `{path}`, e.g. `pageUrl({path: '/'}, meta)` for the site root.
@@ -343,7 +344,7 @@ const query = `
     ${pageUrlQuery()}
   }`;
 
-<img src={imageUrl(photo.imageUrl)}/>
+<img src={imageUrl(photo.imageUrl, meta)}/>
 <Link href={pageUrl(parent.pageUrl, meta)}>Back</Link>
 ```
 
