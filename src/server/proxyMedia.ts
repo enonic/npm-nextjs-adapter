@@ -1,7 +1,9 @@
 import {draftMode} from 'next/headers';
 
-import {JSESSIONID_HEADER} from '../common/constants';
+import {ASCII_CONTROL_CHARACTERS_PATTERN, JSESSIONID_HEADER} from '../common/constants';
 import {getMediaUrl} from '../utils/getMediaUrl';
+
+import {getXpSessionId} from './xpSession';
 
 const DEFAULT_PROXY_PATH = '/api/media';
 const ALLOWED_MEDIA_PREFIXES = ['/media:image/', '/media:attachment/', '/media:unknown'];
@@ -47,7 +49,7 @@ export async function proxyMedia(request: Request, options: ProxyMediaOptions = 
         return new Response('Invalid media path', {status: 400});
     }
 
-    const jsessionid = getSessionId(request.headers);
+    const jsessionid = getXpSessionId(request.headers);
     if (!jsessionid) {
         return new Response('Unauthorized', {status: 401});
     }
@@ -104,27 +106,13 @@ function getProxiedMediaPath(pathname: string, proxyPath: string): string | unde
     if (!ALLOWED_MEDIA_PREFIXES.some((prefix) => mediaPath.startsWith(prefix))) {
         return undefined;
     }
-    if (mediaPath.includes('\\') || hasControlCharacters(mediaPath) || /\/(?:\.{1,2})(?:\/|$)/.test(mediaPath)) {
+    if (mediaPath.includes('\\') || ASCII_CONTROL_CHARACTERS_PATTERN.test(mediaPath) || /\/(?:\.{1,2})(?:\/|$)/.test(mediaPath)) {
         return undefined;
     }
     return mediaPath;
 }
 
-function getSessionId(headers: Headers): string | undefined {
-    const headerValue = headers.get(JSESSIONID_HEADER);
-    const cookieValue = headers.get('cookie')?.split(';').map((cookie) => cookie.trim()).find((cookie) => {
-        return cookie.startsWith(`${JSESSIONID_HEADER}=`);
-    })?.slice(JSESSIONID_HEADER.length + 1);
-    const value = headerValue || cookieValue;
-    return value && !value.includes(';') && !hasControlCharacters(value) ? value : undefined;
-}
 
-function hasControlCharacters(value: string): boolean {
-    return Array.from(value).some((character) => {
-        const code = character.charCodeAt(0);
-        return code <= 31 || code === 127;
-    });
-}
 
 function copyResponseHeaders(upstreamHeaders: Headers): Headers {
     const headers = new Headers();

@@ -2,7 +2,7 @@ import type {Context} from '../src/types';
 
 import {afterEach, beforeEach, describe, expect, jest, test as it} from '@jest/globals';
 import {setupServerEnv} from './constants';
-import {ENV_VARS} from '../src/common/constants';
+import {ENV_VARS, RENDER_MODE} from '../src/common/constants';
 
 
 globalThis.console = {
@@ -41,6 +41,21 @@ describe('utils', () => {
     });
 
     describe('getContentBranch', () => {
+        it.each(Object.values(RENDER_MODE))('accepts explicit render mode %s', async (mode) => {
+            const {getContentBranch} = await import('../src/utils/getContentBranch');
+            const expected = mode === RENDER_MODE.NEXT || mode === RENDER_MODE.LIVE ? 'master' : 'draft';
+            expect(getContentBranch(mode)).toBe(expected);
+        });
+
+        it('preserves context and environment defaults while explicit modes take precedence', async () => {
+            process.env.RENDER_MODE = 'PREVIEW';
+            const {getContentBranch} = await import('../src/utils/getContentBranch');
+            expect(getContentBranch()).toBe('draft');
+            expect(getContentBranch(RENDER_MODE.NEXT)).toBe('master');
+            expect(getContentBranch({contentPath: '/', headers: new Headers({'content-studio-mode': 'live'})}))
+                .toBe('master');
+        });
+
         const TESTS = {
             'edit': 'draft',
             'inline': 'draft',

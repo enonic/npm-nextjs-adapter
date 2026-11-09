@@ -1,5 +1,9 @@
 export const CATCH_ALL = '*';
 
+// ASCII control characters (U+0000–U+001F) and DEL (U+007F).
+// eslint-disable-next-line no-control-regex -- These characters are intentionally matched for input validation.
+export const ASCII_CONTROL_CHARACTERS_PATTERN = /[\u0000-\u001f\u007f]/;
+
 export enum ENV_VARS {
     MAPPINGS = 'ENONIC_MAPPINGS',
     API_TOKEN = 'ENONIC_API_TOKEN',

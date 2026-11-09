@@ -44,6 +44,11 @@ return <MainView {...props}/>
 
 They are available at `@enonic/nextjs-adapter/server`
 
+`GUILLOTINE_URL` is also exported here: the configured `ENONIC_API` root joined with `GUILLOTINE_API`
+(default `com.enonic.app.guillotine:graphql`). It is evaluated when the module loads and can be passed directly to
+`fetchGuillotine()` or `fetch()`. `MEDIA_URL` is also exported here: the configured `ENONIC_MEDIA_CDN` root, falling back to
+`ENONIC_API`, with trailing slashes removed.
+
 <br/>
 
 #### <a id="fetch-content"></a>`fetchContent(context: Context) => Promise<FetchContentResult>`
@@ -236,6 +241,37 @@ const mapping = getLocaleMapping({
 
 const contentPaths = fetchContentPathsForLocale(mapping, 'custom graphql query', 1001);
 ```
+
+<br/>
+
+#### Preview and proxy helpers
+
+These independent helpers are exported from `@enonic/nextjs-adapter/server`. Applications retain their Route Handlers and proxy,
+including logging, authorization, custom rewrites, matchers, and the explicit `(await draftMode()).enable()` call.
+
+| Function | Purpose |
+|----------|---------|
+| `validateXpPayload({blob, secret})` | Authenticates/decrypts an XP blob and validates its object shape and optional string `xpProject`. Does not require a session or timestamp; suitable for mappings and revalidation. |
+| `validatePreviewPayload({blob, secret, maxAgeMs?, clockSkewMs?, now?})` | Uses `validateXpPayload()` internally, then requires a safe, nonempty string `JSESSIONID` and finite numeric `issuedAt`. Defaults to a five-minute lifetime and 30 seconds of clock skew. Timing configuration must be finite and age/skew nonnegative. |
+| `buildPreviewUrlIfNeeded({request, payload, returnUrl, buildId, previewPath?})` | Returns a preview-setup `URL` if the draft/build cookies or XP session need synchronization; otherwise `null`. Defaults to `/api/preview`. Supply the validated payload decoded from this request's `xp` parameter and a same-origin canonical return URL. Invalid handoff configuration throws. |
+| `setPreviewCookies(response, {sessionId, buildId, secure?, sameSite?})` | Sets HTTP-only, root-scoped XP-session and build-marker cookies, but does not enable draft mode. Defaults to secure/SameSite=None outside development and insecure/SameSite=Lax in development. Requires a nonempty build ID; SameSite=None requires secure cookies. |
+| `getXpSessionId(headers)` | Reads the XP session header first, then its cookie, rejecting semicolons/control characters. Reading an ID does not authenticate the session. |
+| `getXpRequestHeaders(request)` | Clones request headers and derives the XP-session header exclusively from the frontend session cookie, removing an arbitrary incoming session header. |
+| `addLocalePrefix(pathname, {locale, locales})` | Adds a locale to a root-relative pathname unless a recognized locale prefix already exists. Locale roots have no trailing slash. |
+| `removeLocalePrefix(pathname, {locale})` | Removes only the specified complete locale segment. Applications choose whether this should be the default locale. |
+| `validateRedirectPath({path, origin})` | Builds a URL from a root-relative path; missing/empty paths default to `/`. Rejects absolute/protocol-relative paths, backslashes, control characters, and non-HTTP(S) origins. Preserves query strings and fragments; does not check content existence. |
+
+The payload validators decrypt the blob and return `{ok: true, payload}` or `{ok: false, reason}`; `validateRedirectPath()` returns `{ok: true, url}` or
+`{ok: false, reason: 'invalid-path'}`. Callers choose HTTP responses. Preview validation accepts optional custom payload fields and
+preserves them. The shared secret and current build ID are passed by the application, not captured from its environment by the helpers.
+
+A typical preview handler decodes the handoff, builds a safe return URL, enables draft mode, creates its response, and sets the preview
+cookies. A proxy decodes incoming preview payloads, computes its canonical URL, uses `buildPreviewUrlIfNeeded()` to decide whether to
+redirect, then applies its own internal routing with the headers returned by `getXpRequestHeaders()`.
+
+These helpers do not provide live logout synchronization: an existing preview needs a fresh XP handoff to discover an XP session change.
+When using strict preview validation in the proxy, old/invalid handoff URLs are rejected even if the browser already has matching cookies;
+ordinary navigation without an `xp` parameter does not need a fresh payload.
 
 <br/>
 
@@ -443,14 +479,17 @@ validateData(data);
 
 <br/>
 
-#### <a id="get-content-branch"></a>`getContentBranch(context?: Context) => string`
+#### <a id="get-content-branch"></a>`getContentBranch(contextOrRenderMode?: Context | RENDER_MODE) => string`
 
 Resolves the Enonic XP branch (`master` or `draft`) for the current request based on its render mode.
 Returns `master` for `LIVE` and `NEXT` render modes, and `draft` otherwise (e.g. `EDIT`, `PREVIEW`, `INLINE`).
 
-| Argument  | Description                   |
-|-----------|-------------------------------|
-| `context` | `Context` object _(Optional)_ |
+| Argument | Description |
+|----------|-------------|
+| `contextOrRenderMode` | Optional `Context` object or explicit `RENDER_MODE` value. A context (or omitted argument) uses request headers and environment defaults; an explicit mode bypasses that resolution. |
+
+For example, `getContentBranch(RENDER_MODE.PREVIEW)` returns `draft`. To default an optional explicit mode to public content rather than
+the environment, use `getContentBranch(renderMode ?? RENDER_MODE.NEXT)`.
 
 Usage:
 
