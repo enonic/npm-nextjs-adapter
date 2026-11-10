@@ -119,7 +119,7 @@ consumed by Next.js). CSS modules under `src/` are copied into `dist/` by `cpy` 
 
 ### Peer Dependencies
 
-This library expects the consuming project to provide `next` (^16), `react` (^19), `react-dom` (^19), and `html-react-parser` (^5).
+This library expects the consuming project to provide `next` (^16), `react` (^19), `react-dom` (^19), and `html-react-parser` (^5 || ^6).
 
 ## ESLint
 

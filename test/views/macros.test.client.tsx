@@ -13,6 +13,13 @@ describe('built-in macro bodies', () => {
         expect(renderToStaticMarkup(<DisableMacro {...props} config={config}/>)).toEqual('&lt;strong&gt;Body&lt;/strong&gt;');
     });
 
+    test('parses sibling elements, entities and React attributes with parser v6', () => {
+        const config = {body: '<label for="field" class="caption">A &amp; B</label><input id="field" disabled>'};
+        expect(renderToStaticMarkup(<DefaultMacro {...props} config={config}/>)).toEqual(
+            '<label for="field" class="caption">A &amp; B</label><input id="field" disabled=""/>'
+        );
+    });
+
     test.each([undefined, null, 1, {}, []])('ignores non-string bodies: %p', (body) => {
         const config = {body};
         expect(renderToStaticMarkup(<DefaultMacro {...props} config={config}/>)).toEqual('');

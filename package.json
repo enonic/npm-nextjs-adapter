@@ -55,7 +55,7 @@
     "test": "jest --no-cache --coverage"
   },
   "dependencies": {
-    "@enonic/react-components": "7.1.0-beta.2",
+    "@enonic/react-components": "7.1.0-beta.3",
     "@formatjs/intl-localematcher": "^0.10.1",
     "gqlmin": "^0.3.2",
     "negotiator": "^1.1.0",
@@ -80,7 +80,7 @@
     "del-cli": "^8.0.1",
     "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
-    "html-react-parser": "^5.2.6",
+    "html-react-parser": "^6.1.9",
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2",
     "madge": "^8.0.0",
@@ -92,7 +92,7 @@
   },
   "types": "index.d.ts",
   "peerDependencies": {
-    "html-react-parser": "^5",
+    "html-react-parser": "^5 || ^6",
     "next": "^16",
     "react": "^19",
     "react-dom": "^19"

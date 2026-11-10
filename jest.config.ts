@@ -19,7 +19,8 @@ const commonConfig = {
         // next/jest maps CSS modules at the top level only, which project configs do not inherit
         '^.+\\.module\\.(css|sass|scss)$': 'next/dist/build/jest/object-proxy.js'
     },
-    transformIgnorePatterns: ["/node_modules/(?!gqlmin)"],
+    // Parser v6's DOM dependencies are ESM-only, so Jest must transform them too.
+    transformIgnorePatterns: ["/node_modules/(?!(gqlmin|domhandler|domelementtype|entities|htmlparser2|domutils|dom-serializer)/)"],
     transform: {
         "^.+\\.tsx?$": [
             'ts-jest',
