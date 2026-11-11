@@ -1,6 +1,12 @@
 # Upgrade Notes
 
-This document lists end-user API changes for the next major release of `@enonic/nextjs-adapter`.
+This document describes migration from `@enonic/nextjs-adapter` 5.x to 6.x.
+
+## Requirements
+
+Use Node.js 24.15.0 or later, npm 10.9.2 or later, Next.js 16, React/React DOM 19, Enonic XP 8.1+ and Guillotine 9. For the Next.XP Content Studio integration, use Next.XP app 6 and Content Studio 6.1 or later.
+
+The adapter accepts `html-react-parser` 5 or 6 and depends on the stable `@enonic/react-components` 7.1.0 release. Parser 5 consumers do not have to upgrade to parser 6 at the same time.
 
 ---
 
@@ -18,8 +24,9 @@ It renders unresolved links without an `href` and omits unresolved images.
 Custom rich-text queries must select these fields too. `RichTextData`,
 `LinkData`, `ImageData`, `MacroData`, and `MacroConfig` are re-exported directly
 from `@enonic/react-components`. URL fields accept strings or source-neutral
-URL parts; the adapter resolves parts at render time and leaves strings unchanged.
+URL parts; the adapter resolves parts at render time. Draft media URL strings containing an XP media path are also routed through the same-origin `/api/media` proxy.
 Reference entries and the data passed to custom replacers are not rewritten.
+Image content and media content may be null for unresolved references; custom consumers of these shared types must add guards where necessary, especially with strict TypeScript null checking.
 Applications providing macros and image styles must be configured on the
 selected site or project.
 
@@ -152,7 +159,7 @@ Query URL fields with `imageUrlQuery(args)`, `mediaUrlQuery()`,
 render the results with `imageUrl(data, meta)`, `mediaUrl(data, meta)`,
 `attachmentUrl(data, meta)` and `pageUrl(data, meta)`; they only need `path`
 (`queryString` is optional). The required `meta.branch` selects the authenticated Next.js media proxy for draft content and the configured
-media API for live content. `RichTextView` rewrites `processedHtml` URLs itself. Client components that build media URLs, import `_mappings.ts` or read the locale mappings still need the `NEXT_PUBLIC_*`
+media API for live content. `RichTextView` resolves reference URLs while rendering, without mutating the original `processedHtml` or reference data. Client components that build media URLs, import `_mappings.ts` or read the locale mappings still need the `NEXT_PUBLIC_*`
 copies (`NEXT_PUBLIC_ENONIC_API`, `NEXT_PUBLIC_ENONIC_MEDIA_CDN`, `NEXT_PUBLIC_ENONIC_APP_NAME`, `NEXT_PUBLIC_ENONIC_MAPPINGS`);
 purely server-rendered sites can drop them. `richTextQuery()` now spreads the named
 fragments `RichTextMacros`, `RichTextLinks` and `RichTextImages`; `fetchGuillotine()` defines them once per document, and documents sent
@@ -259,6 +266,6 @@ New public exports, safe to adopt incrementally:
    `(domNode, data, meta)` signature.
 7. Audit `meta.renderMode === 'edit'` branches — draft-mode requests will
    now hit them.
-8. Remove the `NEXT_PUBLIC_ENONIC_*` lines from `.env`.
+8. Remove `NEXT_PUBLIC_ENONIC_API_TOKEN`; keep the secret server-side. Keep only the non-secret `NEXT_PUBLIC_ENONIC_*` copies used by client components; fully server-rendered integrations can remove those copies.
 9. Upgrade to XP 8.1+ / Guillotine 9, rename `siteKey` to `scopeKey` in custom
    queries and drop `params` from media URL query args.

@@ -2,13 +2,29 @@
 
 > NextJS adapter with Guillotine support and basic views
 
-Requires Enonic XP 8.1+ with Guillotine 9.
+Requires Enonic XP 8.1+ with Guillotine 9. See [Upgrade Notes](UPGRADE.md) when migrating from adapter 5.x.
 
 ## Installation
 
 ```bash
 npm i --save @enonic/nextjs-adapter
 ```
+
+### Requirements
+
+| Dependency | Supported version |
+| --- | --- |
+| Node.js | 24.15.0 or later |
+| npm | 10.9.2 or later |
+| Next.js | 16 |
+| React and React DOM | 19 |
+| `html-react-parser` | 5 or 6 |
+| Enonic XP | 8.1 or later |
+| Guillotine | 9 |
+
+The application supplies Next.js, React, React DOM and `html-react-parser` as peer dependencies. Parser 6 is used for adapter development and tests; existing parser 5 installations remain supported.
+
+The adapter depends on the stable `@enonic/react-components` 7.1.0 release for component-tree and rich-text rendering. It is installed automatically and versioned independently of the adapter. Applications do not need to install it separately unless they import its APIs directly.
 
 ## Usage
 
@@ -1083,8 +1099,9 @@ Requires `transpilePackages: ['@enonic/nextjs-adapter']` in `next.config.js` so 
 Tag for displaying contents of html area input types. Takes care of processing macros, URLs and images inside.
 
 `RichTextData`, `LinkData`, `ImageData`, `MacroData`, and `MacroConfig` are shared with and re-exported from
-`@enonic/react-components`. Rich-text URL values can be strings (used unchanged) or URL parts (resolved by the adapter using its
-locale and media configuration). The adapter renders the original reference entries without rewriting their data.
+`@enonic/react-components` 7.1. Rich-text URL parts are resolved using the adapter's locale and media configuration. URL strings are used unchanged, except draft media strings containing an XP media path are routed through the same-origin `/api/media` proxy. The adapter renders the original reference entries without rewriting their data.
+
+Image content and media content can be null for unresolved references. The adapter resolves URLs from the reference's `src`, `srcset`, `pageUrl` and `media.mediaUrl` fields rather than requiring that content. Referenced links without a resolved URL render without an `href`; unresolved images are omitted. Ordinary HTML links keep their original `href`.
 
 | Argument         | Type           | Description                                                                                       |
 |------------------|----------------|---------------------------------------------------------------------------------------------------|

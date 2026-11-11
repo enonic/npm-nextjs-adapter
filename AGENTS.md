@@ -114,8 +114,9 @@ consumed by Next.js). CSS modules under `src/` are copied into `dist/` by `cpy` 
   client components, `src/server/disableDraftMode.ts` is the only `'use server'` module (async exports only). Server-only code uses Next.js `headers()` and
   `draftMode()`.
 - **Environment variables** are required at module load time on the server — `ENONIC_API`, `ENONIC_APP_NAME`, `ENONIC_MAPPINGS` must be set;
-  `GUILLOTINE_API` and `ENONIC_MEDIA_CDN` are optional. No `NEXT_PUBLIC_` variants are needed; client bundles never read these values,
-  so URL helpers must run in server components and pass results down as props.
+  `GUILLOTINE_API` and `ENONIC_MEDIA_CDN` are optional. The browser reads optional non-secret `NEXT_PUBLIC_ENONIC_API`,
+  `NEXT_PUBLIC_ENONIC_MEDIA_CDN`, `NEXT_PUBLIC_ENONIC_APP_NAME` and `NEXT_PUBLIC_ENONIC_MAPPINGS` copies when client-side code needs them.
+  Fully server-rendered integrations can omit these copies and pass resolved values to client components. Never expose `ENONIC_API_TOKEN`.
 
 ### Peer Dependencies
 
@@ -128,4 +129,4 @@ safety rules are turned off. The `dist/` directory and `.js` files are ignored.
 
 ## Node Version
 
-Requires Node >= 22.15.1 and npm >= 10.9.2 (see `engines` in `package.json`).
+Requires Node >= 24.15.0 and npm >= 10.9.2 (see `engines` in `package.json`).
