@@ -11,7 +11,8 @@
     "dist",
     "LICENSE",
     "package.json",
-    "README.md"
+    "README.md",
+    "UPGRADE.md"
   ],
   "exports": {
     ".": {
@@ -55,7 +56,7 @@
     "test": "jest --no-cache --coverage"
   },
   "dependencies": {
-    "@enonic/react-components": "7.1.0-beta.3",
+    "@enonic/react-components": "7.1.0",
     "@formatjs/intl-localematcher": "^0.10.1",
     "gqlmin": "^0.3.2",
     "negotiator": "^1.1.0",
